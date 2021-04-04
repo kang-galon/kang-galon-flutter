@@ -1,14 +1,30 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:kang_galon/pages/splash_page.dart';
+import 'package:kang_galon/core/services/user_service.dart';
+import 'package:kang_galon/ui/pages/home_page.dart';
 import 'package:pinput/pin_put/pin_put.dart';
 
 class VerificationOtpPage extends StatefulWidget {
+  final String verificationId;
+  final String phoneNumber;
+  final String name;
+  bool isLogin = false;
+
+  VerificationOtpPage({
+    @required this.verificationId,
+    @required this.phoneNumber,
+    @required this.name,
+    @required this.isLogin,
+  });
+
   @override
   _VerificationOtpPageState createState() => _VerificationOtpPageState();
 }
 
 class _VerificationOtpPageState extends State<VerificationOtpPage> {
+  final userService = UserService();
+
   BoxDecoration get _pinPutDecoration {
     return BoxDecoration(
       border: Border.all(color: Colors.deepPurpleAccent),
@@ -16,10 +32,35 @@ class _VerificationOtpPageState extends State<VerificationOtpPage> {
     );
   }
 
-  void pinSubmitAction(String pin) {
-    Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return SplashPage();
-    }));
+  Future<void> pinSubmitAction(String pin) async {
+    FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+    PhoneAuthCredential phoneAuthCredential = PhoneAuthProvider.credential(
+      verificationId: widget.verificationId,
+      smsCode: pin,
+    );
+
+    try {
+      await firebaseAuth.signInWithCredential(phoneAuthCredential);
+      var user = FirebaseAuth.instance.currentUser;
+      String jwtToken = await user.getIdToken();
+      String uid = user.uid;
+
+      // Jika bukan register maka pass data to server
+      if (!widget.isLogin) {
+        // send data to server
+        await userService.register(
+            widget.phoneNumber, widget.name, uid, jwtToken);
+      }
+
+      Navigator.of(context)
+          .pushReplacement(MaterialPageRoute(builder: (context) => HomePage()));
+    } on FirebaseException {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Invalid OTP')));
+    } catch (e) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(e.toString())));
+    }
   }
 
   @override
@@ -44,11 +85,12 @@ class _VerificationOtpPageState extends State<VerificationOtpPage> {
             ),
             Padding(
               padding: const EdgeInsets.only(top: 10.0),
-              child: Text('Enter OTP code sent to your number +628123123'),
+              child: Text(
+                  'Enter OTP code sent to your number ' + widget.phoneNumber),
             ),
             Padding(
               padding:
-                  const EdgeInsets.only(top: 30.0, left: 70.0, right: 70.0),
+                  const EdgeInsets.only(top: 30.0, left: 20.0, right: 20.0),
               child: Wrap(
                 children: [
                   Container(
@@ -69,7 +111,7 @@ class _VerificationOtpPageState extends State<VerificationOtpPage> {
                         horizontal: 30.0,
                       ),
                       child: PinPut(
-                        fieldsCount: 4,
+                        fieldsCount: 6,
                         onSubmit: pinSubmitAction,
                         inputFormatters: <TextInputFormatter>[
                           FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),

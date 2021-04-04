@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "615543939747",
+    "project_id": "kang-galon",
+    "storage_bucket": "kang-galon.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:615543939747:android:f59f2a10bab8f596505516",
+        "android_client_info": {
+          "package_name": "com.example.kang_galon"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "615543939747-1ik2bk755o9k8thial594ar9bdjaae47.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDKrqHzhdGykN3goueN7wKtyZUJ30c83Fc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "615543939747-1ik2bk755o9k8thial594ar9bdjaae47.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
