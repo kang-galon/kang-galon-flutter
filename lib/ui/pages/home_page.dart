@@ -1,38 +1,38 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kang_galon/core/models/user.dart';
+import 'package:kang_galon/core/viewmodels/user_bloc.dart';
 import 'package:kang_galon/ui/pages/account_page.dart';
 import 'package:kang_galon/ui/pages/order_page.dart';
 import 'package:kang_galon/ui/widgets/depot_item.dart';
 import 'package:kang_galon/ui/widgets/home_button.dart';
 
-class HomePage extends StatefulWidget {
-  @override
-  _HomePageState createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  String name;
-
-  @override
-  void initState() {
-    super.initState();
-
-    var user = FirebaseAuth.instance.currentUser;
-    this.name = user.displayName;
-  }
-
-  void allDepotAction() {
+class HomePage extends StatelessWidget {
+  void allDepotAction(BuildContext context) {
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => OrderPage()));
   }
 
-  void accountAction() {
+  void accountAction(BuildContext context, UserBloc userBloc) {
     Navigator.push(
-        context, MaterialPageRoute(builder: (context) => AccountPage()));
+        context,
+        MaterialPageRoute(
+          builder: (context) => BlocProvider.value(
+            value: userBloc,
+            // create: (context) => userBloc,
+            child: AccountPage(),
+          ),
+        ));
+  }
+
+  void chatAction(BuildContext context, UserBloc userBloc) {
+    // userBloc.add(User.updateName('asds'));
   }
 
   @override
   Widget build(BuildContext context) {
+    UserBloc userBloc = BlocProvider.of<UserBloc>(context);
+
     return Scaffold(
       body: SingleChildScrollView(
         child: Center(
@@ -60,7 +60,9 @@ class _HomePageState extends State<HomePage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Hai, ' + this.name),
+                        BlocBuilder<UserBloc, User>(
+                            builder: (context, user) =>
+                                Text('Hai, ${user.name}')),
                         Divider(
                           thickness: 3.0,
                           height: 20.0,
@@ -79,12 +81,14 @@ class _HomePageState extends State<HomePage> {
                             HomeButton(
                               label: 'Akun',
                               icon: Icons.person,
-                              onPressed: this.accountAction,
+                              onPressed: () =>
+                                  this.accountAction(context, userBloc),
                             ),
                             HomeButton(
                               label: 'Chat',
                               icon: Icons.article,
-                              onPressed: () {},
+                              onPressed: () =>
+                                  this.chatAction(context, userBloc),
                             ),
                           ],
                         )
@@ -111,7 +115,7 @@ class _HomePageState extends State<HomePage> {
                     child: Column(
                       children: [
                         OutlinedButton(
-                          onPressed: this.allDepotAction,
+                          onPressed: () => this.allDepotAction(context),
                           style: ButtonStyle(
                             backgroundColor:
                                 MaterialStateProperty.all<Color>(Colors.white),

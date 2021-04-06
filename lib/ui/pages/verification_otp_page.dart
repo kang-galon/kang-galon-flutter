@@ -1,7 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kang_galon/core/services/user_service.dart';
+import 'package:kang_galon/core/viewmodels/user_bloc.dart';
 import 'package:kang_galon/ui/pages/home_page.dart';
 import 'package:pinput/pin_put/pin_put.dart';
 
@@ -52,8 +54,12 @@ class _VerificationOtpPageState extends State<VerificationOtpPage> {
             widget.phoneNumber, widget.name, uid, jwtToken);
       }
 
-      Navigator.of(context)
-          .pushReplacement(MaterialPageRoute(builder: (context) => HomePage()));
+      Navigator.of(context).pushReplacement(MaterialPageRoute(
+        builder: (context) => BlocProvider(
+          create: (context) => UserBloc(),
+          child: HomePage(),
+        ),
+      ));
     } on FirebaseException {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text('Invalid OTP')));

@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kang_galon/core/viewmodels/user_bloc.dart';
 import 'package:kang_galon/ui/pages/home_page.dart';
 import 'package:kang_galon/ui/pages/login_page.dart';
 
@@ -65,7 +67,10 @@ class _SplashPageState extends State<SplashPage> {
     if (user == null) {
       return LoginPage();
     } else {
-      return HomePage();
+      return BlocProvider(
+        create: (context) => UserBloc(),
+        child: HomePage(),
+      );
     }
   }
 }

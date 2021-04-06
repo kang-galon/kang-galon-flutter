@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 import 'package:kang_galon/core/services/api.dart' as api;
 
@@ -25,5 +26,20 @@ class UserService {
     );
 
     return response.statusCode == 200;
+  }
+
+  Future<void> updateProfile(String name) async {
+    Uri url = api.url('/client');
+    var token = await FirebaseAuth.instance.currentUser.getIdToken();
+
+    var response = await http.patch(
+      url,
+      headers: {'Authorization': 'Bearer ' + token},
+      body: {'name': name},
+    );
+
+    if (response.statusCode >= 400) {
+      throw Exception(response.body);
+    }
   }
 }
