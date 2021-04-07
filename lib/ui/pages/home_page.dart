@@ -2,13 +2,29 @@ import 'package:firebase_auth/firebase_auth.dart' as Fire;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kang_galon/core/models/user.dart';
+import 'package:kang_galon/core/models/location.dart' as My;
+import 'package:kang_galon/core/viewmodels/location_bloc.dart';
 import 'package:kang_galon/core/viewmodels/user_bloc.dart';
 import 'package:kang_galon/ui/pages/account_page.dart';
+import 'package:kang_galon/ui/pages/maps_page.dart';
 import 'package:kang_galon/ui/pages/order_page.dart';
 import 'package:kang_galon/ui/widgets/depot_item.dart';
 import 'package:kang_galon/ui/widgets/home_button.dart';
+import 'package:kang_galon/ui/widgets/long_button.dart';
+import 'package:location/location.dart';
 
 class HomePage extends StatelessWidget {
+  void mapsAction(BuildContext context, LocationBloc bloc) {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => BlocProvider.value(
+            value: bloc,
+            child: MapsPage(),
+          ),
+        ));
+  }
+
   void allDepotAction(BuildContext context) {
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => OrderPage()));
@@ -33,6 +49,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     UserBloc userBloc = BlocProvider.of<UserBloc>(context);
+    LocationBloc locationBloc = BlocProvider.of<LocationBloc>(context);
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -99,8 +116,10 @@ class HomePage extends StatelessWidget {
                 ),
                 Container(
                   margin: EdgeInsets.only(top: 30.0),
+                  padding: EdgeInsets.all(10.0),
+                  width: double.infinity,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(30.0),
+                    borderRadius: BorderRadius.circular(10.0),
                     color: Colors.white,
                     boxShadow: [
                       BoxShadow(
@@ -111,54 +130,90 @@ class HomePage extends StatelessWidget {
                       )
                     ],
                   ),
-                  child: Padding(
-                    padding: EdgeInsets.all(10.0),
-                    child: Column(
-                      children: [
-                        OutlinedButton(
-                          onPressed: () => this.allDepotAction(context),
-                          style: ButtonStyle(
-                            backgroundColor:
-                                MaterialStateProperty.all<Color>(Colors.white),
-                            elevation: MaterialStateProperty.all<double>(2.0),
-                            shape: MaterialStateProperty.all<
-                                RoundedRectangleBorder>(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10.0),
+                  child: BlocBuilder<LocationBloc, My.Location>(
+                    builder: (context, location) {
+                      if (location is My.LocationEnable) {
+                        return Column(
+                          children: [
+                            LongButton(
+                              context: context,
+                              onPressed: () =>
+                                  this.mapsAction(context, locationBloc),
+                              icon: Icons.map,
+                              text: 'Ubah lokasi anda',
+                            ),
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 10.0, horizontal: 20.0),
+                              child: Text(location.address),
+                            ),
+                          ],
+                        );
+                      } else {
+                        return Padding(
+                          padding: EdgeInsets.symmetric(
+                              vertical: 10.0, horizontal: 20.0),
+                          child: Column(
+                            children: [
+                              LongButton(
+                                context: context,
+                                onPressed: () {
+                                  locationBloc.add(My.LocationCurrent());
+                                },
+                                icon: Icons.refresh,
+                                text: 'Deteksi lokasi anda',
                               ),
-                            ),
+                              SizedBox(height: 10.0),
+                              Text(location.toString()),
+                            ],
                           ),
-                          child: Container(
-                            width: MediaQuery.of(context).size.width * 0.5,
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 10.0,
-                              vertical: 5.0,
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Icon(Icons.local_drink),
-                                Text(
-                                  'Semua depot',
-                                  textAlign: TextAlign.center,
-                                ),
-                                Icon(Icons.east),
-                              ],
-                            ),
-                          ),
-                        ),
-                        ListView.builder(
-                          shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          itemBuilder: (context, index) {
-                            return DepotItem();
-                          },
-                          itemCount: 5,
-                        ),
-                      ],
-                    ),
+                        );
+                      }
+                    },
                   ),
-                )
+                ),
+                BlocBuilder<LocationBloc, My.Location>(
+                  builder: (context, location) {
+                    if (location is My.LocationEnable) {
+                      return Container(
+                        margin: EdgeInsets.only(top: 30.0),
+                        padding: EdgeInsets.all(10.0),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10.0),
+                          color: Colors.white,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.shade300,
+                              spreadRadius: 2.0,
+                              blurRadius: 2.0,
+                              offset: Offset(1, 2),
+                            )
+                          ],
+                        ),
+                        child: Column(
+                          children: [
+                            LongButton(
+                              context: context,
+                              onPressed: () => this.allDepotAction(context),
+                              icon: Icons.local_drink,
+                              text: 'Semua depot',
+                            ),
+                            ListView.builder(
+                              shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
+                              itemBuilder: (context, index) {
+                                return DepotItem();
+                              },
+                              itemCount: 5,
+                            ),
+                          ],
+                        ),
+                      );
+                    } else {
+                      return Container();
+                    }
+                  },
+                ),
               ],
             ),
           ),
