@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:kang_galon/core/services/user_service.dart';
 import 'package:kang_galon/ui/pages/login_page.dart';
 import 'package:kang_galon/ui/pages/verification_otp_page.dart';
+import 'package:kang_galon/ui/widgets/snackbar.dart';
 
 class Registerpage extends StatefulWidget {
   @override
@@ -41,18 +42,14 @@ class _RegisterpageState extends State<Registerpage> {
         verificationCompleted: (PhoneAuthCredential credential) {},
         codeAutoRetrievalTimeout: (String verificationId) {},
         verificationFailed: (FirebaseAuthException error) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('OTP gagal dikirim')),
-          );
+          showSnackbar(context, 'OTP gagal dikirim');
 
           setState(() {
             _loading = false;
           });
         },
         codeSent: (String verificationId, int forceResendingToken) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('OTP berhasil dikirim')),
-          );
+          showSnackbar(context, 'OTP berhasil dikirim');
 
           Navigator.pushReplacement(context, MaterialPageRoute(
             builder: (context) {

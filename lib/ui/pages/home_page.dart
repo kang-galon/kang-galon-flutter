@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart' as Fire;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kang_galon/core/models/user.dart';
@@ -19,14 +20,14 @@ class HomePage extends StatelessWidget {
         MaterialPageRoute(
           builder: (context) => BlocProvider.value(
             value: userBloc,
-            // create: (context) => userBloc,
             child: AccountPage(),
           ),
         ));
   }
 
-  void chatAction(BuildContext context, UserBloc userBloc) {
-    // userBloc.add(User.updateName('asds'));
+  void chatAction(BuildContext context, UserBloc userBloc) async {
+    print(Fire.FirebaseAuth.instance.currentUser.uid);
+    print(await Fire.FirebaseAuth.instance.currentUser.getIdToken());
   }
 
   @override

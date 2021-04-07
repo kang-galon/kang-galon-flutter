@@ -5,9 +5,9 @@ import 'package:kang_galon/core/services/user_service.dart';
 
 class UserBloc extends Bloc<My.User, My.User> {
   final _userService = UserService();
-  static String name = FirebaseAuth.instance.currentUser.displayName;
 
-  UserBloc() : super(My.User(name: name));
+  UserBloc()
+      : super(My.User(name: FirebaseAuth.instance.currentUser.displayName));
 
   @override
   Stream<My.User> mapEventToState(My.User event) async* {

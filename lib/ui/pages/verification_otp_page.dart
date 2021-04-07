@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kang_galon/core/services/user_service.dart';
 import 'package:kang_galon/core/viewmodels/user_bloc.dart';
 import 'package:kang_galon/ui/pages/home_page.dart';
+import 'package:kang_galon/ui/widgets/snackbar.dart';
 import 'package:pinput/pin_put/pin_put.dart';
 
 class VerificationOtpPage extends StatefulWidget {
@@ -61,11 +62,9 @@ class _VerificationOtpPageState extends State<VerificationOtpPage> {
         ),
       ));
     } on FirebaseException {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Invalid OTP')));
+      showSnackbar(context, 'OTP tidak valid');
     } catch (e) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(e.toString())));
+      showSnackbar(context, e.toString());
     }
   }
 

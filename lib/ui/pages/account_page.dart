@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kang_galon/core/models/user.dart' as My;
 import 'package:kang_galon/core/viewmodels/user_bloc.dart';
 import 'package:kang_galon/ui/pages/splash_page.dart';
+import 'package:kang_galon/ui/widgets/snackbar.dart';
 
 class AccountPage extends StatefulWidget {
   @override
@@ -95,17 +96,11 @@ class _AccountPageState extends State<AccountPage> {
                     BlocListener<UserBloc, My.User>(
                       listener: (context, user) {
                         if (user is My.UserError) {
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            content: Text('Ups, ada yang salah'),
-                            behavior: SnackBarBehavior.floating,
-                          ));
+                          showSnackbar(context, 'Ups, ada yang salah');
                         } else if (user is My.UserSuccess) {
                           Navigator.pop(context);
 
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            content: Text('Ubah nama berhasil'),
-                            behavior: SnackBarBehavior.floating,
-                          ));
+                          showSnackbar(context, 'Ubah nama berhasil');
                         }
                       },
                       child: BlocBuilder<UserBloc, My.User>(
