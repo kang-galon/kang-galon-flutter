@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kang_galon/core/viewmodels/depot_bloc.dart';
 import 'package:kang_galon/core/viewmodels/location_bloc.dart';
 import 'package:kang_galon/core/viewmodels/user_bloc.dart';
 import 'package:kang_galon/ui/pages/home_page.dart';
@@ -72,6 +73,7 @@ class _SplashPageState extends State<SplashPage> {
         providers: [
           BlocProvider<UserBloc>(create: (context) => UserBloc()),
           BlocProvider<LocationBloc>(create: (context) => LocationBloc()),
+          BlocProvider<DepotBloc>(create: (context) => DepotBloc()),
         ],
         child: HomePage(),
       );

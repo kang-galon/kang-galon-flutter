@@ -1,15 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:kang_galon/core/models/depot.dart';
 
 class DepotItem extends StatelessWidget {
+  final Depot depot;
+
+  DepotItem({Key key, @required this.depot}) : super(key: key);
+
+  void detailDepotAction() {
+    print(depot.image);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: () {
-          print('assad');
-        },
+        onTap: this.detailDepotAction,
         customBorder: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10.0),
         ),
@@ -17,19 +24,30 @@ class DepotItem extends StatelessWidget {
           padding: EdgeInsets.symmetric(horizontal: 5.0, vertical: 10.0),
           child: Row(
             children: [
-              Image(
-                width: 70.0,
-                height: 70.0,
-                fit: BoxFit.fill,
-                image: AssetImage('assets/images/phone.png'),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(5.0),
+                child: depot.image == null
+                    ? Image(
+                        width: 70.0,
+                        height: 70.0,
+                        fit: BoxFit.fill,
+                        image: AssetImage('assets/images/phone.png'),
+                      )
+                    : Image.network(
+                        depot.image,
+                        width: 70.0,
+                        height: 70.0,
+                        fit: BoxFit.fill,
+                      ),
               ),
+              SizedBox(width: 10.0),
               Flexible(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: [
-                        Text('Depot hayuuuk'),
+                        Text(depot.name),
                         Spacer(),
                         Icon(
                           Icons.arrow_forward_ios,
@@ -40,7 +58,7 @@ class DepotItem extends StatelessWidget {
                     ),
                     SizedBox(height: 5.0),
                     Text(
-                      'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
+                      this.depot.address,
                       overflow: TextOverflow.ellipsis,
                       maxLines: 2,
                     ),
@@ -48,12 +66,12 @@ class DepotItem extends StatelessWidget {
                     Row(
                       children: [
                         Text(
-                          '0.5 km',
+                          '${depot.distance} km',
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                         Spacer(),
                         RatingBar.builder(
-                          initialRating: 2.5,
+                          initialRating: depot.rating,
                           minRating: 1,
                           direction: Axis.horizontal,
                           allowHalfRating: true,
@@ -68,7 +86,7 @@ class DepotItem extends StatelessWidget {
                         ),
                         SizedBox(width: 5.0),
                         Text(
-                          '4.5',
+                          depot.rating.toString(),
                           textAlign: TextAlign.right,
                         ),
                       ],

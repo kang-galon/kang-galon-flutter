@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kang_galon/core/services/user_service.dart';
+import 'package:kang_galon/core/viewmodels/depot_bloc.dart';
+import 'package:kang_galon/core/viewmodels/location_bloc.dart';
 import 'package:kang_galon/core/viewmodels/user_bloc.dart';
 import 'package:kang_galon/ui/pages/home_page.dart';
 import 'package:kang_galon/ui/widgets/snackbar.dart';
@@ -56,8 +58,12 @@ class _VerificationOtpPageState extends State<VerificationOtpPage> {
       }
 
       Navigator.of(context).pushReplacement(MaterialPageRoute(
-        builder: (context) => BlocProvider(
-          create: (context) => UserBloc(),
+        builder: (context) => MultiBlocProvider(
+          providers: [
+            BlocProvider<UserBloc>(create: (context) => UserBloc()),
+            BlocProvider<LocationBloc>(create: (context) => LocationBloc()),
+            BlocProvider<DepotBloc>(create: (context) => DepotBloc()),
+          ],
           child: HomePage(),
         ),
       ));

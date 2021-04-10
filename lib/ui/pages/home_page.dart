@@ -1,8 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart' as Fire;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kang_galon/core/models/depot.dart';
 import 'package:kang_galon/core/models/user.dart';
 import 'package:kang_galon/core/models/location.dart' as My;
+import 'package:kang_galon/core/viewmodels/depot_bloc.dart';
 import 'package:kang_galon/core/viewmodels/location_bloc.dart';
 import 'package:kang_galon/core/viewmodels/user_bloc.dart';
 import 'package:kang_galon/ui/pages/account_page.dart';
@@ -50,6 +52,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     UserBloc userBloc = BlocProvider.of<UserBloc>(context);
     LocationBloc locationBloc = BlocProvider.of<LocationBloc>(context);
+    DepotBloc depotBloc = BlocProvider.of<DepotBloc>(context);
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -172,42 +175,63 @@ class HomePage extends StatelessWidget {
                     },
                   ),
                 ),
-                BlocBuilder<LocationBloc, My.Location>(
+                BlocConsumer<LocationBloc, My.Location>(
+                  listener: (context, location) {
+                    if (location is My.LocationEnable ||
+                        location is My.LocationSet) {
+                      depotBloc.add(DepotFetchList(
+                        latitude: location.latitude,
+                        longitude: location.longitude,
+                      ));
+                    }
+                  },
                   builder: (context, location) {
-                    if (location is My.LocationEnable) {
-                      return Container(
-                        margin: EdgeInsets.only(top: 30.0),
-                        padding: EdgeInsets.all(10.0),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10.0),
-                          color: Colors.white,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.shade300,
-                              spreadRadius: 2.0,
-                              blurRadius: 2.0,
-                              offset: Offset(1, 2),
-                            )
-                          ],
-                        ),
-                        child: Column(
-                          children: [
-                            LongButton(
-                              context: context,
-                              onPressed: () => this.allDepotAction(context),
-                              icon: Icons.local_drink,
-                              text: 'Semua depot',
-                            ),
-                            ListView.builder(
-                              shrinkWrap: true,
-                              physics: NeverScrollableScrollPhysics(),
-                              itemBuilder: (context, index) {
-                                return DepotItem();
-                              },
-                              itemCount: 5,
-                            ),
-                          ],
-                        ),
+                    if (location is My.LocationEnable ||
+                        location is My.LocationSet) {
+                      return BlocBuilder<DepotBloc, Depot>(
+                        builder: (context, depot) {
+                          if (depot is DepotListSuccess) {
+                            return Container(
+                              margin: EdgeInsets.only(top: 30.0),
+                              padding: EdgeInsets.all(10.0),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10.0),
+                                color: Colors.white,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.shade300,
+                                    spreadRadius: 2.0,
+                                    blurRadius: 2.0,
+                                    offset: Offset(1, 2),
+                                  )
+                                ],
+                              ),
+                              child: Column(
+                                children: [
+                                  LongButton(
+                                    context: context,
+                                    onPressed: () =>
+                                        this.allDepotAction(context),
+                                    icon: Icons.local_drink,
+                                    text: 'Semua depot',
+                                  ),
+                                  ListView.builder(
+                                    shrinkWrap: true,
+                                    physics: NeverScrollableScrollPhysics(),
+                                    itemBuilder: (context, index) {
+                                      return DepotItem(
+                                        depot: depot.depots[index],
+                                      );
+                                    },
+                                    itemCount: 5,
+                                  ),
+                                ],
+                              ),
+                            );
+                          }
+
+                          return Container();
+                        },
                       );
                     } else {
                       return Container();
