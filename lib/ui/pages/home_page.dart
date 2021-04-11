@@ -6,6 +6,7 @@ import 'package:kang_galon/core/models/user.dart';
 import 'package:kang_galon/core/models/location.dart' as My;
 import 'package:kang_galon/core/viewmodels/depot_bloc.dart';
 import 'package:kang_galon/core/viewmodels/location_bloc.dart';
+import 'package:kang_galon/core/viewmodels/transaction_bloc.dart';
 import 'package:kang_galon/core/viewmodels/user_bloc.dart';
 import 'package:kang_galon/ui/pages/account_page.dart';
 import 'package:kang_galon/ui/pages/maps_page.dart';
@@ -13,7 +14,6 @@ import 'package:kang_galon/ui/pages/order_page.dart';
 import 'package:kang_galon/ui/widgets/depot_item.dart';
 import 'package:kang_galon/ui/widgets/home_button.dart';
 import 'package:kang_galon/ui/widgets/long_button.dart';
-import 'package:location/location.dart';
 
 class HomePage extends StatelessWidget {
   void mapsAction(BuildContext context, LocationBloc bloc) {
@@ -53,6 +53,7 @@ class HomePage extends StatelessWidget {
     UserBloc userBloc = BlocProvider.of<UserBloc>(context);
     LocationBloc locationBloc = BlocProvider.of<LocationBloc>(context);
     DepotBloc depotBloc = BlocProvider.of<DepotBloc>(context);
+    TransactionBloc transactionBloc = BlocProvider.of<TransactionBloc>(context);
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -64,6 +65,7 @@ class HomePage extends StatelessWidget {
               children: [
                 Container(
                   width: MediaQuery.of(context).size.width,
+                  padding: EdgeInsets.all(20.0),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
                     color: Colors.white,
@@ -76,45 +78,41 @@ class HomePage extends StatelessWidget {
                       )
                     ],
                   ),
-                  child: Padding(
-                    padding: EdgeInsets.all(20.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        BlocBuilder<UserBloc, User>(
-                            builder: (context, user) =>
-                                Text('Hai, ${user.name}')),
-                        Divider(
-                          thickness: 3.0,
-                          height: 20.0,
-                          color: Colors.grey.shade400,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            HomeButton(
-                              label: 'Riwayat',
-                              icon: Icons.history,
-                              onPressed: () {
-                                print('Riwayat');
-                              },
-                            ),
-                            HomeButton(
-                              label: 'Akun',
-                              icon: Icons.person,
-                              onPressed: () =>
-                                  this.accountAction(context, userBloc),
-                            ),
-                            HomeButton(
-                              label: 'Chat',
-                              icon: Icons.article,
-                              onPressed: () =>
-                                  this.chatAction(context, userBloc),
-                            ),
-                          ],
-                        )
-                      ],
-                    ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      BlocBuilder<UserBloc, User>(
+                          builder: (context, user) =>
+                              Text('Hai, ${user.name}')),
+                      Divider(
+                        thickness: 3.0,
+                        height: 20.0,
+                        color: Colors.grey.shade400,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          HomeButton(
+                            label: 'Riwayat',
+                            icon: Icons.history,
+                            onPressed: () {
+                              print('Riwayat');
+                            },
+                          ),
+                          HomeButton(
+                            label: 'Akun',
+                            icon: Icons.person,
+                            onPressed: () =>
+                                this.accountAction(context, userBloc),
+                          ),
+                          HomeButton(
+                            label: 'Chat',
+                            icon: Icons.article,
+                            onPressed: () => this.chatAction(context, userBloc),
+                          ),
+                        ],
+                      )
+                    ],
                   ),
                 ),
                 Container(
@@ -221,6 +219,8 @@ class HomePage extends StatelessWidget {
                                     itemBuilder: (context, index) {
                                       return DepotItem(
                                         depot: depot.depots[index],
+                                        locationBloc: locationBloc,
+                                        transactionBloc: transactionBloc,
                                       );
                                     },
                                     itemCount: 5,

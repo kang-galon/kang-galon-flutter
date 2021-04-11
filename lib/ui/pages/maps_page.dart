@@ -23,6 +23,8 @@ class MapsPage extends StatelessWidget {
             markerId: MarkerId(this._markerId),
             position: latLng,
             infoWindow: InfoWindow(title: this._infoWindowTitle),
+            icon: BitmapDescriptor.defaultMarkerWithHue(
+                BitmapDescriptor.hueOrange),
           ),
         );
   }

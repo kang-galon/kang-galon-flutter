@@ -1,14 +1,46 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:kang_galon/core/models/depot.dart';
+import 'package:kang_galon/core/viewmodels/location_bloc.dart';
+import 'package:kang_galon/core/viewmodels/transaction_bloc.dart';
+import 'package:kang_galon/ui/pages/depot_page.dart';
 
 class DepotItem extends StatelessWidget {
   final Depot depot;
+  final LocationBloc locationBloc;
+  final TransactionBloc transactionBloc;
 
-  DepotItem({Key key, @required this.depot}) : super(key: key);
+  DepotItem({
+    Key key,
+    @required this.depot,
+    @required this.locationBloc,
+    @required this.transactionBloc,
+  }) : super(key: key);
 
-  void detailDepotAction() {
-    print(depot.image);
+  void detailDepotAction(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => MultiBlocProvider(
+          providers: [
+            BlocProvider<LocationBloc>.value(value: locationBloc),
+            BlocProvider<TransactionBloc>.value(value: transactionBloc),
+          ],
+          child: DepotPage(depot: depot),
+        ),
+      ),
+    );
+
+    // Navigator.push(
+    //     context,
+    //     MaterialPageRoute(
+    //       builder: (context) => DepotPage(
+    //         depot: depot,
+    //         location: locationBloc.state,
+    //       ),
+    //     ));
   }
 
   @override
@@ -16,7 +48,7 @@ class DepotItem extends StatelessWidget {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: this.detailDepotAction,
+        onTap: () => this.detailDepotAction(context),
         customBorder: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10.0),
         ),
@@ -26,19 +58,14 @@ class DepotItem extends StatelessWidget {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(5.0),
-                child: depot.image == null
-                    ? Image(
-                        width: 70.0,
-                        height: 70.0,
-                        fit: BoxFit.fill,
-                        image: AssetImage('assets/images/phone.png'),
-                      )
-                    : Image.network(
-                        depot.image,
-                        width: 70.0,
-                        height: 70.0,
-                        fit: BoxFit.fill,
-                      ),
+                child: Image(
+                  width: 70.0,
+                  height: 70.0,
+                  fit: BoxFit.fill,
+                  image: depot.image == null
+                      ? AssetImage('assets/images/phone.png')
+                      : CachedNetworkImageProvider(depot.image),
+                ),
               ),
               SizedBox(width: 10.0),
               Flexible(

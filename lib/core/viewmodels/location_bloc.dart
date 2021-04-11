@@ -46,16 +46,13 @@ class LocationBloc extends Bloc<My.Location, My.Location> {
     }
 
     if (location is My.LocationSet) {
-      print(location.latitude);
-      print(location.longitude);
-
-      // Coordinates coordinates =
-      //     Coordinates(location.latitude, location.longitude);
-      // List<Address> address =
-      //     await Geocoder.local.findAddressesFromCoordinates(coordinates);
+      Coordinates coordinates =
+          Coordinates(location.latitude, location.longitude);
+      List<Address> address =
+          await Geocoder.local.findAddressesFromCoordinates(coordinates);
 
       yield My.LocationEnable(
-        address: 'address.first.addressLine',
+        address: address.first.addressLine,
         latitude: location.latitude,
         longitude: location.longitude,
       );

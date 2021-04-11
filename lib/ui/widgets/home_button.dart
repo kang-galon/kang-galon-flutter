@@ -5,7 +5,11 @@ class HomeButton extends StatelessWidget {
   IconData icon;
   void Function() onPressed;
 
-  HomeButton({this.label, this.icon, this.onPressed});
+  HomeButton({
+    @required this.label,
+    @required this.icon,
+    @required this.onPressed,
+  });
 
   @override
   Widget build(BuildContext context) {
