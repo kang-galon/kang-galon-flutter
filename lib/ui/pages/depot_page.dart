@@ -163,10 +163,8 @@ class _DepotPageState extends State<DepotPage> {
     this.markers.add(
           Marker(
             markerId: MarkerId('Your Location'),
-            position:
-                // LatLng(widget.location.latitude, widget.location.longitude),
-                LatLng(_locationBloc.state.latitude,
-                    _locationBloc.state.longitude),
+            position: LatLng(
+                _locationBloc.state.latitude, _locationBloc.state.longitude),
             infoWindow: InfoWindow(title: 'Your Location'),
             icon: BitmapDescriptor.defaultMarkerWithHue(
                 BitmapDescriptor.hueOrange),
@@ -297,7 +295,6 @@ class _DepotPageState extends State<DepotPage> {
                       )
                     ],
                   ),
-                  // child: Text(widget.location.address),
                   child: Text(_locationBloc.state.address),
                 ),
                 Container(
