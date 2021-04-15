@@ -4,12 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:kang_galon/core/viewmodels/depot_bloc.dart';
-import 'package:kang_galon/core/viewmodels/location_bloc.dart';
-import 'package:kang_galon/core/viewmodels/transaction_bloc.dart';
-import 'package:kang_galon/core/viewmodels/user_bloc.dart';
-import 'package:kang_galon/ui/pages/home_page.dart';
-import 'package:kang_galon/ui/pages/login_page.dart';
+import 'package:kang_galon/core/viewmodels/bloc.dart';
+import 'package:kang_galon/ui/pages/pages.dart';
 
 class SplashPage extends StatefulWidget {
   @override

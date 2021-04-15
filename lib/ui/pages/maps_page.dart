@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:kang_galon/core/models/location.dart' as My;
-import 'package:kang_galon/core/viewmodels/location_bloc.dart';
+import 'package:kang_galon/core/models/models.dart';
+import 'package:kang_galon/core/viewmodels/bloc.dart';
 
 class MapsPage extends StatelessWidget {
   final Completer<GoogleMapController> _mapsController = Completer();
@@ -14,7 +14,7 @@ class MapsPage extends StatelessWidget {
 
   void _setMarkerLocation(LocationBloc locationBloc, LatLng latLng) {
     locationBloc.add(
-      My.LocationSet(latitude: latLng.latitude, longitude: latLng.longitude),
+      LocationSet(latitude: latLng.latitude, longitude: latLng.longitude),
     );
 
     // create marker
@@ -46,7 +46,7 @@ class MapsPage extends StatelessWidget {
       body: Stack(
         children: [
           Container(
-            child: BlocBuilder<LocationBloc, My.Location>(
+            child: BlocBuilder<LocationBloc, Location>(
               bloc: locationBloc,
               builder: (BuildContext context, state) {
                 return GoogleMap(
@@ -134,7 +134,7 @@ class MapsPage extends StatelessWidget {
                             offset: Offset(0.0, -1.0),
                           )
                         ]),
-                    child: BlocBuilder<LocationBloc, My.Location>(
+                    child: BlocBuilder<LocationBloc, Location>(
                       builder: (context, location) => Text(location.address),
                     ),
                   )

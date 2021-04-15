@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:kang_galon/core/models/user.dart';
-import 'package:kang_galon/core/viewmodels/user_bloc.dart';
-import 'package:kang_galon/ui/pages/home_page.dart';
+import 'package:kang_galon/core/models/models.dart';
+import 'package:kang_galon/core/viewmodels/bloc.dart';
+import 'package:kang_galon/ui/pages/pages.dart';
 import 'package:pinput/pin_put/pin_put.dart';
 
 class VerificationOtpPage extends StatelessWidget {
@@ -80,17 +80,7 @@ class VerificationOtpPage extends StatelessWidget {
                 children: [
                   Container(
                     width: MediaQuery.of(context).size.width,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10.0),
-                        color: Colors.white,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.shade400,
-                            spreadRadius: 1.0,
-                            blurRadius: 5.0,
-                            offset: Offset(1, 2),
-                          )
-                        ]),
+                    decoration: Style.containerDecoration,
                     child: Padding(
                       padding: EdgeInsets.symmetric(
                         vertical: 20.0,

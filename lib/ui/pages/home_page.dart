@@ -1,19 +1,10 @@
-import 'package:firebase_auth/firebase_auth.dart' as Fire;
+import 'package:firebase_auth/firebase_auth.dart' as fire;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:kang_galon/core/models/depot.dart';
-import 'package:kang_galon/core/models/user.dart';
-import 'package:kang_galon/core/models/location.dart' as My;
-import 'package:kang_galon/core/viewmodels/depot_bloc.dart';
-import 'package:kang_galon/core/viewmodels/location_bloc.dart';
-import 'package:kang_galon/core/viewmodels/transaction_bloc.dart';
-import 'package:kang_galon/core/viewmodels/user_bloc.dart';
-import 'package:kang_galon/ui/pages/account_page.dart';
-import 'package:kang_galon/ui/pages/maps_page.dart';
-import 'package:kang_galon/ui/pages/order_page.dart';
-import 'package:kang_galon/ui/widgets/depot_item.dart';
-import 'package:kang_galon/ui/widgets/home_button.dart';
-import 'package:kang_galon/ui/widgets/long_button.dart';
+import 'package:kang_galon/core/models/models.dart' as model;
+import 'package:kang_galon/core/viewmodels/bloc.dart';
+import 'package:kang_galon/ui/pages/pages.dart';
+import 'package:kang_galon/ui/widgets/widgets.dart';
 
 class HomePage extends StatelessWidget {
   void _mapsAction(BuildContext context, LocationBloc bloc) {
@@ -28,12 +19,24 @@ class HomePage extends StatelessWidget {
   }
 
   void _detectMapsAction(LocationBloc locationBloc) {
-    locationBloc.add(My.LocationCurrent());
+    locationBloc.add(model.LocationCurrent());
   }
 
-  void _allDepotAction(BuildContext context) {
+  void _allDepotAction(BuildContext context, DepotBloc depotBloc,
+      LocationBloc locationBloc, TransactionBloc transactionBloc) {
     Navigator.push(
-        context, MaterialPageRoute(builder: (context) => OrderPage()));
+      context,
+      MaterialPageRoute(
+        builder: (context) => MultiBlocProvider(
+          providers: [
+            BlocProvider<DepotBloc>.value(value: depotBloc),
+            BlocProvider<LocationBloc>.value(value: locationBloc),
+            BlocProvider<TransactionBloc>.value(value: transactionBloc),
+          ],
+          child: NearDepotPage(),
+        ),
+      ),
+    );
   }
 
   void _accountAction(BuildContext context, UserBloc userBloc) {
@@ -48,8 +51,8 @@ class HomePage extends StatelessWidget {
   }
 
   void chatAction(BuildContext context, UserBloc userBloc) async {
-    print(Fire.FirebaseAuth.instance.currentUser.uid);
-    print(await Fire.FirebaseAuth.instance.currentUser.getIdToken());
+    print(fire.FirebaseAuth.instance.currentUser.uid);
+    print(await fire.FirebaseAuth.instance.currentUser.getIdToken());
   }
 
   @override
@@ -70,22 +73,11 @@ class HomePage extends StatelessWidget {
                 Container(
                   width: MediaQuery.of(context).size.width,
                   padding: EdgeInsets.all(20.0),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: Colors.white,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.shade300,
-                        spreadRadius: 2.0,
-                        blurRadius: 2.0,
-                        offset: Offset(1, 2),
-                      )
-                    ],
-                  ),
+                  decoration: Style.containerDecoration,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      BlocBuilder<UserBloc, User>(
+                      BlocBuilder<UserBloc, model.User>(
                           builder: (context, user) =>
                               Text('Hai, ${user.name}')),
                       Divider(
@@ -122,21 +114,10 @@ class HomePage extends StatelessWidget {
                 Container(
                   padding: EdgeInsets.all(10.0),
                   width: double.infinity,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10.0),
-                    color: Colors.white,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.shade300,
-                        spreadRadius: 2.0,
-                        blurRadius: 2.0,
-                        offset: Offset(1, 2),
-                      )
-                    ],
-                  ),
-                  child: BlocBuilder<LocationBloc, My.Location>(
+                  decoration: Style.containerDecoration,
+                  child: BlocBuilder<LocationBloc, model.Location>(
                     builder: (context, location) {
-                      if (location is My.LocationEnable) {
+                      if (location is model.LocationEnable) {
                         return Column(
                           children: [
                             LongButton(
@@ -176,41 +157,34 @@ class HomePage extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 30.0),
-                BlocConsumer<LocationBloc, My.Location>(
+                BlocConsumer<LocationBloc, model.Location>(
                   listener: (context, location) {
-                    if (location is My.LocationEnable ||
-                        location is My.LocationSet) {
-                      depotBloc.add(DepotFetchList(
+                    if (location is model.LocationEnable ||
+                        location is model.LocationSet) {
+                      depotBloc.add(model.DepotFetchList(
                         latitude: location.latitude,
                         longitude: location.longitude,
                       ));
                     }
                   },
                   builder: (context, location) {
-                    if (location is My.LocationEnable ||
-                        location is My.LocationSet) {
-                      return BlocBuilder<DepotBloc, Depot>(
+                    if (location is model.LocationEnable ||
+                        location is model.LocationSet) {
+                      return BlocBuilder<DepotBloc, model.Depot>(
                         builder: (context, depot) {
-                          if (depot is DepotListSuccess) {
+                          if (depot is model.DepotListSuccess) {
                             return Container(
                               padding: EdgeInsets.all(10.0),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10.0),
-                                color: Colors.white,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.grey.shade300,
-                                    spreadRadius: 2.0,
-                                    blurRadius: 2.0,
-                                    offset: Offset(1, 2),
-                                  )
-                                ],
-                              ),
+                              decoration: Style.containerDecoration,
                               child: Column(
                                 children: [
                                   LongButton(
                                     context: context,
-                                    onPressed: () => _allDepotAction(context),
+                                    onPressed: () => _allDepotAction(
+                                        context,
+                                        depotBloc,
+                                        locationBloc,
+                                        transactionBloc),
                                     icon: Icons.local_drink,
                                     text: 'Semua depot',
                                   ),
@@ -231,38 +205,27 @@ class HomePage extends StatelessWidget {
                                 ],
                               ),
                             );
-                          } else if (depot is DepotLoading) {
+                          } else if (depot is model.DepotLoading) {
                             return CircularProgressIndicator();
-                          } else if (depot is DepotEmpty ||
-                              depot is DepotError) {
+                          } else if (depot is model.DepotEmpty ||
+                              depot is model.DepotError) {
                             return Container(
                               padding: EdgeInsets.all(10.0),
                               width: double.infinity,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10.0),
-                                color: Colors.white,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.grey.shade300,
-                                    spreadRadius: 2.0,
-                                    blurRadius: 2.0,
-                                    offset: Offset(1, 2),
-                                  )
-                                ],
-                              ),
+                              decoration: Style.containerDecoration,
                               child: Text(
                                 depot.toString(),
                                 textAlign: TextAlign.center,
                               ),
                             );
-                          } else {
-                            return Container();
                           }
+
+                          return SizedBox.shrink();
                         },
                       );
-                    } else {
-                      return Container();
                     }
+
+                    return SizedBox.shrink();
                   },
                 ),
               ],

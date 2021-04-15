@@ -1,10 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:kang_galon/core/models/user.dart' as My;
-import 'package:kang_galon/core/viewmodels/user_bloc.dart';
-import 'package:kang_galon/ui/pages/splash_page.dart';
-import 'package:kang_galon/ui/widgets/snackbar.dart';
+import 'package:kang_galon/core/models/models.dart' as model;
+import 'package:kang_galon/core/viewmodels/bloc.dart';
+import 'package:kang_galon/ui/pages/pages.dart';
+import 'package:kang_galon/ui/widgets/widgets.dart';
 
 class AccountPage extends StatefulWidget {
   @override
@@ -35,7 +35,7 @@ class _AccountPageState extends State<AccountPage> {
 
   void saveAction() async {
     if (this._formKey.currentState.validate()) {
-      this._userBloc.add(My.User(name: this._textFieldController.text));
+      this._userBloc.add(model.User(name: this._textFieldController.text));
     }
   }
 
@@ -57,18 +57,7 @@ class _AccountPageState extends State<AccountPage> {
             width: MediaQuery.of(context).size.width,
             margin: EdgeInsets.only(
                 top: 70.0, bottom: 30.0, left: 30.0, right: 30.0),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.shade300,
-                  spreadRadius: 2.0,
-                  blurRadius: 2.0,
-                  offset: Offset(1, 2),
-                )
-              ],
-            ),
+            decoration: Style.containerDecoration,
             child: Padding(
               padding: EdgeInsets.all(20.0),
               child: Form(
@@ -93,20 +82,20 @@ class _AccountPageState extends State<AccountPage> {
                       ),
                     ),
                     SizedBox(height: 10.0),
-                    BlocListener<UserBloc, My.User>(
+                    BlocListener<UserBloc, model.User>(
                       listener: (context, user) {
-                        if (user is My.UserError) {
+                        if (user is model.UserError) {
                           showSnackbar(context, 'Ups, ada yang salah');
-                        } else if (user is My.UserSuccess) {
+                        } else if (user is model.UserSuccess) {
                           Navigator.pop(context);
 
                           showSnackbar(context, 'Ubah nama berhasil');
                         }
                       },
-                      child: BlocBuilder<UserBloc, My.User>(
+                      child: BlocBuilder<UserBloc, model.User>(
                         builder: (context, user) {
                           return ElevatedButton(
-                            onPressed: user is My.UserLoading
+                            onPressed: user is model.UserLoading
                                 ? () {}
                                 : this.saveAction,
                             style: ButtonStyle(
@@ -117,7 +106,7 @@ class _AccountPageState extends State<AccountPage> {
                                 ),
                               ),
                             ),
-                            child: user is My.UserLoading
+                            child: user is model.UserLoading
                                 ? Container(
                                     width:
                                         MediaQuery.of(context).size.width * 0.5,
