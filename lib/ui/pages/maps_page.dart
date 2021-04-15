@@ -12,61 +12,137 @@ class MapsPage extends StatelessWidget {
   final String _infoWindowTitle = 'My Position';
   final String _markerId = 'My Location';
 
-  void setMarkerLocation(LocationBloc locationBloc, LatLng latLng) {
+  void _setMarkerLocation(LocationBloc locationBloc, LatLng latLng) {
     locationBloc.add(
       My.LocationSet(latitude: latLng.latitude, longitude: latLng.longitude),
     );
 
     // create marker
-    this._markers.add(
-          Marker(
-            markerId: MarkerId(this._markerId),
-            position: latLng,
-            infoWindow: InfoWindow(title: this._infoWindowTitle),
-            icon: BitmapDescriptor.defaultMarkerWithHue(
-                BitmapDescriptor.hueOrange),
-          ),
-        );
+    _markers.add(
+      Marker(
+        markerId: MarkerId(_markerId),
+        position: latLng,
+        infoWindow: InfoWindow(title: _infoWindowTitle),
+        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
+      ),
+    );
+  }
+
+  void _backAction(BuildContext context) {
+    Navigator.pop(context);
   }
 
   @override
   Widget build(BuildContext context) {
+    Size screenSize = MediaQuery.of(context).size;
     LocationBloc locationBloc = BlocProvider.of<LocationBloc>(context);
     double latitude = locationBloc.state.latitude;
     double longitude = locationBloc.state.longitude;
 
     // current location
-    this.setMarkerLocation(locationBloc, LatLng(latitude, longitude));
+    _setMarkerLocation(locationBloc, LatLng(latitude, longitude));
 
     return Scaffold(
-      body: Container(
-        child: BlocBuilder<LocationBloc, My.Location>(
-          bloc: locationBloc,
-          builder: (BuildContext context, state) {
-            return GoogleMap(
-              initialCameraPosition: CameraPosition(
-                target: LatLng(latitude, longitude),
-                zoom: 20.0,
-              ),
-              myLocationEnabled: false,
-              myLocationButtonEnabled: false,
-              zoomControlsEnabled: false,
-              markers: Set<Marker>.from(this._markers),
-              onMapCreated: (controller) =>
-                  this._mapsController.complete(controller),
-              onTap: (latLng) async {
-                this.setMarkerLocation(locationBloc, latLng);
+      body: Stack(
+        children: [
+          Container(
+            child: BlocBuilder<LocationBloc, My.Location>(
+              bloc: locationBloc,
+              builder: (BuildContext context, state) {
+                return GoogleMap(
+                  initialCameraPosition: CameraPosition(
+                    target: LatLng(latitude, longitude),
+                    zoom: 20.0,
+                  ),
+                  myLocationEnabled: false,
+                  myLocationButtonEnabled: false,
+                  zoomControlsEnabled: false,
+                  markers: Set<Marker>.from(_markers),
+                  onMapCreated: (controller) =>
+                      _mapsController.complete(controller),
+                  onTap: (latLng) async {
+                    _setMarkerLocation(locationBloc, latLng);
+                  },
+                );
               },
-            );
-          },
-        ),
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        icon: Icon(Icons.map),
-        onPressed: () {
-          Navigator.pop(context);
-        },
-        label: Text('Ubah posisi'),
+            ),
+          ),
+          Positioned(
+            bottom: 0.0,
+            child: Container(
+              width: screenSize.width,
+              color: Colors.transparent,
+              child: Column(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 10.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        ElevatedButton(
+                          child: Icon(Icons.chevron_left),
+                          style: ButtonStyle(
+                            padding: MaterialStateProperty.all<EdgeInsets>(
+                              EdgeInsets.all(10.0),
+                            ),
+                            minimumSize:
+                                MaterialStateProperty.all<Size>(Size.zero),
+                            shape: MaterialStateProperty.all<CircleBorder>(
+                                CircleBorder()),
+                          ),
+                          onPressed: () => _backAction(context),
+                        ),
+                        ElevatedButton(
+                          child: Row(
+                            children: [
+                              Icon(Icons.map),
+                              SizedBox(width: 5.0),
+                              Text('Ubah posisi'),
+                            ],
+                          ),
+                          style: ButtonStyle(
+                            padding: MaterialStateProperty.all<EdgeInsets>(
+                              EdgeInsets.symmetric(
+                                  vertical: 10.0, horizontal: 20.0),
+                            ),
+                            shape: MaterialStateProperty.all<
+                                RoundedRectangleBorder>(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20.0),
+                              ),
+                            ),
+                          ),
+                          onPressed: () => _backAction(context),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 10.0),
+                  Container(
+                    width: screenSize.width,
+                    padding: EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 30.0),
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                          topRight: Radius.circular(20.0),
+                          topLeft: Radius.circular(20.0),
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey,
+                            blurRadius: 2.0,
+                            offset: Offset(0.0, -1.0),
+                          )
+                        ]),
+                    child: BlocBuilder<LocationBloc, My.Location>(
+                      builder: (context, location) => Text(location.address),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

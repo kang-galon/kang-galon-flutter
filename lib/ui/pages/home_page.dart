@@ -16,7 +16,7 @@ import 'package:kang_galon/ui/widgets/home_button.dart';
 import 'package:kang_galon/ui/widgets/long_button.dart';
 
 class HomePage extends StatelessWidget {
-  void mapsAction(BuildContext context, LocationBloc bloc) {
+  void _mapsAction(BuildContext context, LocationBloc bloc) {
     Navigator.push(
         context,
         MaterialPageRoute(
@@ -27,16 +27,16 @@ class HomePage extends StatelessWidget {
         ));
   }
 
-  void detectMapsAction(LocationBloc locationBloc) {
+  void _detectMapsAction(LocationBloc locationBloc) {
     locationBloc.add(My.LocationCurrent());
   }
 
-  void allDepotAction(BuildContext context) {
+  void _allDepotAction(BuildContext context) {
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => OrderPage()));
   }
 
-  void accountAction(BuildContext context, UserBloc userBloc) {
+  void _accountAction(BuildContext context, UserBloc userBloc) {
     Navigator.push(
         context,
         MaterialPageRoute(
@@ -106,8 +106,7 @@ class HomePage extends StatelessWidget {
                           HomeButton(
                             label: 'Akun',
                             icon: Icons.person,
-                            onPressed: () =>
-                                this.accountAction(context, userBloc),
+                            onPressed: () => _accountAction(context, userBloc),
                           ),
                           HomeButton(
                             label: 'Chat',
@@ -143,7 +142,7 @@ class HomePage extends StatelessWidget {
                             LongButton(
                               context: context,
                               onPressed: () =>
-                                  this.mapsAction(context, locationBloc),
+                                  _mapsAction(context, locationBloc),
                               icon: Icons.map,
                               text: 'Ubah lokasi anda',
                             ),
@@ -163,7 +162,7 @@ class HomePage extends StatelessWidget {
                               LongButton(
                                 context: context,
                                 onPressed: () =>
-                                    this.detectMapsAction(locationBloc),
+                                    _detectMapsAction(locationBloc),
                                 icon: Icons.refresh,
                                 text: 'Deteksi lokasi anda',
                               ),
@@ -211,8 +210,7 @@ class HomePage extends StatelessWidget {
                                 children: [
                                   LongButton(
                                     context: context,
-                                    onPressed: () =>
-                                        this.allDepotAction(context),
+                                    onPressed: () => _allDepotAction(context),
                                     icon: Icons.local_drink,
                                     text: 'Semua depot',
                                   ),
@@ -226,7 +224,9 @@ class HomePage extends StatelessWidget {
                                         transactionBloc: transactionBloc,
                                       );
                                     },
-                                    itemCount: 5,
+                                    itemCount: depot.depots.length > 4
+                                        ? 5
+                                        : depot.depots.length,
                                   ),
                                 ],
                               ),
