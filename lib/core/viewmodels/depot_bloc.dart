@@ -5,7 +5,7 @@ import 'package:kang_galon/core/services/depot_service.dart';
 class DepotBloc extends Bloc<Depot, Depot> {
   final DepotService _depotService = DepotService();
 
-  DepotBloc() : super(DepotEmpty());
+  DepotBloc() : super(DepotUninitialized());
 
   @override
   Stream<Depot> mapEventToState(Depot depotEvent) async* {
@@ -17,13 +17,18 @@ class DepotBloc extends Bloc<Depot, Depot> {
             ._depotService
             .getDepots(depotEvent.latitude, depotEvent.longitude);
 
-        yield depotListSuccess;
+        print(depotListSuccess.depots.isEmpty);
+        print(depotListSuccess.depots.length);
+
+        if (depotListSuccess.depots.isEmpty) {
+          yield DepotEmpty();
+        } else {
+          yield depotListSuccess;
+        }
       } catch (e) {
         print(e.toString());
         yield DepotError();
       }
-    } else {
-      yield DepotEmpty();
     }
   }
 }

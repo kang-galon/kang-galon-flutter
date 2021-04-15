@@ -27,6 +27,10 @@ class HomePage extends StatelessWidget {
         ));
   }
 
+  void detectMapsAction(LocationBloc locationBloc) {
+    locationBloc.add(My.LocationCurrent());
+  }
+
   void allDepotAction(BuildContext context) {
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => OrderPage()));
@@ -115,8 +119,8 @@ class HomePage extends StatelessWidget {
                     ],
                   ),
                 ),
+                SizedBox(height: 30.0),
                 Container(
-                  margin: EdgeInsets.only(top: 30.0),
                   padding: EdgeInsets.all(10.0),
                   width: double.infinity,
                   decoration: BoxDecoration(
@@ -158,9 +162,8 @@ class HomePage extends StatelessWidget {
                             children: [
                               LongButton(
                                 context: context,
-                                onPressed: () {
-                                  locationBloc.add(My.LocationCurrent());
-                                },
+                                onPressed: () =>
+                                    this.detectMapsAction(locationBloc),
                                 icon: Icons.refresh,
                                 text: 'Deteksi lokasi anda',
                               ),
@@ -173,6 +176,7 @@ class HomePage extends StatelessWidget {
                     },
                   ),
                 ),
+                SizedBox(height: 30.0),
                 BlocConsumer<LocationBloc, My.Location>(
                   listener: (context, location) {
                     if (location is My.LocationEnable ||
@@ -190,7 +194,6 @@ class HomePage extends StatelessWidget {
                         builder: (context, depot) {
                           if (depot is DepotListSuccess) {
                             return Container(
-                              margin: EdgeInsets.only(top: 30.0),
                               padding: EdgeInsets.all(10.0),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(10.0),
@@ -228,9 +231,33 @@ class HomePage extends StatelessWidget {
                                 ],
                               ),
                             );
+                          } else if (depot is DepotLoading) {
+                            return CircularProgressIndicator();
+                          } else if (depot is DepotEmpty ||
+                              depot is DepotError) {
+                            return Container(
+                              padding: EdgeInsets.all(10.0),
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10.0),
+                                color: Colors.white,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.shade300,
+                                    spreadRadius: 2.0,
+                                    blurRadius: 2.0,
+                                    offset: Offset(1, 2),
+                                  )
+                                ],
+                              ),
+                              child: Text(
+                                depot.toString(),
+                                textAlign: TextAlign.center,
+                              ),
+                            );
+                          } else {
+                            return Container();
                           }
-
-                          return Container();
                         },
                       );
                     } else {

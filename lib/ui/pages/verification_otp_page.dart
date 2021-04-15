@@ -1,34 +1,23 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:kang_galon/core/services/user_service.dart';
-import 'package:kang_galon/core/viewmodels/depot_bloc.dart';
-import 'package:kang_galon/core/viewmodels/location_bloc.dart';
+import 'package:kang_galon/core/models/user.dart';
 import 'package:kang_galon/core/viewmodels/user_bloc.dart';
 import 'package:kang_galon/ui/pages/home_page.dart';
-import 'package:kang_galon/ui/widgets/snackbar.dart';
 import 'package:pinput/pin_put/pin_put.dart';
 
-class VerificationOtpPage extends StatefulWidget {
+class VerificationOtpPage extends StatelessWidget {
   final String verificationId;
   final String phoneNumber;
   final String name;
-  bool isLogin = false;
+  bool isLogin;
 
   VerificationOtpPage({
     @required this.verificationId,
     @required this.phoneNumber,
     @required this.name,
-    @required this.isLogin,
+    this.isLogin = false,
   });
-
-  @override
-  _VerificationOtpPageState createState() => _VerificationOtpPageState();
-}
-
-class _VerificationOtpPageState extends State<VerificationOtpPage> {
-  final userService = UserService();
 
   BoxDecoration get _pinPutDecoration {
     return BoxDecoration(
@@ -37,45 +26,31 @@ class _VerificationOtpPageState extends State<VerificationOtpPage> {
     );
   }
 
-  Future<void> pinSubmitAction(String pin) async {
-    FirebaseAuth firebaseAuth = FirebaseAuth.instance;
-    PhoneAuthCredential phoneAuthCredential = PhoneAuthProvider.credential(
-      verificationId: widget.verificationId,
-      smsCode: pin,
-    );
+  void _pinSubmitAction(String pin, UserBloc userBloc) {
+    // if login
+    if (isLogin) {
+      UserLogin userLogin = UserLogin(pin, verificationId);
 
-    try {
-      await firebaseAuth.signInWithCredential(phoneAuthCredential);
-      var user = FirebaseAuth.instance.currentUser;
-      String jwtToken = await user.getIdToken();
-      String uid = user.uid;
+      userBloc.add(userLogin);
+    } else {
+      UserRegister userRegister =
+          UserRegister(phoneNumber, name, verificationId, pin);
 
-      // Jika bukan register maka pass data to server
-      if (!widget.isLogin) {
-        // send data to server
-        await userService.register(
-            widget.phoneNumber, widget.name, uid, jwtToken);
-      }
+      userBloc.add(userRegister);
+    }
+  }
 
-      Navigator.of(context).pushReplacement(MaterialPageRoute(
-        builder: (context) => MultiBlocProvider(
-          providers: [
-            BlocProvider<UserBloc>(create: (context) => UserBloc()),
-            BlocProvider<LocationBloc>(create: (context) => LocationBloc()),
-            BlocProvider<DepotBloc>(create: (context) => DepotBloc()),
-          ],
-          child: HomePage(),
-        ),
-      ));
-    } on FirebaseException {
-      showSnackbar(context, 'OTP tidak valid');
-    } catch (e) {
-      showSnackbar(context, e.toString());
+  void _blocListener(BuildContext context, User user) {
+    if (user is UserSuccess) {
+      Navigator.of(context)
+          .pushReplacement(MaterialPageRoute(builder: (context) => HomePage()));
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    UserBloc userBloc = BlocProvider.of<UserBloc>(context);
+
     return Scaffold(
       body: Center(
         child: Column(
@@ -96,8 +71,7 @@ class _VerificationOtpPageState extends State<VerificationOtpPage> {
             ),
             Padding(
               padding: const EdgeInsets.only(top: 10.0),
-              child: Text(
-                  'Enter OTP code sent to your number ' + widget.phoneNumber),
+              child: Text('Enter OTP code sent to your number ' + phoneNumber),
             ),
             Padding(
               padding:
@@ -105,6 +79,7 @@ class _VerificationOtpPageState extends State<VerificationOtpPage> {
               child: Wrap(
                 children: [
                   Container(
+                    width: MediaQuery.of(context).size.width,
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10.0),
                         color: Colors.white,
@@ -121,20 +96,36 @@ class _VerificationOtpPageState extends State<VerificationOtpPage> {
                         vertical: 20.0,
                         horizontal: 30.0,
                       ),
-                      child: PinPut(
-                        fieldsCount: 6,
-                        onSubmit: pinSubmitAction,
-                        inputFormatters: <TextInputFormatter>[
-                          FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
-                        ],
-                        submittedFieldDecoration: _pinPutDecoration,
-                        selectedFieldDecoration: _pinPutDecoration,
-                        followingFieldDecoration: _pinPutDecoration.copyWith(
-                          borderRadius: BorderRadius.circular(5.0),
-                          border: Border.all(
-                            color: Colors.deepPurpleAccent.withOpacity(.5),
-                          ),
-                        ),
+                      child: BlocConsumer<UserBloc, User>(
+                        listener: _blocListener,
+                        builder: (context, user) {
+                          if (user is UserLoading) {
+                            return Wrap(
+                              alignment: WrapAlignment.center,
+                              children: [CircularProgressIndicator()],
+                            );
+                          } else {
+                            return PinPut(
+                              fieldsCount: 6,
+                              onSubmit: (pin) =>
+                                  _pinSubmitAction(pin, userBloc),
+                              inputFormatters: <TextInputFormatter>[
+                                FilteringTextInputFormatter.allow(
+                                    RegExp(r'[0-9]')),
+                              ],
+                              submittedFieldDecoration: _pinPutDecoration,
+                              selectedFieldDecoration: _pinPutDecoration,
+                              followingFieldDecoration:
+                                  _pinPutDecoration.copyWith(
+                                borderRadius: BorderRadius.circular(5.0),
+                                border: Border.all(
+                                  color:
+                                      Colors.deepPurpleAccent.withOpacity(.5),
+                                ),
+                              ),
+                            );
+                          }
+                        },
                       ),
                     ),
                   ),

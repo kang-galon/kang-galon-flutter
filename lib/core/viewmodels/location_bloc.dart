@@ -30,8 +30,6 @@ class LocationBloc extends Bloc<My.Location, My.Location> {
 
     if (location is My.LocationCurrent) {
       LocationData locationData = await this._location.getLocation();
-      print('loc long ${locationData.latitude}');
-      print('loc long ${locationData.longitude}');
 
       Coordinates coordinates =
           Coordinates(locationData.latitude, locationData.longitude);

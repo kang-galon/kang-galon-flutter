@@ -22,6 +22,10 @@ class DepotService {
     );
 
     var json = jsonDecode(response.body);
-    return DepotListSuccess.fromJsonToList(json['data']);
+    if (json['success']) {
+      return DepotListSuccess.fromJsonToList(json['data']);
+    } else {
+      throw Exception(json['message']);
+    }
   }
 }

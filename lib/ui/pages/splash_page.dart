@@ -68,11 +68,19 @@ class _SplashPageState extends State<SplashPage> {
     var auth = FirebaseAuth.instance;
     var user = auth.currentUser;
     if (user == null) {
-      return LoginPage();
-    } else {
       return MultiBlocProvider(
         providers: [
           BlocProvider<UserBloc>(create: (context) => UserBloc()),
+          BlocProvider<LocationBloc>(create: (context) => LocationBloc()),
+          BlocProvider<DepotBloc>(create: (context) => DepotBloc()),
+          BlocProvider<TransactionBloc>(create: (context) => TransactionBloc()),
+        ],
+        child: LoginPage(),
+      );
+    } else {
+      return MultiBlocProvider(
+        providers: [
+          BlocProvider<UserBloc>(create: (context) => UserBloc.currentUser()),
           BlocProvider<LocationBloc>(create: (context) => LocationBloc()),
           BlocProvider<DepotBloc>(create: (context) => DepotBloc()),
           BlocProvider<TransactionBloc>(create: (context) => TransactionBloc()),

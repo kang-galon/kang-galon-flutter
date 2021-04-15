@@ -28,8 +28,13 @@ class Depot {
   });
 }
 
+class DepotUninitialized extends Depot {}
+
 class DepotEmpty extends Depot {
-  final List<Depot> depots = <Depot>[];
+  @override
+  String toString() {
+    return 'Tidak ada depot di sekitar anda';
+  }
 }
 
 class DepotFetchList extends Depot {
@@ -70,4 +75,9 @@ class DepotListSuccess extends Depot {
 
 class DepotLoading extends Depot {}
 
-class DepotError extends Depot {}
+class DepotError extends Depot {
+  @override
+  String toString() {
+    return 'Ups.. ada yang salah nih';
+  }
+}

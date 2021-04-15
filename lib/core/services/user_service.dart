@@ -1,9 +1,12 @@
+import 'dart:convert';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
+import 'package:kang_galon/core/models/user.dart' as My;
 import 'package:kang_galon/core/services/api.dart' as api;
 
 class UserService {
-  Future<void> register(
+  Future<My.User> register(
       String phoneNumber, String name, String uid, String token) async {
     Uri url = api.url('/client/register');
 
@@ -16,6 +19,16 @@ class UserService {
         'token': token,
       },
     );
+
+    var json = jsonDecode(response.body);
+    if (json['success']) {
+      return My.User(
+        phoneNumber: json['data']['phone_number'],
+        name: json['data']['name'],
+      );
+    } else {
+      throw Exception(json['message']);
+    }
   }
 
   Future<bool> isUserExist(String phoneNumber) async {
@@ -38,8 +51,9 @@ class UserService {
       body: {'name': name},
     );
 
-    if (response.statusCode >= 400) {
-      throw Exception(response.body);
+    var json = jsonDecode(response.body);
+    if (!json['success']) {
+      throw Exception(json['message']);
     }
   }
 }
