@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kang_galon/core/models/models.dart' as model;
 import 'package:kang_galon/core/viewmodels/bloc.dart';
+import 'package:kang_galon/ui/pages/history_page.dart';
 import 'package:kang_galon/ui/pages/pages.dart';
 import 'package:kang_galon/ui/widgets/widgets.dart';
 
@@ -39,6 +40,17 @@ class HomePage extends StatelessWidget {
     );
   }
 
+  void _historyAction(BuildContext context, TransactionBloc transactionBloc) {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => BlocProvider.value(
+            value: transactionBloc,
+            child: HistoryPage(),
+          ),
+        ));
+  }
+
   void _accountAction(BuildContext context, UserBloc userBloc) {
     Navigator.push(
         context,
@@ -66,8 +78,7 @@ class HomePage extends StatelessWidget {
       body: SingleChildScrollView(
         child: Center(
           child: Padding(
-            padding: EdgeInsets.only(
-                top: 70.0, left: 30.0, right: 30.0, bottom: 30.0),
+            padding: Style.mainPadding,
             child: Column(
               children: [
                 Container(
@@ -91,9 +102,8 @@ class HomePage extends StatelessWidget {
                           HomeButton(
                             label: 'Riwayat',
                             icon: Icons.history,
-                            onPressed: () {
-                              print('Riwayat');
-                            },
+                            onPressed: () =>
+                                _historyAction(context, transactionBloc),
                           ),
                           HomeButton(
                             label: 'Akun',

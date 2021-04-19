@@ -18,8 +18,7 @@ class NearDepotPage extends StatelessWidget {
 
     return Scaffold(
       body: SingleChildScrollView(
-        padding:
-            EdgeInsets.only(top: 70.0, left: 30.0, right: 30.0, bottom: 30.0),
+        padding: Style.mainPadding,
         child: Column(
           children: [
             HeaderBar(
@@ -28,7 +27,7 @@ class NearDepotPage extends StatelessWidget {
             ),
             SizedBox(height: 20.0),
             Container(
-              padding: EdgeInsets.fromLTRB(20.0, 0, 20.0, 20.0),
+              padding: EdgeInsets.all(10.0),
               decoration: Style.containerDecoration,
               child: BlocBuilder<DepotBloc, Depot>(
                 bloc: depotBloc,

@@ -23,5 +23,35 @@ class TransactionBloc extends Bloc<Transaction, Transaction> {
         yield TransactionError();
       }
     }
+
+    if (transaction is TransactionFetchList) {
+      yield TransactionLoading();
+
+      try {
+        TransactionFetchListSuccess transactionFetchSuccess =
+            await transactionService.getTransactions();
+
+        if (transactionFetchSuccess.transactions.isEmpty) {
+          yield TransactionEmpty();
+        } else {
+          yield transactionFetchSuccess;
+        }
+      } catch (e) {
+        yield TransactionError();
+      }
+    }
+
+    if (transaction is TransactionFetchDetail) {
+      yield TransactionLoading();
+
+      try {
+        TransactionFetchDetailSuccess transactionFetchDetailSuccess =
+            await transactionService.getDetailTransactions(transaction.id);
+
+        yield transactionFetchDetailSuccess;
+      } catch (e) {
+        yield TransactionError();
+      }
+    }
   }
 }

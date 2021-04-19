@@ -7,6 +7,8 @@ export 'near_depot_page.dart';
 export 'register_page.dart';
 export 'splash_page.dart';
 export 'verification_otp_page.dart';
+export 'history_page.dart';
+export 'transaction_page.dart';
 
 import 'package:flutter/material.dart';
 
@@ -23,4 +25,7 @@ class Style {
       )
     ],
   );
+
+  static final EdgeInsets mainPadding =
+      EdgeInsets.only(top: 70.0, left: 30.0, right: 30.0, bottom: 30.0);
 }

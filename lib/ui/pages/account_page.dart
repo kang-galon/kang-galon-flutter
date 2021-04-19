@@ -55,8 +55,7 @@ class _AccountPageState extends State<AccountPage> {
         child: Center(
           child: Container(
             width: MediaQuery.of(context).size.width,
-            margin: EdgeInsets.only(
-                top: 70.0, bottom: 30.0, left: 30.0, right: 30.0),
+            margin: Style.mainPadding,
             decoration: Style.containerDecoration,
             child: Padding(
               padding: EdgeInsets.all(20.0),

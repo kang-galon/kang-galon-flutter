@@ -17,9 +17,6 @@ class DepotBloc extends Bloc<Depot, Depot> {
             ._depotService
             .getDepots(depotEvent.latitude, depotEvent.longitude);
 
-        print(depotListSuccess.depots.isEmpty);
-        print(depotListSuccess.depots.length);
-
         if (depotListSuccess.depots.isEmpty) {
           yield DepotEmpty();
         } else {

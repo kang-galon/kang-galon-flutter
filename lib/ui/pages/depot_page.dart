@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:kang_galon/core/models/models.dart';
 import 'package:kang_galon/core/viewmodels/bloc.dart';
+import 'package:kang_galon/ui/widgets/depot_description.dart';
 import 'package:kang_galon/ui/widgets/widgets.dart';
 import 'package:kang_galon/ui/pages/pages.dart';
 
@@ -177,158 +178,83 @@ class _DepotPageState extends State<DepotPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
-        child: Center(
-          child: Padding(
-            padding: EdgeInsets.only(
-                top: 70.0, left: 30.0, right: 30.0, bottom: 30.0),
-            child: Column(
-              children: [
-                HeaderBar(onPressed: _backAction, label: widget.depot.name),
-                SizedBox(height: 20.0),
-                Container(
-                  width: MediaQuery.of(context).size.width,
-                  padding: EdgeInsets.all(20.0),
-                  decoration: Style.containerDecoration,
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(5.0),
-                        child: Image(
-                          width: 100.0,
-                          fit: BoxFit.fitWidth,
-                          image: widget.depot.image == null
-                              ? AssetImage('assets/images/phone.png')
-                              : CachedNetworkImageProvider(widget.depot.image),
-                        ),
-                      ),
-                      SizedBox(width: 10.0),
-                      Flexible(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(widget.depot.address),
-                            SizedBox(height: 30.0),
-                            Row(
-                              children: [
-                                Text(
-                                  '${widget.depot.distance} km',
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                                Spacer(),
-                                RatingBar.builder(
-                                  initialRating: widget.depot.rating,
-                                  minRating: 1,
-                                  direction: Axis.horizontal,
-                                  allowHalfRating: true,
-                                  itemSize: 15.0,
-                                  itemCount: 5,
-                                  ignoreGestures: true,
-                                  itemBuilder: (context, _) => Icon(
-                                    Icons.star,
-                                    color: Colors.amber,
-                                  ),
-                                  onRatingUpdate: (double value) {},
-                                ),
-                                SizedBox(width: 5.0),
-                                Text(
-                                  widget.depot.rating.toString(),
-                                  textAlign: TextAlign.right,
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  margin: EdgeInsets.only(top: 20.0),
-                  width: MediaQuery.of(context).size.width,
-                  padding: EdgeInsets.all(20.0),
-                  decoration: Style.containerDecoration,
-                  child: Row(
-                    children: [
-                      Text('Per galon '),
-                      Text(
-                        widget.depot.priceDesc,
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      )
-                    ],
-                  ),
-                ),
-                Container(
-                  margin: EdgeInsets.only(top: 20.0),
-                  width: MediaQuery.of(context).size.width,
-                  padding: EdgeInsets.all(20.0),
-                  decoration: Style.containerDecoration,
-                  child: Text(_locationBloc.state.address),
-                ),
-                Container(
-                  margin: EdgeInsets.only(top: 20.0),
-                  width: MediaQuery.of(context).size.width,
-                  height: 300,
-                  decoration: Style.containerDecoration,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(10.0),
-                    child: GoogleMap(
-                      initialCameraPosition: CameraPosition(
-                        target: LatLng(
-                            widget.depot.latitude, widget.depot.longitude),
-                        zoom: 15.0,
-                      ),
-                      myLocationEnabled: false,
-                      myLocationButtonEnabled: false,
-                      zoomControlsEnabled: true,
-                      rotateGesturesEnabled: false,
-                      scrollGesturesEnabled: false,
-                      markers: Set<Marker>.from(this.markers),
+        child: Padding(
+          padding: Style.mainPadding,
+          child: Column(
+            children: [
+              HeaderBar(onPressed: _backAction, label: widget.depot.name),
+              SizedBox(height: 20.0),
+              DepotDescription(depot: widget.depot),
+              Container(
+                margin: EdgeInsets.only(top: 20.0),
+                width: MediaQuery.of(context).size.width,
+                padding: EdgeInsets.all(20.0),
+                decoration: Style.containerDecoration,
+                child: Text(_locationBloc.state.address),
+              ),
+              Container(
+                margin: EdgeInsets.only(top: 20.0),
+                width: MediaQuery.of(context).size.width,
+                height: 300,
+                decoration: Style.containerDecoration,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(10.0),
+                  child: GoogleMap(
+                    initialCameraPosition: CameraPosition(
+                      target:
+                          LatLng(widget.depot.latitude, widget.depot.longitude),
+                      zoom: 15.0,
                     ),
+                    myLocationEnabled: false,
+                    myLocationButtonEnabled: false,
+                    zoomControlsEnabled: true,
+                    rotateGesturesEnabled: false,
+                    scrollGesturesEnabled: false,
+                    markers: Set<Marker>.from(this.markers),
                   ),
                 ),
-                Container(
-                  margin: EdgeInsets.only(top: 20.0),
-                  padding: EdgeInsets.all(20.0),
-                  width: MediaQuery.of(context).size.width,
-                  decoration: Style.containerDecoration,
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          HomeButton(
-                            label: 'Kurang',
-                            icon: Icons.remove,
-                            onPressed: this._removeGallonAction,
+              ),
+              Container(
+                margin: EdgeInsets.only(top: 20.0),
+                padding: EdgeInsets.all(20.0),
+                width: MediaQuery.of(context).size.width,
+                decoration: Style.containerDecoration,
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        HomeButton(
+                          label: 'Kurang',
+                          icon: Icons.remove,
+                          onPressed: this._removeGallonAction,
+                        ),
+                        Container(
+                          padding: EdgeInsets.all(20.0),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10.0),
+                            border: Border.all(color: Colors.grey),
                           ),
-                          Container(
-                            padding: EdgeInsets.all(20.0),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10.0),
-                              border: Border.all(color: Colors.grey),
-                            ),
-                            child: Text('${this._gallon} Galon'),
-                          ),
-                          HomeButton(
-                            label: 'Tambah',
-                            icon: Icons.add,
-                            onPressed: this._addGallonAction,
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 10.0),
-                      LongButton(
-                        context: context,
-                        onPressed: this._orderAction,
-                        icon: Icons.shopping_cart,
-                        text: 'Order isi ulang galon',
-                      )
-                    ],
-                  ),
+                          child: Text('${this._gallon} Galon'),
+                        ),
+                        HomeButton(
+                          label: 'Tambah',
+                          icon: Icons.add,
+                          onPressed: this._addGallonAction,
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 10.0),
+                    LongButton(
+                      context: context,
+                      onPressed: this._orderAction,
+                      icon: Icons.shopping_cart,
+                      text: 'Order isi ulang galon',
+                    )
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

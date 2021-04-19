@@ -19,7 +19,7 @@ class DepotItem extends StatelessWidget {
     @required this.transactionBloc,
   }) : super(key: key);
 
-  void detailDepotAction(BuildContext context) {
+  void _detailDepotAction(BuildContext context) {
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -32,15 +32,6 @@ class DepotItem extends StatelessWidget {
         ),
       ),
     );
-
-    // Navigator.push(
-    //     context,
-    //     MaterialPageRoute(
-    //       builder: (context) => DepotPage(
-    //         depot: depot,
-    //         location: locationBloc.state,
-    //       ),
-    //     ));
   }
 
   @override
@@ -48,7 +39,7 @@ class DepotItem extends StatelessWidget {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: () => this.detailDepotAction(context),
+        onTap: () => _detailDepotAction(context),
         customBorder: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10.0),
         ),
