@@ -10,6 +10,22 @@ class NearDepotPage extends StatelessWidget {
     Navigator.pop(context);
   }
 
+  void _detailDepotAction(BuildContext context, LocationBloc locationBloc,
+      TransactionBloc transactionBloc, Depot depot) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => MultiBlocProvider(
+          providers: [
+            BlocProvider<LocationBloc>.value(value: locationBloc),
+            BlocProvider<TransactionBloc>.value(value: transactionBloc),
+          ],
+          child: DepotPage(depot: depot),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     DepotBloc depotBloc = BlocProvider.of<DepotBloc>(context);
@@ -39,8 +55,8 @@ class NearDepotPage extends StatelessWidget {
                       itemBuilder: (context, index) {
                         return DepotItem(
                           depot: depot.depots[index],
-                          locationBloc: locationBloc,
-                          transactionBloc: transactionBloc,
+                          onTap: () => _detailDepotAction(context, locationBloc,
+                              transactionBloc, depot.depots[index]),
                         );
                       },
                       itemCount: depot.depots.length,

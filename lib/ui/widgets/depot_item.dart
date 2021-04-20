@@ -1,45 +1,23 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:kang_galon/core/models/depot.dart';
-import 'package:kang_galon/core/viewmodels/location_bloc.dart';
-import 'package:kang_galon/core/viewmodels/transaction_bloc.dart';
-import 'package:kang_galon/ui/pages/depot_page.dart';
 
 class DepotItem extends StatelessWidget {
   final Depot depot;
-  final LocationBloc locationBloc;
-  final TransactionBloc transactionBloc;
+  final Function onTap;
 
   DepotItem({
-    Key key,
     @required this.depot,
-    @required this.locationBloc,
-    @required this.transactionBloc,
-  }) : super(key: key);
-
-  void _detailDepotAction(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => MultiBlocProvider(
-          providers: [
-            BlocProvider<LocationBloc>.value(value: locationBloc),
-            BlocProvider<TransactionBloc>.value(value: transactionBloc),
-          ],
-          child: DepotPage(depot: depot),
-        ),
-      ),
-    );
-  }
+    @required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: () => _detailDepotAction(context),
+        onTap: onTap,
         customBorder: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10.0),
         ),

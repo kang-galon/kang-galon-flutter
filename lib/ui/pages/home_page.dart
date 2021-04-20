@@ -67,6 +67,22 @@ class HomePage extends StatelessWidget {
     print(await fire.FirebaseAuth.instance.currentUser.getIdToken());
   }
 
+  void _detailDepotAction(BuildContext context, LocationBloc locationBloc,
+      TransactionBloc transactionBloc, model.Depot depot) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => MultiBlocProvider(
+          providers: [
+            BlocProvider<LocationBloc>.value(value: locationBloc),
+            BlocProvider<TransactionBloc>.value(value: transactionBloc),
+          ],
+          child: DepotPage(depot: depot),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     UserBloc userBloc = BlocProvider.of<UserBloc>(context);
@@ -204,8 +220,11 @@ class HomePage extends StatelessWidget {
                                     itemBuilder: (context, index) {
                                       return DepotItem(
                                         depot: depot.depots[index],
-                                        locationBloc: locationBloc,
-                                        transactionBloc: transactionBloc,
+                                        onTap: () => _detailDepotAction(
+                                            context,
+                                            locationBloc,
+                                            transactionBloc,
+                                            depot.depots[index]),
                                       );
                                     },
                                     itemCount: depot.depots.length > 4
