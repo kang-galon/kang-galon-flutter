@@ -1,68 +1,41 @@
 import 'package:firebase_auth/firebase_auth.dart' as fire;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kang_galon/core/blocs/event_state.dart';
 import 'package:kang_galon/core/models/models.dart' as model;
 import 'package:kang_galon/core/viewmodels/bloc.dart';
-import 'package:kang_galon/ui/pages/history_page.dart';
 import 'package:kang_galon/ui/pages/pages.dart';
 import 'package:kang_galon/ui/widgets/widgets.dart';
 
 class HomePage extends StatelessWidget {
   void _mapsAction(BuildContext context, LocationBloc bloc) {
     Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => BlocProvider.value(
-            value: bloc,
-            child: MapsPage(),
-          ),
-        ));
+        context, MaterialPageRoute(builder: (context) => MapsPage()));
   }
 
   void _detectMapsAction(LocationBloc locationBloc) {
-    locationBloc.add(model.LocationCurrent());
+    locationBloc.add(LocationCurrent());
   }
 
   void _allDepotAction(BuildContext context, DepotBloc depotBloc,
       LocationBloc locationBloc, TransactionBloc transactionBloc) {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => MultiBlocProvider(
-          providers: [
-            BlocProvider<DepotBloc>.value(value: depotBloc),
-            BlocProvider<LocationBloc>.value(value: locationBloc),
-            BlocProvider<TransactionBloc>.value(value: transactionBloc),
-          ],
-          child: NearDepotPage(),
-        ),
-      ),
+      MaterialPageRoute(builder: (context) => NearDepotPage()),
     );
   }
 
   void _historyAction(BuildContext context, TransactionBloc transactionBloc) {
     Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => BlocProvider.value(
-            value: transactionBloc,
-            child: HistoryPage(),
-          ),
-        ));
+        context, MaterialPageRoute(builder: (context) => HistoryPage()));
   }
 
   void _accountAction(BuildContext context, UserBloc userBloc) {
     Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => BlocProvider.value(
-            value: userBloc,
-            child: AccountPage(),
-          ),
-        ));
+        context, MaterialPageRoute(builder: (context) => AccountPage()));
   }
 
-  void chatAction(BuildContext context, UserBloc userBloc) async {
+  void _chatAction(BuildContext context, UserBloc userBloc) async {
     print(fire.FirebaseAuth.instance.currentUser.uid);
     print(await fire.FirebaseAuth.instance.currentUser.getIdToken());
   }
@@ -71,15 +44,7 @@ class HomePage extends StatelessWidget {
       TransactionBloc transactionBloc, model.Depot depot) {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => MultiBlocProvider(
-          providers: [
-            BlocProvider<LocationBloc>.value(value: locationBloc),
-            BlocProvider<TransactionBloc>.value(value: transactionBloc),
-          ],
-          child: DepotPage(depot: depot),
-        ),
-      ),
+      MaterialPageRoute(builder: (context) => DepotPage(depot: depot)),
     );
   }
 
@@ -104,9 +69,14 @@ class HomePage extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      BlocBuilder<UserBloc, model.User>(
-                          builder: (context, user) =>
-                              Text('Hai, ${user.name}')),
+                      BlocBuilder<UserBloc, UserState>(
+                        builder: (context, user) {
+                          if (user is UserSuccess) {
+                            return Text('Hai, ${user.name}');
+                          }
+                          return Text('Hai, -');
+                        },
+                      ),
                       Divider(
                         thickness: 3.0,
                         height: 20.0,
@@ -129,7 +99,7 @@ class HomePage extends StatelessWidget {
                           HomeButton(
                             label: 'Chat',
                             icon: Icons.article,
-                            onPressed: () => this.chatAction(context, userBloc),
+                            onPressed: () => _chatAction(context, userBloc),
                           ),
                         ],
                       )
@@ -141,9 +111,9 @@ class HomePage extends StatelessWidget {
                   padding: EdgeInsets.all(10.0),
                   width: double.infinity,
                   decoration: Style.containerDecoration,
-                  child: BlocBuilder<LocationBloc, model.Location>(
-                    builder: (context, location) {
-                      if (location is model.LocationEnable) {
+                  child: BlocBuilder<LocationBloc, LocationState>(
+                    builder: (context, event) {
+                      if (event is LocationEnable) {
                         return Column(
                           children: [
                             LongButton(
@@ -156,11 +126,14 @@ class HomePage extends StatelessWidget {
                             Padding(
                               padding: EdgeInsets.symmetric(
                                   vertical: 10.0, horizontal: 20.0),
-                              child: Text(location.address),
+                              child: Text(event.location.address),
                             ),
                           ],
                         );
-                      } else {
+                      }
+
+                      if (event is LocationPermissionUnable ||
+                          event is LocationServiceUnable) {
                         return Padding(
                           padding: EdgeInsets.symmetric(
                               vertical: 10.0, horizontal: 20.0),
@@ -174,31 +147,31 @@ class HomePage extends StatelessWidget {
                                 text: 'Deteksi lokasi anda',
                               ),
                               SizedBox(height: 10.0),
-                              Text(location.toString()),
+                              Text(event.toString()),
                             ],
                           ),
                         );
                       }
+
+                      return SizedBox.shrink();
                     },
                   ),
                 ),
                 SizedBox(height: 30.0),
-                BlocConsumer<LocationBloc, model.Location>(
-                  listener: (context, location) {
-                    if (location is model.LocationEnable ||
-                        location is model.LocationSet) {
-                      depotBloc.add(model.DepotFetchList(
-                        latitude: location.latitude,
-                        longitude: location.longitude,
-                      ));
+                BlocConsumer<LocationBloc, LocationState>(
+                  listener: (context, event) {
+                    if (event is LocationEnable || event is LocationSet) {
+                      model.Location location =
+                          (event as LocationEnable).location;
+
+                      depotBloc.add(DepotFetchList(location: location));
                     }
                   },
                   builder: (context, location) {
-                    if (location is model.LocationEnable ||
-                        location is model.LocationSet) {
-                      return BlocBuilder<DepotBloc, model.Depot>(
-                        builder: (context, depot) {
-                          if (depot is model.DepotListSuccess) {
+                    if (location is LocationEnable || location is LocationSet) {
+                      return BlocBuilder<DepotBloc, DepotState>(
+                        builder: (context, event) {
+                          if (event is DepotFetchListSuccess) {
                             return Container(
                               padding: EdgeInsets.all(10.0),
                               decoration: Style.containerDecoration,
@@ -219,31 +192,31 @@ class HomePage extends StatelessWidget {
                                     physics: NeverScrollableScrollPhysics(),
                                     itemBuilder: (context, index) {
                                       return DepotItem(
-                                        depot: depot.depots[index],
+                                        depot: event.depots[index],
                                         onTap: () => _detailDepotAction(
                                             context,
                                             locationBloc,
                                             transactionBloc,
-                                            depot.depots[index]),
+                                            event.depots[index]),
                                       );
                                     },
-                                    itemCount: depot.depots.length > 4
+                                    itemCount: event.depots.length > 4
                                         ? 5
-                                        : depot.depots.length,
+                                        : event.depots.length,
                                   ),
                                 ],
                               ),
                             );
-                          } else if (depot is model.DepotLoading) {
+                          } else if (event is DepotLoading) {
                             return CircularProgressIndicator();
-                          } else if (depot is model.DepotEmpty ||
-                              depot is model.DepotError) {
+                          } else if (event is DepotEmpty ||
+                              event is DepotError) {
                             return Container(
                               padding: EdgeInsets.all(10.0),
                               width: double.infinity,
                               decoration: Style.containerDecoration,
                               child: Text(
-                                depot.toString(),
+                                event.toString(),
                                 textAlign: TextAlign.center,
                               ),
                             );

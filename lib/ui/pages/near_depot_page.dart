@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kang_galon/core/blocs/event_state.dart';
 import 'package:kang_galon/core/models/models.dart';
 import 'package:kang_galon/core/viewmodels/bloc.dart';
 import 'package:kang_galon/ui/widgets/widgets.dart';
@@ -14,15 +15,7 @@ class NearDepotPage extends StatelessWidget {
       TransactionBloc transactionBloc, Depot depot) {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => MultiBlocProvider(
-          providers: [
-            BlocProvider<LocationBloc>.value(value: locationBloc),
-            BlocProvider<TransactionBloc>.value(value: transactionBloc),
-          ],
-          child: DepotPage(depot: depot),
-        ),
-      ),
+      MaterialPageRoute(builder: (context) => DepotPage(depot: depot)),
     );
   }
 
@@ -45,21 +38,21 @@ class NearDepotPage extends StatelessWidget {
             Container(
               padding: EdgeInsets.all(10.0),
               decoration: Style.containerDecoration,
-              child: BlocBuilder<DepotBloc, Depot>(
+              child: BlocBuilder<DepotBloc, DepotState>(
                 bloc: depotBloc,
-                builder: (context, depot) {
-                  if (depot is DepotListSuccess) {
+                builder: (context, event) {
+                  if (event is DepotFetchListSuccess) {
                     return ListView.builder(
                       shrinkWrap: true,
                       physics: NeverScrollableScrollPhysics(),
                       itemBuilder: (context, index) {
                         return DepotItem(
-                          depot: depot.depots[index],
+                          depot: event.depots[index],
                           onTap: () => _detailDepotAction(context, locationBloc,
-                              transactionBloc, depot.depots[index]),
+                              transactionBloc, event.depots[index]),
                         );
                       },
-                      itemCount: depot.depots.length,
+                      itemCount: event.depots.length,
                     );
                   }
                   return Container();

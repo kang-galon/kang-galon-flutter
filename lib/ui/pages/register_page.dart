@@ -1,84 +1,60 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:kang_galon/core/services/user_service.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kang_galon/core/blocs/event_state.dart';
+import 'package:kang_galon/core/viewmodels/bloc.dart';
 import 'package:kang_galon/ui/pages/pages.dart';
 import 'package:kang_galon/ui/widgets/widgets.dart';
 
-class Registerpage extends StatefulWidget {
-  @override
-  _RegisterpageState createState() => _RegisterpageState();
-}
-
-class _RegisterpageState extends State<Registerpage> {
+class RegisterPage extends StatelessWidget {
   final _formKey = GlobalKey<FormState>();
-  final userService = UserService();
-  String _phoneNumber, _name;
-  String _errorText = '';
-  bool _loading = false;
+  final _phoneNumberController = TextEditingController();
+  final _nameController = TextEditingController();
 
-  void registerAction() async {
-    if (this._formKey.currentState.validate()) {
-      // set loading
-      setState(() {
-        _loading = true;
-      });
-
-      String phoneNumber = '+62' + this._phoneNumber;
+  void _registerAction(UserBloc userBloc) {
+    if (_formKey.currentState.validate()) {
+      String phoneNumber = '+62' + _phoneNumberController.text;
 
       // Check user is exist
-      bool isUserExist = await userService.isUserExist(phoneNumber);
-      if (isUserExist) {
-        return setState(() {
-          this._loading = false;
-          this._errorText = 'Nomor sudah terdaftar';
-        });
-      }
-
-      FirebaseAuth firebaseAuth = FirebaseAuth.instance;
-      await firebaseAuth.verifyPhoneNumber(
-        phoneNumber: phoneNumber,
-        verificationCompleted: (PhoneAuthCredential credential) {},
-        codeAutoRetrievalTimeout: (String verificationId) {},
-        verificationFailed: (FirebaseAuthException error) {
-          showSnackbar(context, 'OTP gagal dikirim');
-
-          setState(() {
-            _loading = false;
-          });
-        },
-        codeSent: (String verificationId, int forceResendingToken) {
-          showSnackbar(context, 'OTP berhasil dikirim');
-
-          Navigator.pushReplacement(context, MaterialPageRoute(
-            builder: (context) {
-              return VerificationOtpPage(
-                verificationId: verificationId,
-                phoneNumber: phoneNumber,
-                name: this._name,
-                isLogin: false,
-              );
-            },
-          ));
-        },
-      );
+      UserIsExist userIsExist = UserIsExist(phoneNumber: phoneNumber);
+      userBloc.add(userIsExist);
     }
   }
 
-  void loginAction() {
+  void _loginAction(BuildContext context) {
     Navigator.pushReplacement(
         context, MaterialPageRoute(builder: (context) => LoginPage()));
   }
 
-  void phoneNumberChange(String str) {
-    setState(() {
-      _phoneNumber = str;
-    });
+  void _sendOtp(BuildContext context, UserBloc userBloc) async {
+    String phoneNumber = '+62' + _phoneNumberController.text;
+    String name = _nameController.text;
+
+    await userBloc.sendOtp(
+      phoneNumber,
+      (error) {
+        showSnackbar(context, 'OTP gagal dikirim');
+      },
+      (verificationId, forceResendingToken) {
+        showSnackbar(context, 'OTP berhasil dikirim');
+
+        Navigator.pushReplacement(context, MaterialPageRoute(
+          builder: (context) {
+            return VerificationOtpPage(
+              verificationId: verificationId,
+              phoneNumber: phoneNumber,
+              name: name,
+              isLogin: false,
+            );
+          },
+        ));
+      },
+    );
   }
 
-  String phoneNumberValidator(String value) {
+  String _phoneNumberValidator(String value) {
     if (value.isEmpty) {
-      return 'Fill this field';
+      return 'Wajib diisi';
     }
 
     if (value.length < 11) {
@@ -88,18 +64,14 @@ class _RegisterpageState extends State<Registerpage> {
     return null;
   }
 
-  void nameChange(String str) {
-    setState(() {
-      _name = str;
-    });
-  }
-
-  String nameValidator(String value) {
+  String _nameValidator(String value) {
     return (value.isEmpty) ? 'Wajib diisi' : null;
   }
 
   @override
   Widget build(BuildContext context) {
+    UserBloc userBloc = BlocProvider.of<UserBloc>(context);
+
     return Scaffold(
       body: Center(
         child: SingleChildScrollView(
@@ -139,12 +111,12 @@ class _RegisterpageState extends State<Registerpage> {
                           horizontal: 30.0,
                         ),
                         child: Form(
-                          key: this._formKey,
+                          key: _formKey,
                           child: Column(
                             children: [
                               TextFormField(
-                                onChanged: this.nameChange,
-                                validator: this.nameValidator,
+                                controller: _nameController,
+                                validator: _nameValidator,
                                 decoration: InputDecoration(
                                   counterText: '',
                                   hintText: 'Nama',
@@ -160,50 +132,72 @@ class _RegisterpageState extends State<Registerpage> {
                                 ),
                               ),
                               SizedBox(height: 10.0),
-                              TextFormField(
-                                maxLength: 11,
-                                keyboardType: TextInputType.number,
-                                onChanged: this.phoneNumberChange,
-                                validator: this.phoneNumberValidator,
-                                inputFormatters: <TextInputFormatter>[
-                                  FilteringTextInputFormatter.allow(
-                                      RegExp(r'[0-9]')),
-                                ],
-                                decoration: InputDecoration(
-                                  counterText: '',
-                                  errorText: this._errorText,
-                                  prefixIcon: Padding(
-                                    padding: EdgeInsets.fromLTRB(15, 15, 5, 15),
-                                    child: Text(
-                                      '+62',
-                                      style: TextStyle(fontSize: 15.0),
+                              BlocConsumer<UserBloc, UserState>(
+                                listener: (context, state) {
+                                  if (state is UserDoesntExist) {
+                                    _sendOtp(context, userBloc);
+                                  }
+                                },
+                                builder: (context, state) {
+                                  return TextFormField(
+                                    controller: _phoneNumberController,
+                                    maxLength: 11,
+                                    keyboardType: TextInputType.number,
+                                    validator: _phoneNumberValidator,
+                                    inputFormatters: <TextInputFormatter>[
+                                      FilteringTextInputFormatter.allow(
+                                          RegExp(r'[0-9]')),
+                                    ],
+                                    decoration: InputDecoration(
+                                      counterText: '',
+                                      errorText: (state is UserExist)
+                                          ? 'Nomor sudah terdaftar'
+                                          : '',
+                                      prefixIcon: Padding(
+                                        padding:
+                                            EdgeInsets.fromLTRB(15, 15, 5, 15),
+                                        child: Text(
+                                          '+62',
+                                          style: TextStyle(fontSize: 15.0),
+                                        ),
+                                      ),
+                                      fillColor: Colors.grey.shade200,
+                                      border: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(5.0),
+                                        borderSide: BorderSide(
+                                          width: 0,
+                                          style: BorderStyle.none,
+                                        ),
+                                      ),
+                                      filled: true,
                                     ),
-                                  ),
-                                  fillColor: Colors.grey.shade200,
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(5.0),
-                                    borderSide: BorderSide(
-                                      width: 0,
-                                      style: BorderStyle.none,
-                                    ),
-                                  ),
-                                  filled: true,
-                                ),
+                                  );
+                                },
                               ),
                               SizedBox(height: 10.0),
-                              ElevatedButton(
-                                onPressed:
-                                    this._loading ? () {} : this.registerAction,
-                                child: this._loading
-                                    ? SizedBox(
+                              BlocBuilder<UserBloc, UserState>(
+                                builder: (context, state) {
+                                  if (state is UserLoading) {
+                                    return ElevatedButton(
+                                      onPressed: () {},
+                                      child: SizedBox(
                                         width: 20.0,
                                         height: 20.0,
                                         child: CircularProgressIndicator(
                                           backgroundColor: Colors.white,
                                           strokeWidth: 3.0,
                                         ),
-                                      )
-                                    : Text('Daftar'),
+                                      ),
+                                    );
+                                  } else {
+                                    return ElevatedButton(
+                                      onPressed: () =>
+                                          _registerAction(userBloc),
+                                      child: Text('Daftar'),
+                                    );
+                                  }
+                                },
                               ),
                             ],
                           ),
@@ -219,14 +213,21 @@ class _RegisterpageState extends State<Registerpage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text('Sudah punya akun ? '),
-                    TextButton(
-                      onPressed: this.loginAction,
-                      child: Text('Login'),
-                      style: ButtonStyle(
-                        padding: MaterialStateProperty.all<EdgeInsets>(
-                            EdgeInsets.all(0.0)),
-                        minimumSize: MaterialStateProperty.all<Size>(Size.zero),
-                      ),
+                    BlocBuilder<UserBloc, UserState>(
+                      builder: (context, state) {
+                        return TextButton(
+                          onPressed: (state is UserLoading)
+                              ? () {}
+                              : () => _loginAction(context),
+                          child: Text('Login'),
+                          style: ButtonStyle(
+                            padding: MaterialStateProperty.all<EdgeInsets>(
+                                EdgeInsets.all(0.0)),
+                            minimumSize:
+                                MaterialStateProperty.all<Size>(Size.zero),
+                          ),
+                        );
+                      },
                     ),
                   ],
                 ),

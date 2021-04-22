@@ -1,55 +1,44 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:kang_galon/core/models/models.dart' as model;
+import 'package:kang_galon/core/blocs/event_state.dart';
 import 'package:kang_galon/core/viewmodels/bloc.dart';
 import 'package:kang_galon/ui/pages/pages.dart';
 import 'package:kang_galon/ui/widgets/widgets.dart';
 
-class AccountPage extends StatefulWidget {
-  @override
-  _AccountPageState createState() => _AccountPageState();
-}
-
-class _AccountPageState extends State<AccountPage> {
+class AccountPage extends StatelessWidget {
   final _formKey = GlobalKey<FormState>();
   final _textFieldController = TextEditingController();
-  UserBloc _userBloc;
 
-  @override
-  void initState() {
-    super.initState();
-
-    this._userBloc = BlocProvider.of<UserBloc>(context);
-
-    var name = this._userBloc.state.name;
-    this._textFieldController.text = name;
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-
-    _textFieldController.dispose();
-  }
-
-  void saveAction() async {
-    if (this._formKey.currentState.validate()) {
-      this._userBloc.add(model.User(name: this._textFieldController.text));
+  void _setName(UserBloc userBloc) {
+    UserState userState = userBloc.state;
+    if (userState is UserSuccess) {
+      var name = userState.name;
+      _textFieldController.text = name;
     }
   }
 
-  void logOutAction() {
-    FirebaseAuth.instance.signOut();
+  void _saveAction(UserBloc userBloc) async {
+    if (_formKey.currentState.validate()) {
+      userBloc.add(UserUpdate(name: _textFieldController.text));
+    }
+  }
+
+  void _logOutAction(BuildContext context, UserBloc userBloc) {
+    userBloc.logOUt();
 
     Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (context) => SplashPage()),
-        (route) => false);
+      context,
+      MaterialPageRoute(builder: (context) => SplashPage()),
+      (route) => false,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    UserBloc userBloc = BlocProvider.of<UserBloc>(context);
+
+    _setName(userBloc);
+
     return Scaffold(
       body: SingleChildScrollView(
         child: Center(
@@ -60,11 +49,11 @@ class _AccountPageState extends State<AccountPage> {
             child: Padding(
               padding: EdgeInsets.all(20.0),
               child: Form(
-                key: this._formKey,
+                key: _formKey,
                 child: Column(
                   children: [
                     TextFormField(
-                      controller: this._textFieldController,
+                      controller: _textFieldController,
                       validator: (value) =>
                           value.isEmpty ? 'Tidak boleh kosong' : null,
                       decoration: InputDecoration(
@@ -81,22 +70,22 @@ class _AccountPageState extends State<AccountPage> {
                       ),
                     ),
                     SizedBox(height: 10.0),
-                    BlocListener<UserBloc, model.User>(
+                    BlocListener<UserBloc, UserState>(
                       listener: (context, user) {
-                        if (user is model.UserError) {
+                        if (user is UserError) {
                           showSnackbar(context, 'Ups, ada yang salah');
-                        } else if (user is model.UserSuccess) {
+                        } else if (user is UserSuccess) {
                           Navigator.pop(context);
 
                           showSnackbar(context, 'Ubah nama berhasil');
                         }
                       },
-                      child: BlocBuilder<UserBloc, model.User>(
+                      child: BlocBuilder<UserBloc, UserState>(
                         builder: (context, user) {
                           return ElevatedButton(
-                            onPressed: user is model.UserLoading
+                            onPressed: (user is UserLoading)
                                 ? () {}
-                                : this.saveAction,
+                                : () => _saveAction(userBloc),
                             style: ButtonStyle(
                               shape: MaterialStateProperty.all<
                                   RoundedRectangleBorder>(
@@ -105,7 +94,7 @@ class _AccountPageState extends State<AccountPage> {
                                 ),
                               ),
                             ),
-                            child: user is model.UserLoading
+                            child: (user is UserLoading)
                                 ? Container(
                                     width:
                                         MediaQuery.of(context).size.width * 0.5,
@@ -135,7 +124,7 @@ class _AccountPageState extends State<AccountPage> {
                     ),
                     SizedBox(height: 10.0),
                     OutlinedButton(
-                      onPressed: this.logOutAction,
+                      onPressed: () => _logOutAction(context, userBloc),
                       style: ButtonStyle(
                         shape:
                             MaterialStateProperty.all<RoundedRectangleBorder>(

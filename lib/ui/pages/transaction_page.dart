@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:kang_galon/core/models/models.dart';
+import 'package:kang_galon/core/blocs/event_state.dart';
 import 'package:kang_galon/core/viewmodels/bloc.dart';
 import 'package:kang_galon/ui/pages/pages.dart';
 import 'package:kang_galon/ui/widgets/widgets.dart';
@@ -16,27 +16,28 @@ class TransactionPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TransactionBloc transactionBloc = BlocProvider.of<TransactionBloc>(context);
+    TransactionDetailBloc transactionDetailBloc =
+        BlocProvider.of<TransactionDetailBloc>(context);
 
     // get detail transaction
-    transactionBloc.add(TransactionFetchDetail(id: id));
+    transactionDetailBloc.add(TransactionFetchDetail(id: id));
 
     return Scaffold(
       body: SingleChildScrollView(
         child: Padding(
           padding: Style.mainPadding,
-          child: BlocBuilder<TransactionBloc, Transaction>(
-            builder: (context, transaction) {
-              if (transaction is TransactionFetchDetailSuccess) {
+          child: BlocBuilder<TransactionDetailBloc, TransactionState>(
+            builder: (context, event) {
+              if (event is TransactionFetchDetailSuccess) {
                 return Column(
                   children: [
                     HeaderBar(
                       onPressed: () => _backAction(context),
-                      label: 'Transaksi ${transaction.transaction.depotName}',
+                      label: 'Transaksi ${event.transaction.depotName}',
                     ),
                     SizedBox(height: 20.0),
                     DepotDescription(
-                      depot: transaction.depot,
+                      depot: event.transaction.depot,
                       isDistance: false,
                     ),
                     SizedBox(height: 20.0),
@@ -47,13 +48,13 @@ class TransactionPage extends StatelessWidget {
                       child: Row(
                         children: [
                           Text(
-                            '${transaction.depot.priceDesc} ',
+                            '${event.transaction.depot.priceDesc} ',
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
-                          Text('x ${transaction.transaction.gallon} Gallon'),
+                          Text('x ${event.transaction.gallon} Gallon'),
                           Expanded(
                             child: Text(
-                              transaction.transaction.totalPriceDescription,
+                              event.transaction.totalPriceDescription,
                               textAlign: TextAlign.end,
                             ),
                           ),
@@ -66,7 +67,7 @@ class TransactionPage extends StatelessWidget {
                       padding: EdgeInsets.all(20.0),
                       decoration: Style.containerDecoration,
                       child: Text(
-                        transaction.transaction.statusDescription,
+                        event.transaction.statusDescription,
                         textAlign: TextAlign.center,
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
@@ -78,7 +79,6 @@ class TransactionPage extends StatelessWidget {
               return SizedBox.shrink();
             },
           ),
-          // DepotDescription(depot: ),
         ),
       ),
     );

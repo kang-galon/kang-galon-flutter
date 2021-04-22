@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:kang_galon/core/blocs/event_state.dart';
 import 'package:kang_galon/core/models/models.dart';
 import 'package:kang_galon/core/viewmodels/bloc.dart';
 
@@ -13,8 +14,11 @@ class MapsPage extends StatelessWidget {
   final String _markerId = 'My Location';
 
   void _setMarkerLocation(LocationBloc locationBloc, LatLng latLng) {
+    Location location = Location(
+        address: '', latitude: latLng.latitude, longitude: latLng.longitude);
+
     locationBloc.add(
-      LocationSet(latitude: latLng.latitude, longitude: latLng.longitude),
+      LocationSet(location: location),
     );
 
     // create marker
@@ -36,8 +40,14 @@ class MapsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
     LocationBloc locationBloc = BlocProvider.of<LocationBloc>(context);
-    double latitude = locationBloc.state.latitude;
-    double longitude = locationBloc.state.longitude;
+    double latitude = 0.0;
+    double longitude = 0.0;
+
+    LocationState locationState = locationBloc.state;
+    if (locationState is LocationEnable) {
+      latitude = locationState.location.latitude;
+      longitude = locationState.location.longitude;
+    }
 
     // current location
     _setMarkerLocation(locationBloc, LatLng(latitude, longitude));
@@ -46,7 +56,7 @@ class MapsPage extends StatelessWidget {
       body: Stack(
         children: [
           Container(
-            child: BlocBuilder<LocationBloc, Location>(
+            child: BlocBuilder<LocationBloc, LocationState>(
               bloc: locationBloc,
               builder: (BuildContext context, state) {
                 return GoogleMap(
@@ -134,8 +144,14 @@ class MapsPage extends StatelessWidget {
                             offset: Offset(0.0, -1.0),
                           )
                         ]),
-                    child: BlocBuilder<LocationBloc, Location>(
-                      builder: (context, location) => Text(location.address),
+                    child: BlocBuilder<LocationBloc, LocationState>(
+                      builder: (context, event) {
+                        if (event is LocationEnable) {
+                          return Text(event.location.address);
+                        }
+
+                        return Text('');
+                      },
                     ),
                   )
                 ],

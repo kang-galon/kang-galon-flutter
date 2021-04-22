@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:kang_galon/core/models/models.dart';
+import 'package:kang_galon/core/blocs/event_state.dart';
 import 'package:kang_galon/core/viewmodels/bloc.dart';
 import 'package:kang_galon/ui/pages/pages.dart';
 import 'package:kang_galon/ui/widgets/widgets.dart';
@@ -14,12 +14,7 @@ class HistoryPage extends StatelessWidget {
       BuildContext context, TransactionBloc transactionBloc, int id) {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => BlocProvider.value(
-          value: transactionBloc,
-          child: TransactionPage(id: id),
-        ),
-      ),
+      MaterialPageRoute(builder: (context) => TransactionPage(id: id)),
     );
   }
 
@@ -45,34 +40,32 @@ class HistoryPage extends StatelessWidget {
                 padding: EdgeInsets.all(10.0),
                 width: MediaQuery.of(context).size.width,
                 decoration: Style.containerDecoration,
-                child: BlocBuilder<TransactionBloc, Transaction>(
-                  builder: (context, transaction) {
-                    if (transaction is TransactionLoading) {
+                child: BlocBuilder<TransactionBloc, TransactionState>(
+                  builder: (context, event) {
+                    if (event is TransactionLoading) {
                       return Wrap(
                         alignment: WrapAlignment.center,
                         children: [CircularProgressIndicator()],
                       );
                     }
 
-                    if (transaction is TransactionFetchListSuccess) {
+                    if (event is TransactionFetchListSuccess) {
                       return ListView.builder(
                         shrinkWrap: true,
-                        itemCount: transaction.transactions.length,
+                        itemCount: event.transactions.length,
                         itemBuilder: (context, index) {
                           return TransactionItem(
-                            transaction: transaction.transactions[index],
-                            onTap: () => _detailTransactionAction(
-                                context,
-                                transactionBloc,
-                                transaction.transactions[index].id),
+                            transaction: event.transactions[index],
+                            onTap: () => _detailTransactionAction(context,
+                                transactionBloc, event.transactions[index].id),
                           );
                         },
                       );
                     }
 
-                    if (transaction is TransactionEmpty) {
+                    if (event is TransactionEmpty) {
                       return Text(
-                        'Anda belum melakukan transaksi',
+                        event.toString(),
                         textAlign: TextAlign.center,
                       );
                     }

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kang_galon/core/viewmodels/bloc.dart';
 import 'package:kang_galon/ui/pages/pages.dart';
+import 'package:kang_galon/ui/widgets/widgets.dart';
 
 class SplashPage extends StatefulWidget {
   @override
@@ -43,18 +44,16 @@ class _SplashPageState extends State<SplashPage> {
   @override
   Widget build(BuildContext context) {
     if (_error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Something wrong, when initialize FlutterFire'),
-        ),
-      );
+      showSnackbar(context, 'Something wrong, when initialize FlutterFire');
     }
 
     if (!_initialized) {
-      return Scaffold(
-        body: Center(
-          child: Container(
-            child: Text('Kang Galon'),
+      return MaterialApp(
+        home: Scaffold(
+          body: Center(
+            child: Container(
+              child: Text('Kang Galon'),
+            ),
           ),
         ),
       );
@@ -70,8 +69,10 @@ class _SplashPageState extends State<SplashPage> {
           BlocProvider<LocationBloc>(create: (context) => LocationBloc()),
           BlocProvider<DepotBloc>(create: (context) => DepotBloc()),
           BlocProvider<TransactionBloc>(create: (context) => TransactionBloc()),
+          BlocProvider<TransactionDetailBloc>(
+              create: (context) => TransactionDetailBloc()),
         ],
-        child: LoginPage(),
+        child: MaterialApp(home: LoginPage()),
       );
     } else {
       return MultiBlocProvider(
@@ -80,8 +81,10 @@ class _SplashPageState extends State<SplashPage> {
           BlocProvider<LocationBloc>(create: (context) => LocationBloc()),
           BlocProvider<DepotBloc>(create: (context) => DepotBloc()),
           BlocProvider<TransactionBloc>(create: (context) => TransactionBloc()),
+          BlocProvider<TransactionDetailBloc>(
+              create: (context) => TransactionDetailBloc()),
         ],
-        child: HomePage(),
+        child: MaterialApp(home: HomePage()),
       );
     }
   }

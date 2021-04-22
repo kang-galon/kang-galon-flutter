@@ -1,22 +1,23 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geocoder/geocoder.dart';
-import 'package:kang_galon/core/models/location.dart' as My;
+import 'package:kang_galon/core/blocs/event_state.dart';
+import 'package:kang_galon/core/models/location.dart' as model;
 import 'package:location/location.dart';
 
-class LocationBloc extends Bloc<My.Location, My.Location> {
-  bool _serviceEnabled;
+class LocationBloc extends Bloc<LocationEvent, LocationState> {
   Location _location = Location();
+  bool _serviceEnabled;
   PermissionStatus _permissionGranted;
 
-  LocationBloc() : super(My.LocationServiceUnable());
+  LocationBloc() : super(LocationServiceUnable());
 
   @override
-  Stream<My.Location> mapEventToState(My.Location location) async* {
+  Stream<LocationState> mapEventToState(LocationEvent event) async* {
     _serviceEnabled = await this._location.serviceEnabled();
     if (!_serviceEnabled) {
       _serviceEnabled = await this._location.requestService();
       if (!_serviceEnabled) {
-        yield My.LocationServiceUnable();
+        yield LocationServiceUnable();
       }
     }
 
@@ -24,11 +25,11 @@ class LocationBloc extends Bloc<My.Location, My.Location> {
     if (_permissionGranted == PermissionStatus.denied) {
       _permissionGranted = await this._location.requestPermission();
       if (_permissionGranted != PermissionStatus.granted) {
-        yield My.LocationPermissionUnable();
+        yield LocationPermissionUnable();
       }
     }
 
-    if (location is My.LocationCurrent) {
+    if (event is LocationCurrent) {
       LocationData locationData = await this._location.getLocation();
 
       Coordinates coordinates =
@@ -36,23 +37,27 @@ class LocationBloc extends Bloc<My.Location, My.Location> {
       List<Address> address =
           await Geocoder.local.findAddressesFromCoordinates(coordinates);
 
-      yield My.LocationEnable(
-        address: address.first.addressLine,
-        latitude: locationData.latitude,
-        longitude: locationData.longitude,
+      yield LocationEnable(
+        location: model.Location(
+          address: address.first.addressLine,
+          latitude: locationData.latitude,
+          longitude: locationData.longitude,
+        ),
       );
     }
 
-    if (location is My.LocationSet) {
+    if (event is LocationSet) {
       Coordinates coordinates =
-          Coordinates(location.latitude, location.longitude);
+          Coordinates(event.location.latitude, event.location.longitude);
       List<Address> address =
           await Geocoder.local.findAddressesFromCoordinates(coordinates);
 
-      yield My.LocationEnable(
-        address: address.first.addressLine,
-        latitude: location.latitude,
-        longitude: location.longitude,
+      yield LocationEnable(
+        location: model.Location(
+          address: address.first.addressLine,
+          latitude: event.location.latitude,
+          longitude: event.location.longitude,
+        ),
       );
     }
   }

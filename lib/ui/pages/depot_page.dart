@@ -1,12 +1,10 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:intl/intl.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:kang_galon/core/blocs/event_state.dart';
 import 'package:kang_galon/core/models/models.dart';
 import 'package:kang_galon/core/viewmodels/bloc.dart';
-import 'package:kang_galon/ui/widgets/depot_description.dart';
 import 'package:kang_galon/ui/widgets/widgets.dart';
 import 'package:kang_galon/ui/pages/pages.dart';
 
@@ -40,13 +38,17 @@ class _DepotPageState extends State<DepotPage> {
   }
 
   void _checkoutAction() {
-    String location =
-        "${_locationBloc.state.latitude}, ${_locationBloc.state.longitude}";
+    LocationState locationState = _locationBloc.state;
 
-    _transactionBloc.add(TransactionAdd(
-        clientLocation: location,
-        depotPhoneNumber: widget.depot.phoneNumber,
-        gallon: _gallon));
+    if (locationState is LocationEnable) {
+      Location location = locationState.location;
+      String clientLocation = "${location.latitude}, ${location.longitude}";
+
+      _transactionBloc.add(TransactionAdd(
+          clientLocation: clientLocation,
+          depotPhoneNumber: widget.depot.phoneNumber,
+          gallon: _gallon));
+    }
   }
 
   void _backAction() {
@@ -68,10 +70,10 @@ class _DepotPageState extends State<DepotPage> {
         ),
       ),
       builder: (context) {
-        return BlocConsumer<TransactionBloc, Transaction>(
+        return BlocConsumer<TransactionBloc, TransactionState>(
           bloc: _transactionBloc,
           listener: (context, transaction) {
-            if (transaction is TransactionSuccess) {
+            if (transaction is TransactionAddSuccess) {
               Navigator.pop(context);
               showSnackbar(context, 'Checkout berhasil, silahkan menunggu');
             }
@@ -107,7 +109,8 @@ class _DepotPageState extends State<DepotPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   Text('Alamat anda'),
-                  Text(_locationBloc.state.address),
+                  Text(
+                      (_locationBloc.state as LocationEnable).location.address),
                   Divider(
                     color: Colors.grey.shade400,
                     thickness: 2.0,
@@ -166,7 +169,9 @@ class _DepotPageState extends State<DepotPage> {
           Marker(
             markerId: MarkerId('Your Location'),
             position: LatLng(
-                _locationBloc.state.latitude, _locationBloc.state.longitude),
+              (_locationBloc.state as LocationEnable).location.latitude,
+              (_locationBloc.state as LocationEnable).location.longitude,
+            ),
             infoWindow: InfoWindow(title: 'Your Location'),
             icon: BitmapDescriptor.defaultMarkerWithHue(
                 BitmapDescriptor.hueOrange),
@@ -190,7 +195,8 @@ class _DepotPageState extends State<DepotPage> {
                 width: MediaQuery.of(context).size.width,
                 padding: EdgeInsets.all(20.0),
                 decoration: Style.containerDecoration,
-                child: Text(_locationBloc.state.address),
+                child: Text(
+                    (_locationBloc.state as LocationEnable).location.address),
               ),
               Container(
                 margin: EdgeInsets.only(top: 20.0),

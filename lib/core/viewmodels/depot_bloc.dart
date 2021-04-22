@@ -1,29 +1,29 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:kang_galon/core/models/depot.dart';
+import 'package:kang_galon/core/blocs/event_state.dart';
+import 'package:kang_galon/core/models/models.dart';
 import 'package:kang_galon/core/services/depot_service.dart';
 
-class DepotBloc extends Bloc<Depot, Depot> {
+class DepotBloc extends Bloc<DepotEvent, DepotState> {
   final DepotService _depotService = DepotService();
 
   DepotBloc() : super(DepotUninitialized());
 
   @override
-  Stream<Depot> mapEventToState(Depot depotEvent) async* {
-    if (depotEvent is DepotFetchList) {
+  Stream<DepotState> mapEventToState(DepotEvent event) async* {
+    if (event is DepotFetchList) {
       yield DepotLoading();
 
       try {
-        DepotListSuccess depotListSuccess = await this
+        List<Depot> depots = await this
             ._depotService
-            .getDepots(depotEvent.latitude, depotEvent.longitude);
+            .getDepots(event.location.latitude, event.location.longitude);
 
-        if (depotListSuccess.depots.isEmpty) {
+        if (depots.isEmpty) {
           yield DepotEmpty();
         } else {
-          yield depotListSuccess;
+          yield DepotFetchListSuccess(depots: depots);
         }
       } catch (e) {
-        print(e.toString());
         yield DepotError();
       }
     }

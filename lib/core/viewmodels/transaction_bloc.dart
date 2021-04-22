@@ -1,54 +1,42 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:kang_galon/core/models/transaction.dart';
+import 'package:kang_galon/core/blocs/event_state.dart';
+import 'package:kang_galon/core/models/models.dart';
 import 'package:kang_galon/core/services/transaction_service.dart';
 
-class TransactionBloc extends Bloc<Transaction, Transaction> {
-  final TransactionService transactionService = TransactionService();
+class TransactionBloc extends Bloc<TransactionEvent, TransactionState> {
+  final TransactionService _transactionService = TransactionService();
 
   TransactionBloc() : super(TransactionEmpty());
 
   @override
-  Stream<Transaction> mapEventToState(Transaction transaction) async* {
-    if (transaction is TransactionAdd) {
+  Stream<TransactionState> mapEventToState(TransactionEvent event) async* {
+    if (event is TransactionAdd) {
       yield TransactionLoading();
 
       try {
-        await transactionService.addTransaction(
-          transaction.depotPhoneNumber,
-          transaction.clientLocation,
-          transaction.gallon,
+        await _transactionService.addTransaction(
+          event.depotPhoneNumber,
+          event.clientLocation,
+          event.gallon,
         );
-        yield TransactionSuccess();
+        yield TransactionAddSuccess();
       } catch (e) {
         yield TransactionError();
       }
     }
 
-    if (transaction is TransactionFetchList) {
+    if (event is TransactionFetchList) {
       yield TransactionLoading();
 
       try {
-        TransactionFetchListSuccess transactionFetchSuccess =
-            await transactionService.getTransactions();
+        List<Transaction> transactions =
+            await _transactionService.getTransactions();
 
-        if (transactionFetchSuccess.transactions.isEmpty) {
+        if (transactions.isEmpty) {
           yield TransactionEmpty();
         } else {
-          yield transactionFetchSuccess;
+          yield TransactionFetchListSuccess(transactions: transactions);
         }
-      } catch (e) {
-        yield TransactionError();
-      }
-    }
-
-    if (transaction is TransactionFetchDetail) {
-      yield TransactionLoading();
-
-      try {
-        TransactionFetchDetailSuccess transactionFetchDetailSuccess =
-            await transactionService.getDetailTransactions(transaction.id);
-
-        yield transactionFetchDetailSuccess;
       } catch (e) {
         yield TransactionError();
       }

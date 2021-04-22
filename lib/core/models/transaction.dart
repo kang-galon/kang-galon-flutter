@@ -13,6 +13,7 @@ class Transaction {
   final int gallon;
   final double rating;
   final String createdAt;
+  final Depot depot;
 
   Transaction({
     this.id,
@@ -27,31 +28,10 @@ class Transaction {
     this.gallon,
     this.rating,
     this.createdAt,
+    this.depot,
   });
-}
 
-class TransactionEmpty extends Transaction {}
-
-class TransactionLoading extends Transaction {}
-
-class TransactionError extends Transaction {}
-
-class TransactionAdd extends Transaction {
-  String depotPhoneNumber;
-  String clientLocation;
-  int gallon;
-
-  TransactionAdd({this.depotPhoneNumber, this.clientLocation, this.gallon});
-}
-
-class TransactionFetchList extends Transaction {}
-
-class TransactionFetchListSuccess extends Transaction {
-  List<Transaction> transactions = [];
-
-  TransactionFetchListSuccess(this.transactions);
-
-  factory TransactionFetchListSuccess.fromJsonToList(dynamic json) {
+  static List<Transaction> fromJsonToList(dynamic json) {
     List<Transaction> transactions = [];
 
     for (var transaction in json) {
@@ -71,38 +51,10 @@ class TransactionFetchListSuccess extends Transaction {
       ));
     }
 
-    return TransactionFetchListSuccess(transactions);
+    return transactions;
   }
-}
 
-class TransactionFetchDetail extends Transaction {
-  int id;
-
-  TransactionFetchDetail({this.id});
-}
-
-class TransactionFetchDetailSuccess extends Transaction {
-  Depot depot;
-  Transaction transaction;
-
-  TransactionFetchDetailSuccess({this.depot, this.transaction});
-
-  factory TransactionFetchDetailSuccess.fromJsonToModel(dynamic json) {
-    Transaction transaction = Transaction(
-      id: json['id'],
-      depotName: json['depot_name'],
-      depotPhoneNumber: json['depot_phone_number'],
-      clientPhoneNumber: json['client_phone_number'],
-      clientLocation: json['client_location'],
-      status: json['status'],
-      statusDescription: json['status_description'],
-      totalPrice: json['total_price'],
-      totalPriceDescription: json['total_price_description'],
-      gallon: json['gallon'],
-      rating: double.parse(json['rating'].toString()),
-      createdAt: json['created_at'],
-    );
-
+  static Transaction fromJsonToModel(dynamic json) {
     Depot depot = Depot(
       phoneNumber: json['depot']['phone_number'],
       image: json['depot']['image'],
@@ -116,13 +68,22 @@ class TransactionFetchDetailSuccess extends Transaction {
       isOpenDesc: json['depot']['is_open_description'],
     );
 
-    return TransactionFetchDetailSuccess(
-      transaction: transaction,
+    Transaction transaction = Transaction(
+      id: json['id'],
+      depotName: json['depot_name'],
+      depotPhoneNumber: json['depot_phone_number'],
+      clientPhoneNumber: json['client_phone_number'],
+      clientLocation: json['client_location'],
+      status: json['status'],
+      statusDescription: json['status_description'],
+      totalPrice: json['total_price'],
+      totalPriceDescription: json['total_price_description'],
+      gallon: json['gallon'],
+      rating: double.parse(json['rating'].toString()),
+      createdAt: json['created_at'],
       depot: depot,
     );
-  }
-}
 
-class TransactionSuccess extends Transaction {
-  List<Transaction> transactions = [];
+    return transaction;
+  }
 }

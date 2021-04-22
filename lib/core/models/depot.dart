@@ -26,30 +26,8 @@ class Depot {
     this.distance,
     this.image,
   });
-}
 
-class DepotUninitialized extends Depot {}
-
-class DepotEmpty extends Depot {
-  @override
-  String toString() {
-    return 'Tidak ada depot di sekitar anda';
-  }
-}
-
-class DepotFetchList extends Depot {
-  final double latitude;
-  final double longitude;
-
-  DepotFetchList({this.latitude, this.longitude});
-}
-
-class DepotListSuccess extends Depot {
-  final List<Depot> depots;
-
-  DepotListSuccess({this.depots});
-
-  factory DepotListSuccess.fromJsonToList(dynamic json) {
+  static List<Depot> fromJsonToList(dynamic json) {
     List<Depot> depots = [];
 
     for (var depot in json) {
@@ -69,15 +47,6 @@ class DepotListSuccess extends Depot {
       ));
     }
 
-    return DepotListSuccess(depots: depots);
-  }
-}
-
-class DepotLoading extends Depot {}
-
-class DepotError extends Depot {
-  @override
-  String toString() {
-    return 'Ups.. ada yang salah nih';
+    return depots;
   }
 }
