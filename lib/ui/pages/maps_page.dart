@@ -145,9 +145,9 @@ class MapsPage extends StatelessWidget {
                           )
                         ]),
                     child: BlocBuilder<LocationBloc, LocationState>(
-                      builder: (context, event) {
-                        if (event is LocationEnable) {
-                          return Text(event.location.address);
+                      builder: (context, state) {
+                        if (state is LocationEnable) {
+                          return Text(state.location.address);
                         }
 
                         return Text('');

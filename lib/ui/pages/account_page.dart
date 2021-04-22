@@ -81,9 +81,9 @@ class AccountPage extends StatelessWidget {
                         }
                       },
                       child: BlocBuilder<UserBloc, UserState>(
-                        builder: (context, user) {
+                        builder: (context, state) {
                           return ElevatedButton(
-                            onPressed: (user is UserLoading)
+                            onPressed: (state is UserLoading)
                                 ? () {}
                                 : () => _saveAction(userBloc),
                             style: ButtonStyle(
@@ -94,7 +94,7 @@ class AccountPage extends StatelessWidget {
                                 ),
                               ),
                             ),
-                            child: (user is UserLoading)
+                            child: (state is UserLoading)
                                 ? Container(
                                     width:
                                         MediaQuery.of(context).size.width * 0.5,

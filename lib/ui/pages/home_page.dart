@@ -70,9 +70,9 @@ class HomePage extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       BlocBuilder<UserBloc, UserState>(
-                        builder: (context, user) {
-                          if (user is UserSuccess) {
-                            return Text('Hai, ${user.name}');
+                        builder: (context, state) {
+                          if (state is UserSuccess) {
+                            return Text('Hai, ${state.name}');
                           }
                           return Text('Hai, -');
                         },
@@ -112,8 +112,8 @@ class HomePage extends StatelessWidget {
                   width: double.infinity,
                   decoration: Style.containerDecoration,
                   child: BlocBuilder<LocationBloc, LocationState>(
-                    builder: (context, event) {
-                      if (event is LocationEnable) {
+                    builder: (context, state) {
+                      if (state is LocationEnable) {
                         return Column(
                           children: [
                             LongButton(
@@ -126,14 +126,14 @@ class HomePage extends StatelessWidget {
                             Padding(
                               padding: EdgeInsets.symmetric(
                                   vertical: 10.0, horizontal: 20.0),
-                              child: Text(event.location.address),
+                              child: Text(state.location.address),
                             ),
                           ],
                         );
                       }
 
-                      if (event is LocationPermissionUnable ||
-                          event is LocationServiceUnable) {
+                      if (state is LocationPermissionUnable ||
+                          state is LocationServiceUnable) {
                         return Padding(
                           padding: EdgeInsets.symmetric(
                               vertical: 10.0, horizontal: 20.0),
@@ -147,7 +147,7 @@ class HomePage extends StatelessWidget {
                                 text: 'Deteksi lokasi anda',
                               ),
                               SizedBox(height: 10.0),
-                              Text(event.toString()),
+                              Text(state.toString()),
                             ],
                           ),
                         );
@@ -170,8 +170,8 @@ class HomePage extends StatelessWidget {
                   builder: (context, location) {
                     if (location is LocationEnable || location is LocationSet) {
                       return BlocBuilder<DepotBloc, DepotState>(
-                        builder: (context, event) {
-                          if (event is DepotFetchListSuccess) {
+                        builder: (context, state) {
+                          if (state is DepotFetchListSuccess) {
                             return Container(
                               padding: EdgeInsets.all(10.0),
                               decoration: Style.containerDecoration,
@@ -192,31 +192,31 @@ class HomePage extends StatelessWidget {
                                     physics: NeverScrollableScrollPhysics(),
                                     itemBuilder: (context, index) {
                                       return DepotItem(
-                                        depot: event.depots[index],
+                                        depot: state.depots[index],
                                         onTap: () => _detailDepotAction(
                                             context,
                                             locationBloc,
                                             transactionBloc,
-                                            event.depots[index]),
+                                            state.depots[index]),
                                       );
                                     },
-                                    itemCount: event.depots.length > 4
+                                    itemCount: state.depots.length > 4
                                         ? 5
-                                        : event.depots.length,
+                                        : state.depots.length,
                                   ),
                                 ],
                               ),
                             );
-                          } else if (event is DepotLoading) {
+                          } else if (state is DepotLoading) {
                             return CircularProgressIndicator();
-                          } else if (event is DepotEmpty ||
-                              event is DepotError) {
+                          } else if (state is DepotEmpty ||
+                              state is DepotError) {
                             return Container(
                               padding: EdgeInsets.all(10.0),
                               width: double.infinity,
                               decoration: Style.containerDecoration,
                               child: Text(
-                                event.toString(),
+                                state.toString(),
                                 textAlign: TextAlign.center,
                               ),
                             );

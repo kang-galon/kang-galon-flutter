@@ -27,17 +27,17 @@ class TransactionPage extends StatelessWidget {
         child: Padding(
           padding: Style.mainPadding,
           child: BlocBuilder<TransactionDetailBloc, TransactionState>(
-            builder: (context, event) {
-              if (event is TransactionFetchDetailSuccess) {
+            builder: (context, state) {
+              if (state is TransactionFetchDetailSuccess) {
                 return Column(
                   children: [
                     HeaderBar(
                       onPressed: () => _backAction(context),
-                      label: 'Transaksi ${event.transaction.depotName}',
+                      label: 'Transaksi ${state.transaction.depotName}',
                     ),
                     SizedBox(height: 20.0),
                     DepotDescription(
-                      depot: event.transaction.depot,
+                      depot: state.transaction.depot,
                       isDistance: false,
                     ),
                     SizedBox(height: 20.0),
@@ -48,13 +48,13 @@ class TransactionPage extends StatelessWidget {
                       child: Row(
                         children: [
                           Text(
-                            '${event.transaction.depot.priceDesc} ',
+                            '${state.transaction.depot.priceDesc} ',
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
-                          Text('x ${event.transaction.gallon} Gallon'),
+                          Text('x ${state.transaction.gallon} Gallon'),
                           Expanded(
                             child: Text(
-                              event.transaction.totalPriceDescription,
+                              state.transaction.totalPriceDescription,
                               textAlign: TextAlign.end,
                             ),
                           ),
@@ -67,7 +67,7 @@ class TransactionPage extends StatelessWidget {
                       padding: EdgeInsets.all(20.0),
                       decoration: Style.containerDecoration,
                       child: Text(
-                        event.transaction.statusDescription,
+                        state.transaction.statusDescription,
                         textAlign: TextAlign.center,
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),

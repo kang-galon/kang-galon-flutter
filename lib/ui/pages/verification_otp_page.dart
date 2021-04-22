@@ -91,8 +91,8 @@ class VerificationOtpPage extends StatelessWidget {
                       ),
                       child: BlocConsumer<UserBloc, UserState>(
                         listener: _blocListener,
-                        builder: (context, user) {
-                          if (user is UserLoading) {
+                        builder: (context, state) {
+                          if (state is UserLoading) {
                             return Wrap(
                               alignment: WrapAlignment.center,
                               children: [CircularProgressIndicator()],

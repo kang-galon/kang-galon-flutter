@@ -21,7 +21,6 @@ class NearDepotPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    DepotBloc depotBloc = BlocProvider.of<DepotBloc>(context);
     LocationBloc locationBloc = BlocProvider.of<LocationBloc>(context);
     TransactionBloc transactionBloc = BlocProvider.of<TransactionBloc>(context);
 
@@ -39,20 +38,19 @@ class NearDepotPage extends StatelessWidget {
               padding: EdgeInsets.all(10.0),
               decoration: Style.containerDecoration,
               child: BlocBuilder<DepotBloc, DepotState>(
-                bloc: depotBloc,
-                builder: (context, event) {
-                  if (event is DepotFetchListSuccess) {
+                builder: (context, state) {
+                  if (state is DepotFetchListSuccess) {
                     return ListView.builder(
                       shrinkWrap: true,
                       physics: NeverScrollableScrollPhysics(),
                       itemBuilder: (context, index) {
                         return DepotItem(
-                          depot: event.depots[index],
+                          depot: state.depots[index],
                           onTap: () => _detailDepotAction(context, locationBloc,
-                              transactionBloc, event.depots[index]),
+                              transactionBloc, state.depots[index]),
                         );
                       },
-                      itemCount: event.depots.length,
+                      itemCount: state.depots.length,
                     );
                   }
                   return Container();

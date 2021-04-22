@@ -41,31 +41,31 @@ class HistoryPage extends StatelessWidget {
                 width: MediaQuery.of(context).size.width,
                 decoration: Style.containerDecoration,
                 child: BlocBuilder<TransactionBloc, TransactionState>(
-                  builder: (context, event) {
-                    if (event is TransactionLoading) {
+                  builder: (context, state) {
+                    if (state is TransactionLoading) {
                       return Wrap(
                         alignment: WrapAlignment.center,
                         children: [CircularProgressIndicator()],
                       );
                     }
 
-                    if (event is TransactionFetchListSuccess) {
+                    if (state is TransactionFetchListSuccess) {
                       return ListView.builder(
                         shrinkWrap: true,
-                        itemCount: event.transactions.length,
+                        itemCount: state.transactions.length,
                         itemBuilder: (context, index) {
                           return TransactionItem(
-                            transaction: event.transactions[index],
+                            transaction: state.transactions[index],
                             onTap: () => _detailTransactionAction(context,
-                                transactionBloc, event.transactions[index].id),
+                                transactionBloc, state.transactions[index].id),
                           );
                         },
                       );
                     }
 
-                    if (event is TransactionEmpty) {
+                    if (state is TransactionEmpty) {
                       return Text(
-                        event.toString(),
+                        state.toString(),
                         textAlign: TextAlign.center,
                       );
                     }
