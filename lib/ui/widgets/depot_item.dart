@@ -32,7 +32,7 @@ class DepotItem extends StatelessWidget {
                   height: 70.0,
                   fit: BoxFit.fill,
                   image: depot.image == null
-                      ? AssetImage('assets/images/phone.png')
+                      ? AssetImage('assets/images/shop.png')
                       : CachedNetworkImageProvider(depot.image),
                 ),
               ),
