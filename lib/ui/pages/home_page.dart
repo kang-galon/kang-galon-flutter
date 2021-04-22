@@ -64,44 +64,51 @@ class HomePage extends StatelessWidget {
               children: [
                 Container(
                   width: MediaQuery.of(context).size.width,
-                  padding: EdgeInsets.all(20.0),
                   decoration: Style.containerDecoration,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      BlocBuilder<UserBloc, UserState>(
-                        builder: (context, state) {
-                          if (state is UserSuccess) {
-                            return Text('Hai, ${state.name}');
-                          }
-                          return Text('Hai, -');
-                        },
+                      Padding(
+                        padding:
+                            EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
+                        child: BlocBuilder<UserBloc, UserState>(
+                          builder: (context, state) {
+                            if (state is UserSuccess) {
+                              return Text('Hai, ${state.name}');
+                            }
+                            return Text('Hai, -');
+                          },
+                        ),
                       ),
                       Divider(
                         thickness: 3.0,
                         height: 20.0,
                         color: Colors.grey.shade400,
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          HomeButton(
-                            label: 'Riwayat',
-                            icon: Icons.history,
-                            onPressed: () =>
-                                _historyAction(context, transactionBloc),
-                          ),
-                          HomeButton(
-                            label: 'Akun',
-                            icon: Icons.person,
-                            onPressed: () => _accountAction(context, userBloc),
-                          ),
-                          HomeButton(
-                            label: 'Chat',
-                            icon: Icons.article,
-                            onPressed: () => _chatAction(context, userBloc),
-                          ),
-                        ],
+                      Padding(
+                        padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            HomeButton(
+                              label: 'Riwayat',
+                              icon: Icons.history,
+                              onPressed: () =>
+                                  _historyAction(context, transactionBloc),
+                            ),
+                            HomeButton(
+                              label: 'Akun',
+                              icon: Icons.person,
+                              onPressed: () =>
+                                  _accountAction(context, userBloc),
+                            ),
+                            HomeButton(
+                              label: 'Chat',
+                              icon: Icons.article,
+                              onPressed: () => _chatAction(context, userBloc),
+                            ),
+                          ],
+                        ),
                       )
                     ],
                   ),
@@ -109,9 +116,14 @@ class HomePage extends StatelessWidget {
                 SizedBox(height: 30.0),
                 Container(
                   padding: EdgeInsets.all(10.0),
-                  width: double.infinity,
+                  width: MediaQuery.of(context).size.width,
                   decoration: Style.containerDecoration,
-                  child: BlocBuilder<LocationBloc, LocationState>(
+                  child: BlocConsumer<LocationBloc, LocationState>(
+                    listener: (context, state) {
+                      if (state is LocationError) {
+                        showSnackbar(context, state.toString());
+                      }
+                    },
                     builder: (context, state) {
                       if (state is LocationEnable) {
                         return Column(
@@ -133,10 +145,10 @@ class HomePage extends StatelessWidget {
                       }
 
                       if (state is LocationPermissionUnable ||
-                          state is LocationServiceUnable) {
+                          state is LocationServiceUnable ||
+                          state is LocationError) {
                         return Padding(
-                          padding: EdgeInsets.symmetric(
-                              vertical: 10.0, horizontal: 20.0),
+                          padding: EdgeInsets.symmetric(vertical: 10.0),
                           child: Column(
                             children: [
                               LongButton(

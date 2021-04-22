@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:kang_galon/core/blocs/event_state.dart';
@@ -31,15 +32,19 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
 
     if (event is LocationCurrent) {
       LocationData locationData = await this._location.getLocation();
+      String address = 'Alamat tidak tersedia';
 
-      Coordinates coordinates =
-          Coordinates(locationData.latitude, locationData.longitude);
-      List<Address> address =
-          await Geocoder.local.findAddressesFromCoordinates(coordinates);
+      try {
+        Coordinates coordinates =
+            Coordinates(locationData.latitude, locationData.longitude);
+        List<Address> addresses =
+            await Geocoder.local.findAddressesFromCoordinates(coordinates);
+        address = addresses.first.addressLine;
+      } on PlatformException {}
 
       yield LocationEnable(
         location: model.Location(
-          address: address.first.addressLine,
+          address: address,
           latitude: locationData.latitude,
           longitude: locationData.longitude,
         ),
@@ -47,14 +52,19 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
     }
 
     if (event is LocationSet) {
-      Coordinates coordinates =
-          Coordinates(event.location.latitude, event.location.longitude);
-      List<Address> address =
-          await Geocoder.local.findAddressesFromCoordinates(coordinates);
+      String address = 'Alamat tidak tersedia';
+
+      try {
+        Coordinates coordinates =
+            Coordinates(event.location.latitude, event.location.longitude);
+        List<Address> addresses =
+            await Geocoder.local.findAddressesFromCoordinates(coordinates);
+        address = addresses.first.addressLine;
+      } on PlatformException {}
 
       yield LocationEnable(
         location: model.Location(
-          address: address.first.addressLine,
+          address: address,
           latitude: event.location.latitude,
           longitude: event.location.longitude,
         ),

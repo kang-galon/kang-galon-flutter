@@ -38,3 +38,13 @@ class LocationEnable extends LocationState {
   @override
   List<Object> get props => [location];
 }
+
+class LocationError extends LocationState {
+  @override
+  List<Object> get props => [];
+
+  @override
+  String toString() {
+    return 'Ups.. ada yang salah nih';
+  }
+}

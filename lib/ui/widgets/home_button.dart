@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 
 class HomeButton extends StatelessWidget {
-  String label;
-  IconData icon;
-  void Function() onPressed;
+  final String label;
+  final IconData icon;
+  final void Function() onPressed;
+  final bool isDense;
 
   HomeButton({
     @required this.label,
     @required this.icon,
     @required this.onPressed,
+    this.isDense = false,
   });
 
   @override
@@ -16,7 +18,9 @@ class HomeButton extends StatelessWidget {
     return TextButton(
       onPressed: this.onPressed,
       style: ButtonStyle(
-        minimumSize: MaterialStateProperty.all<Size>(Size(100.0, 60.0)),
+        minimumSize: isDense
+            ? MaterialStateProperty.all<Size>(Size(60.0, 60.0))
+            : MaterialStateProperty.all<Size>(Size(100.0, 60.0)),
       ),
       child: Padding(
         padding: EdgeInsets.all(5.0),

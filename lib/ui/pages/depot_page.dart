@@ -228,15 +228,18 @@ class _DepotPageState extends State<DepotPage> {
                 child: Column(
                   children: [
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         HomeButton(
                           label: 'Kurang',
                           icon: Icons.remove,
                           onPressed: this._removeGallonAction,
+                          isDense: true,
                         ),
                         Container(
-                          padding: EdgeInsets.all(20.0),
+                          padding: EdgeInsets.all(10.0),
+                          margin: EdgeInsets.only(top: 20.0),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10.0),
                             border: Border.all(color: Colors.grey),
@@ -247,6 +250,7 @@ class _DepotPageState extends State<DepotPage> {
                           label: 'Tambah',
                           icon: Icons.add,
                           onPressed: this._addGallonAction,
+                          isDense: true,
                         ),
                       ],
                     ),
