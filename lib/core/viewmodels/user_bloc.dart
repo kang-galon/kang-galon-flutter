@@ -25,7 +25,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         );
 
         await _firebaseAuth.signInWithCredential(phoneAuthCredential);
-        var user = FirebaseAuth.instance.currentUser;
+        var user = _firebaseAuth.currentUser;
         String jwtToken = await user.getIdToken();
         String uid = user.uid;
 
@@ -33,7 +33,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
             event.phoneNumber, event.name, uid, jwtToken);
 
         // reload profile user to avoid displayName null
-        await _firebaseAuth.currentUser.reload();
+        await user.reload();
 
         yield UserSuccess(name: user.displayName);
       }
@@ -47,7 +47,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         );
 
         await _firebaseAuth.signInWithCredential(phoneAuthCredential);
-        var user = FirebaseAuth.instance.currentUser;
+        var user = _firebaseAuth.currentUser;
 
         yield UserSuccess(name: user.displayName);
       }
@@ -71,7 +71,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         yield UserSuccess(name: event.name);
       }
     } catch (e) {
-      yield UserError(message: e.toString());
+      yield UserError();
     }
   }
 
@@ -80,8 +80,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     Function(FirebaseAuthException) verificationFailed,
     Function(String verificationId, int forceResendingToken) codeSent,
   ) async {
-    FirebaseAuth firebaseAuth = FirebaseAuth.instance;
-    await firebaseAuth.verifyPhoneNumber(
+    await _firebaseAuth.verifyPhoneNumber(
       phoneNumber: phoneNumber,
       verificationCompleted: (PhoneAuthCredential credential) {},
       codeAutoRetrievalTimeout: (String verificationId) {},
@@ -91,6 +90,6 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   }
 
   void logOUt() {
-    FirebaseAuth.instance.signOut();
+    _firebaseAuth.signOut();
   }
 }

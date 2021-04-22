@@ -137,6 +137,10 @@ class RegisterPage extends StatelessWidget {
                                   if (state is UserDoesntExist) {
                                     _sendOtp(context, userBloc);
                                   }
+
+                                  if (state is UserError) {
+                                    showSnackbar(context, state.toString());
+                                  }
                                 },
                                 builder: (context, state) {
                                   return TextFormField(

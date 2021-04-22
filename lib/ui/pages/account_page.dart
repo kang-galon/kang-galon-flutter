@@ -70,57 +70,57 @@ class AccountPage extends StatelessWidget {
                       ),
                     ),
                     SizedBox(height: 10.0),
-                    BlocListener<UserBloc, UserState>(
-                      listener: (context, user) {
-                        if (user is UserError) {
-                          showSnackbar(context, 'Ups, ada yang salah');
-                        } else if (user is UserSuccess) {
+                    BlocConsumer<UserBloc, UserState>(
+                      listener: (context, state) {
+                        if (state is UserError) {
+                          showSnackbar(context, state.toString());
+                        }
+
+                        if (state is UserSuccess) {
                           Navigator.pop(context);
 
-                          showSnackbar(context, 'Ubah nama berhasil');
+                          showSnackbar(context, state.toString());
                         }
                       },
-                      child: BlocBuilder<UserBloc, UserState>(
-                        builder: (context, state) {
-                          return ElevatedButton(
-                            onPressed: (state is UserLoading)
-                                ? () {}
-                                : () => _saveAction(userBloc),
-                            style: ButtonStyle(
-                              shape: MaterialStateProperty.all<
-                                  RoundedRectangleBorder>(
-                                RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10.0),
-                                ),
+                      builder: (context, state) {
+                        return ElevatedButton(
+                          onPressed: (state is UserLoading)
+                              ? () {}
+                              : () => _saveAction(userBloc),
+                          style: ButtonStyle(
+                            shape: MaterialStateProperty.all<
+                                RoundedRectangleBorder>(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10.0),
                               ),
                             ),
-                            child: (state is UserLoading)
-                                ? Container(
-                                    width:
-                                        MediaQuery.of(context).size.width * 0.5,
-                                    child: Wrap(
-                                      alignment: WrapAlignment.center,
-                                      children: [
-                                        SizedBox(
-                                          width: 20.0,
-                                          height: 20.0,
-                                          child: CircularProgressIndicator(
-                                            backgroundColor: Colors.white,
-                                            strokeWidth: 3.0,
-                                          ),
+                          ),
+                          child: (state is UserLoading)
+                              ? Container(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.5,
+                                  child: Wrap(
+                                    alignment: WrapAlignment.center,
+                                    children: [
+                                      SizedBox(
+                                        width: 20.0,
+                                        height: 20.0,
+                                        child: CircularProgressIndicator(
+                                          backgroundColor: Colors.white,
+                                          strokeWidth: 3.0,
                                         ),
-                                      ],
-                                    ),
-                                  )
-                                : Container(
-                                    width:
-                                        MediaQuery.of(context).size.width * 0.5,
-                                    child: Text('Simpan',
-                                        textAlign: TextAlign.center),
+                                      ),
+                                    ],
                                   ),
-                          );
-                        },
-                      ),
+                                )
+                              : Container(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.5,
+                                  child: Text('Simpan',
+                                      textAlign: TextAlign.center),
+                                ),
+                        );
+                      },
                     ),
                     SizedBox(height: 10.0),
                     OutlinedButton(

@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kang_galon/core/blocs/event_state.dart';
 import 'package:kang_galon/core/viewmodels/bloc.dart';
 import 'package:kang_galon/ui/pages/pages.dart';
+import 'package:kang_galon/ui/widgets/snackbar.dart';
 import 'package:pinput/pin_put/pin_put.dart';
 
 class VerificationOtpPage extends StatelessWidget {
@@ -48,6 +49,10 @@ class VerificationOtpPage extends StatelessWidget {
     if (state is UserSuccess) {
       Navigator.of(context)
           .pushReplacement(MaterialPageRoute(builder: (context) => HomePage()));
+    }
+
+    if (state is UserError) {
+      showSnackbar(context, state.toString());
     }
   }
 

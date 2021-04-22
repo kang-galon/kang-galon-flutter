@@ -72,19 +72,19 @@ class _DepotPageState extends State<DepotPage> {
       builder: (context) {
         return BlocConsumer<TransactionBloc, TransactionState>(
           bloc: _transactionBloc,
-          listener: (context, transaction) {
-            if (transaction is TransactionAddSuccess) {
+          listener: (context, state) {
+            if (state is TransactionAddSuccess) {
               Navigator.pop(context);
-              showSnackbar(context, 'Checkout berhasil, silahkan menunggu');
+              showSnackbar(context, state.toString());
             }
 
-            if (transaction is TransactionError) {
+            if (state is TransactionError) {
               Navigator.pop(context);
-              showSnackbar(context, 'Oops ada yang salah nih');
+              showSnackbar(context, state.toString());
             }
           },
-          builder: (context, transaction) {
-            if (transaction is TransactionLoading) {
+          builder: (context, state) {
+            if (state is TransactionLoading) {
               return Container(
                 height: 250,
                 padding: EdgeInsets.all(20.0),

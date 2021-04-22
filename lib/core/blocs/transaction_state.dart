@@ -33,6 +33,11 @@ class TransactionError extends TransactionState {
 class TransactionAddSuccess extends TransactionState {
   @override
   List<Object> get props => [];
+
+  @override
+  String toString() {
+    return 'Checkout berhasil, silahkan menunggu';
+  }
 }
 
 class TransactionFetchListSuccess extends TransactionState {

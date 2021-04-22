@@ -40,7 +40,12 @@ class HistoryPage extends StatelessWidget {
                 padding: EdgeInsets.all(10.0),
                 width: MediaQuery.of(context).size.width,
                 decoration: Style.containerDecoration,
-                child: BlocBuilder<TransactionBloc, TransactionState>(
+                child: BlocConsumer<TransactionBloc, TransactionState>(
+                  listener: (context, state) {
+                    if (state is TransactionError) {
+                      showSnackbar(context, state.toString());
+                    }
+                  },
                   builder: (context, state) {
                     if (state is TransactionLoading) {
                       return Wrap(

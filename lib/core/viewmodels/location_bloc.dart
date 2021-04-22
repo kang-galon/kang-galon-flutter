@@ -40,7 +40,9 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
         List<Address> addresses =
             await Geocoder.local.findAddressesFromCoordinates(coordinates);
         address = addresses.first.addressLine;
-      } on PlatformException {}
+      } on PlatformException {
+        yield LocationError();
+      }
 
       yield LocationEnable(
         location: model.Location(
@@ -60,7 +62,9 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
         List<Address> addresses =
             await Geocoder.local.findAddressesFromCoordinates(coordinates);
         address = addresses.first.addressLine;
-      } on PlatformException {}
+      } on PlatformException {
+        yield LocationError();
+      }
 
       yield LocationEnable(
         location: model.Location(

@@ -181,7 +181,12 @@ class HomePage extends StatelessWidget {
                   },
                   builder: (context, location) {
                     if (location is LocationEnable || location is LocationSet) {
-                      return BlocBuilder<DepotBloc, DepotState>(
+                      return BlocConsumer<DepotBloc, DepotState>(
+                        listener: (context, state) {
+                          if (state is DepotError) {
+                            showSnackbar(context, state.toString());
+                          }
+                        },
                         builder: (context, state) {
                           if (state is DepotFetchListSuccess) {
                             return Container(

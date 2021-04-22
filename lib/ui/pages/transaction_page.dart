@@ -26,7 +26,12 @@ class TransactionPage extends StatelessWidget {
       body: SingleChildScrollView(
         child: Padding(
           padding: Style.mainPadding,
-          child: BlocBuilder<TransactionDetailBloc, TransactionState>(
+          child: BlocConsumer<TransactionDetailBloc, TransactionState>(
+            listener: (context, state) {
+              if (state is TransactionError) {
+                showSnackbar(context, state.toString());
+              }
+            },
             builder: (context, state) {
               if (state is TransactionFetchDetailSuccess) {
                 return Column(

@@ -37,7 +37,12 @@ class NearDepotPage extends StatelessWidget {
             Container(
               padding: EdgeInsets.all(10.0),
               decoration: Style.containerDecoration,
-              child: BlocBuilder<DepotBloc, DepotState>(
+              child: BlocConsumer<DepotBloc, DepotState>(
+                listener: (context, state) {
+                  if (state is DepotError) {
+                    showSnackbar(context, state.toString());
+                  }
+                },
                 builder: (context, state) {
                   if (state is DepotFetchListSuccess) {
                     return ListView.builder(
