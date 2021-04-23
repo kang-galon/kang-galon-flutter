@@ -93,8 +93,13 @@ class HomePage extends StatelessWidget {
                       Padding(
                         padding: EdgeInsets.symmetric(
                             vertical: 10.0, horizontal: 20.0),
-                        child: BlocBuilder<TransactionCurrentBloc,
+                        child: BlocConsumer<TransactionCurrentBloc,
                             TransactionState>(
+                          listener: (context, state) {
+                            if (state is TransactionError) {
+                              showSnackbar(context, state.toString());
+                            }
+                          },
                           builder: (context, state) {
                             if (state is TransactionLoading) {
                               return CircularProgressIndicator();

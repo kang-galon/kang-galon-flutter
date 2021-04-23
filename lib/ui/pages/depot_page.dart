@@ -21,6 +21,7 @@ class _DepotPageState extends State<DepotPage> {
   final List<Marker> markers = <Marker>[];
   LocationBloc _locationBloc;
   TransactionBloc _transactionBloc;
+  TransactionCurrentBloc _transactionCurrentBloc;
   int _gallon = 1;
 
   void _removeGallonAction() {
@@ -73,9 +74,14 @@ class _DepotPageState extends State<DepotPage> {
         return BlocConsumer<TransactionBloc, TransactionState>(
           bloc: _transactionBloc,
           listener: (context, state) {
-            if (state is TransactionAddSuccess ||
-                state is TransactionAddFailed ||
-                state is TransactionError) {
+            if (state is TransactionAddSuccess) {
+              _transactionCurrentBloc.add(TransactionFetchCurrent());
+
+              Navigator.pop(context);
+              showSnackbar(context, state.toString());
+            }
+
+            if (state is TransactionAddFailed || state is TransactionError) {
               Navigator.pop(context);
               showSnackbar(context, state.toString());
             }
@@ -151,6 +157,9 @@ class _DepotPageState extends State<DepotPage> {
 
     // init _transactionBloc
     _transactionBloc = BlocProvider.of<TransactionBloc>(context);
+
+    // init _transactionCurrentBloc
+    _transactionCurrentBloc = BlocProvider.of<TransactionCurrentBloc>(context);
 
     // Depot marker
     this.markers.add(
