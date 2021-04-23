@@ -28,3 +28,8 @@ class TransactionFetchDetail extends TransactionEvent {
   @override
   List<Object> get props => [id];
 }
+
+class TransactionFetchCurrent extends TransactionEvent {
+  @override
+  List<Object> get props => [];
+}

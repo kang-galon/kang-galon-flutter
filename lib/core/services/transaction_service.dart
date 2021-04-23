@@ -6,7 +6,7 @@ import 'package:kang_galon/core/models/models.dart';
 import 'package:kang_galon/core/services/services.dart';
 
 class TransactionService {
-  Future<void> addTransaction(
+  Future<bool> addTransaction(
       String depotPhoneNumber, String clientLocation, int gallon) async {
     Uri uri = url('/client/transaction');
     String token = await FirebaseAuth.instance.currentUser.getIdToken();
@@ -20,9 +20,7 @@ class TransactionService {
     });
 
     var json = jsonDecode(response.body);
-    if (!json['success']) {
-      throw Exception(json['message']);
-    }
+    return json['success'];
   }
 
   Future<List<Transaction>> getTransactions() async {
@@ -43,6 +41,22 @@ class TransactionService {
 
   Future<Transaction> getDetailTransactions(int id) async {
     Uri uri = url('/client/transaction/$id');
+    String token = await FirebaseAuth.instance.currentUser.getIdToken();
+
+    var response = await http.get(uri, headers: {
+      'Authorization': 'Bearer ' + token,
+    });
+
+    var json = jsonDecode(response.body);
+    if (json['success']) {
+      return Transaction.fromJsonToModel(json['data']);
+    } else {
+      throw Exception(json['message']);
+    }
+  }
+
+  Future<Transaction> getCurrentTransactions() async {
+    Uri uri = url('/client/transaction/current');
     String token = await FirebaseAuth.instance.currentUser.getIdToken();
 
     var response = await http.get(uri, headers: {

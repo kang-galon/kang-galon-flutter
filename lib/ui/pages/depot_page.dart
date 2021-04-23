@@ -73,12 +73,9 @@ class _DepotPageState extends State<DepotPage> {
         return BlocConsumer<TransactionBloc, TransactionState>(
           bloc: _transactionBloc,
           listener: (context, state) {
-            if (state is TransactionAddSuccess) {
-              Navigator.pop(context);
-              showSnackbar(context, state.toString());
-            }
-
-            if (state is TransactionError) {
+            if (state is TransactionAddSuccess ||
+                state is TransactionAddFailed ||
+                state is TransactionError) {
               Navigator.pop(context);
               showSnackbar(context, state.toString());
             }

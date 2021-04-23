@@ -61,6 +61,12 @@ class DepotItem extends StatelessWidget {
                     SizedBox(height: 10.0),
                     Row(
                       children: [
+                        Icon(
+                          Icons.room,
+                          size: 20.0,
+                          color: Colors.blueGrey,
+                        ),
+                        SizedBox(width: 2.0),
                         Text(
                           '${depot.distance} km',
                           style: TextStyle(fontWeight: FontWeight.bold),

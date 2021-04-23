@@ -40,6 +40,16 @@ class TransactionAddSuccess extends TransactionState {
   }
 }
 
+class TransactionAddFailed extends TransactionState {
+  @override
+  List<Object> get props => [];
+
+  @override
+  String toString() {
+    return 'Checkout gagal, tunggu transaksi sebelumnya selesai';
+  }
+}
+
 class TransactionFetchListSuccess extends TransactionState {
   final List<Transaction> transactions;
 
@@ -53,6 +63,15 @@ class TransactionFetchDetailSuccess extends TransactionState {
   final Transaction transaction;
 
   TransactionFetchDetailSuccess({this.transaction});
+
+  @override
+  List<Object> get props => [transaction];
+}
+
+class TransactionFetchCurrentSuccess extends TransactionState {
+  final Transaction transaction;
+
+  TransactionFetchCurrentSuccess({this.transaction});
 
   @override
   List<Object> get props => [transaction];

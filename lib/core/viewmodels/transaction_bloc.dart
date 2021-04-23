@@ -14,12 +14,17 @@ class TransactionBloc extends Bloc<TransactionEvent, TransactionState> {
       yield TransactionLoading();
 
       try {
-        await _transactionService.addTransaction(
+        bool isSuccess = await _transactionService.addTransaction(
           event.depotPhoneNumber,
           event.clientLocation,
           event.gallon,
         );
-        yield TransactionAddSuccess();
+
+        if (isSuccess) {
+          yield TransactionAddSuccess();
+        } else {
+          yield TransactionAddFailed();
+        }
       } catch (e) {
         yield TransactionError();
       }

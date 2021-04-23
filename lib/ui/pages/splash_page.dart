@@ -71,6 +71,8 @@ class _SplashPageState extends State<SplashPage> {
           BlocProvider<TransactionBloc>(create: (context) => TransactionBloc()),
           BlocProvider<TransactionDetailBloc>(
               create: (context) => TransactionDetailBloc()),
+          BlocProvider<TransactionCurrentBloc>(
+              create: (context) => TransactionCurrentBloc()),
         ],
         child: MaterialApp(home: LoginPage()),
       );
@@ -83,6 +85,8 @@ class _SplashPageState extends State<SplashPage> {
           BlocProvider<TransactionBloc>(create: (context) => TransactionBloc()),
           BlocProvider<TransactionDetailBloc>(
               create: (context) => TransactionDetailBloc()),
+          BlocProvider<TransactionCurrentBloc>(
+              create: (context) => TransactionCurrentBloc()),
         ],
         child: MaterialApp(home: HomePage()),
       );

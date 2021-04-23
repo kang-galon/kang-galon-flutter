@@ -35,7 +35,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         // reload profile user to avoid displayName null
         await user.reload();
 
-        yield UserSuccess(name: user.displayName);
+        yield UserSuccess(name: event.name);
       }
 
       if (event is UserLogin) {
