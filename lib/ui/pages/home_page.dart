@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart' as fire;
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kang_galon/core/blocs/event_state.dart';
@@ -41,8 +42,13 @@ class HomePage extends StatelessWidget {
   }
 
   void _chatAction(BuildContext context) async {
-    print(fire.FirebaseAuth.instance.currentUser.uid);
-    print(await fire.FirebaseAuth.instance.currentUser.getIdToken());
+    // FirebaseMessaging messaging = FirebaseMessaging.instance;
+    // print(await messaging.getToken());
+    // print(fire.FirebaseAuth.instance.currentUser.uid);
+    // print(await fire.FirebaseAuth.instance.currentUser.getIdToken());
+
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => ChatsPage()));
   }
 
   void _detailDepotAction(BuildContext context, model.Depot depot) {

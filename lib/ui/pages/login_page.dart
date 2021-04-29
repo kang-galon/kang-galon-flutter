@@ -10,8 +10,10 @@ class LoginPage extends StatelessWidget {
   final _formKey = GlobalKey<FormState>();
   final _textEditingController = TextEditingController();
 
-  void _loginAction(UserBloc userBloc) {
+  void _loginAction(BuildContext context, UserBloc userBloc) {
     if (_formKey.currentState.validate()) {
+      FocusScope.of(context).unfocus();
+
       String phoneNumber = '+62' + _textEditingController.text;
 
       // Check user is exist
@@ -184,7 +186,8 @@ class LoginPage extends StatelessWidget {
                                           ));
                                     } else {
                                       return ElevatedButton(
-                                        onPressed: () => _loginAction(userBloc),
+                                        onPressed: () =>
+                                            _loginAction(context, userBloc),
                                         child: Text('Masuk'),
                                       );
                                     }

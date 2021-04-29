@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kang_galon/core/blocs/event_state.dart';
 import 'package:kang_galon/core/services/user_service.dart';
@@ -28,9 +29,10 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         var user = _firebaseAuth.currentUser;
         String jwtToken = await user.getIdToken();
         String uid = user.uid;
+        String deviceId = await FirebaseMessaging.instance.getToken();
 
         await _userService.register(
-            event.phoneNumber, event.name, uid, jwtToken);
+            event.phoneNumber, event.name, uid, deviceId, jwtToken);
 
         // reload profile user to avoid displayName null
         await user.reload();
@@ -71,6 +73,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         yield UserSuccess(name: event.name);
       }
     } catch (e) {
+      print(e);
       yield UserError();
     }
   }

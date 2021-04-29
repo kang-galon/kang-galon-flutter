@@ -17,8 +17,13 @@ class TransactionCurrentBloc extends Bloc<TransactionEvent, TransactionState> {
         Transaction transaction =
             await _transactionService.getCurrentTransactions();
 
-        yield TransactionFetchCurrentSuccess(transaction: transaction);
+        if (transaction == null) {
+          yield TransactionEmpty();
+        } else {
+          yield TransactionFetchCurrentSuccess(transaction: transaction);
+        }
       } catch (e) {
+        print(e);
         yield TransactionError();
       }
     }

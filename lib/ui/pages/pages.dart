@@ -9,6 +9,7 @@ export 'splash_page.dart';
 export 'verification_otp_page.dart';
 export 'history_page.dart';
 export 'transaction_page.dart';
+export 'chats_page.dart';
 
 import 'package:flutter/material.dart';
 

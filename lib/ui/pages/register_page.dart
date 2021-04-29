@@ -11,8 +11,10 @@ class RegisterPage extends StatelessWidget {
   final _phoneNumberController = TextEditingController();
   final _nameController = TextEditingController();
 
-  void _registerAction(UserBloc userBloc) {
+  void _registerAction(BuildContext context, UserBloc userBloc) {
     if (_formKey.currentState.validate()) {
+      FocusScope.of(context).unfocus();
+
       String phoneNumber = '+62' + _phoneNumberController.text;
 
       // Check user is exist
@@ -197,7 +199,7 @@ class RegisterPage extends StatelessWidget {
                                   } else {
                                     return ElevatedButton(
                                       onPressed: () =>
-                                          _registerAction(userBloc),
+                                          _registerAction(context, userBloc),
                                       child: Text('Daftar'),
                                     );
                                   }

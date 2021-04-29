@@ -24,6 +24,7 @@ class DepotBloc extends Bloc<DepotEvent, DepotState> {
           yield DepotFetchListSuccess(depots: depots);
         }
       } catch (e) {
+        print(e);
         yield DepotError();
       }
     }

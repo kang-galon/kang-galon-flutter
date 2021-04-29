@@ -67,7 +67,7 @@ class TransactionService {
     if (json['success']) {
       return Transaction.fromJsonToModel(json['data']);
     } else {
-      throw Exception(json['message']);
+      return null;
     }
   }
 }

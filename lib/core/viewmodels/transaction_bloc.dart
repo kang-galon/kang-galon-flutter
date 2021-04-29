@@ -26,6 +26,7 @@ class TransactionBloc extends Bloc<TransactionEvent, TransactionState> {
           yield TransactionAddFailed();
         }
       } catch (e) {
+        print(e);
         yield TransactionError();
       }
     }
@@ -43,6 +44,7 @@ class TransactionBloc extends Bloc<TransactionEvent, TransactionState> {
           yield TransactionFetchListSuccess(transactions: transactions);
         }
       } catch (e) {
+        print(e);
         yield TransactionError();
       }
     }

@@ -19,6 +19,7 @@ class TransactionDetailBloc extends Bloc<TransactionEvent, TransactionState> {
 
         yield TransactionFetchDetailSuccess(transaction: transaction);
       } catch (e) {
+        print(e);
         yield TransactionError();
       }
     }
