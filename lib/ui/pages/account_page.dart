@@ -6,6 +6,7 @@ import 'package:kang_galon/ui/pages/pages.dart';
 import 'package:kang_galon/ui/widgets/widgets.dart';
 
 class AccountPage extends StatelessWidget {
+  static const String routeName = '/account';
   final _formKey = GlobalKey<FormState>();
   final _textFieldController = TextEditingController();
 

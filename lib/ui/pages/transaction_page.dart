@@ -6,6 +6,7 @@ import 'package:kang_galon/ui/pages/pages.dart';
 import 'package:kang_galon/ui/widgets/widgets.dart';
 
 class TransactionPage extends StatelessWidget {
+  static const String routeName = '/transaction';
   final int id;
 
   TransactionPage({@required this.id});
@@ -33,6 +34,10 @@ class TransactionPage extends StatelessWidget {
               }
             },
             builder: (context, state) {
+              if (state is TransactionLoading) {
+                return Center(child: CircularProgressIndicator());
+              }
+
               if (state is TransactionFetchDetailSuccess) {
                 return Column(
                   children: [
@@ -40,15 +45,15 @@ class TransactionPage extends StatelessWidget {
                       onPressed: () => _backAction(context),
                       label: 'Transaksi ${state.transaction.depotName}',
                     ),
-                    SizedBox(height: 20.0),
+                    const SizedBox(height: 20.0),
                     DepotDescription(
                       depot: state.transaction.depot,
                       isDistance: false,
                     ),
-                    SizedBox(height: 20.0),
+                    const SizedBox(height: 20.0),
                     Container(
                       width: MediaQuery.of(context).size.width,
-                      padding: EdgeInsets.all(20.0),
+                      padding: const EdgeInsets.all(20.0),
                       decoration: Style.containerDecoration,
                       child: Row(
                         children: [
@@ -66,10 +71,10 @@ class TransactionPage extends StatelessWidget {
                         ],
                       ),
                     ),
-                    SizedBox(height: 20.0),
+                    const SizedBox(height: 20.0),
                     Container(
                       width: MediaQuery.of(context).size.width,
-                      padding: EdgeInsets.all(20.0),
+                      padding: const EdgeInsets.all(20.0),
                       decoration: Style.containerDecoration,
                       child: Text(
                         state.transaction.statusDescription,
@@ -81,7 +86,7 @@ class TransactionPage extends StatelessWidget {
                 );
               }
 
-              return SizedBox.shrink();
+              return const SizedBox.shrink();
             },
           ),
         ),

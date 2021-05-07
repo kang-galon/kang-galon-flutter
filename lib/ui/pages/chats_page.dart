@@ -8,6 +8,7 @@ import 'package:kang_galon/ui/pages/pages.dart';
 import 'package:kang_galon/ui/widgets/widgets.dart';
 
 class ChatsPage extends StatelessWidget {
+  static const String routeName = '/chats';
   final TextEditingController _textEditingController = TextEditingController();
   List<Message> _messages = [];
 

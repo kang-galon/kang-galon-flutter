@@ -9,6 +9,7 @@ import 'package:kang_galon/ui/widgets/widgets.dart';
 import 'package:kang_galon/ui/pages/pages.dart';
 
 class DepotPage extends StatefulWidget {
+  static const String routeName = '/depot';
   final Depot depot;
 
   DepotPage({@required this.depot});
@@ -26,16 +27,12 @@ class _DepotPageState extends State<DepotPage> {
 
   void _removeGallonAction() {
     if (_gallon != 1) {
-      setState(() {
-        _gallon--;
-      });
+      setState(() => _gallon--);
     }
   }
 
   void _addGallonAction() {
-    setState(() {
-      _gallon++;
-    });
+    setState(() => _gallon++);
   }
 
   void _checkoutAction() {
@@ -57,7 +54,7 @@ class _DepotPageState extends State<DepotPage> {
   }
 
   void _orderAction() {
-    int priceTotal = this._gallon * widget.depot.price;
+    int priceTotal = _gallon * widget.depot.price;
     NumberFormat numberFormat = NumberFormat.currency(
         locale: 'en_US', symbol: 'Rp. ', decimalDigits: 0);
     String priceTotalDesc = numberFormat.format(priceTotal);
@@ -75,10 +72,14 @@ class _DepotPageState extends State<DepotPage> {
           bloc: _transactionBloc,
           listener: (context, state) {
             if (state is TransactionAddSuccess) {
+              showSnackbar(context, state.toString());
+
+              // fetch current transaction
               _transactionCurrentBloc.add(TransactionFetchCurrent());
 
-              Navigator.pop(context);
-              showSnackbar(context, state.toString());
+              // navigate to home
+              Navigator.popUntil(
+                  context, ModalRoute.withName(HomePage.routeName));
             }
 
             if (state is TransactionAddFailed || state is TransactionError) {
@@ -90,11 +91,11 @@ class _DepotPageState extends State<DepotPage> {
             if (state is TransactionLoading) {
               return Container(
                 height: 250,
-                padding: EdgeInsets.all(20.0),
+                padding: const EdgeInsets.all(20.0),
                 child: Wrap(
                   alignment: WrapAlignment.center,
                   children: [
-                    SizedBox(
+                    const SizedBox(
                       width: 150.0,
                       height: 150.0,
                       child: CircularProgressIndicator(),
@@ -106,7 +107,7 @@ class _DepotPageState extends State<DepotPage> {
 
             return Container(
               height: 250,
-              padding: EdgeInsets.all(20.0),
+              padding: const EdgeInsets.all(20.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -121,8 +122,8 @@ class _DepotPageState extends State<DepotPage> {
                   Text('Isi ulang galon'),
                   Row(
                     children: [
-                      Text('${this._gallon} x ${widget.depot.priceDesc}'),
-                      Spacer(),
+                      Text('${_gallon} x ${widget.depot.priceDesc}'),
+                      const Spacer(),
                       Text(priceTotalDesc),
                     ],
                   ),
@@ -162,27 +163,26 @@ class _DepotPageState extends State<DepotPage> {
     _transactionCurrentBloc = BlocProvider.of<TransactionCurrentBloc>(context);
 
     // Depot marker
-    this.markers.add(
-          Marker(
-            markerId: MarkerId(widget.depot.name),
-            position: LatLng(widget.depot.latitude, widget.depot.longitude),
-            infoWindow: InfoWindow(title: widget.depot.name),
-          ),
-        );
+    markers.add(
+      Marker(
+        markerId: MarkerId(widget.depot.name),
+        position: LatLng(widget.depot.latitude, widget.depot.longitude),
+        infoWindow: InfoWindow(title: widget.depot.name),
+      ),
+    );
 
     // Client marker
-    this.markers.add(
-          Marker(
-            markerId: MarkerId('Your Location'),
-            position: LatLng(
-              (_locationBloc.state as LocationEnable).location.latitude,
-              (_locationBloc.state as LocationEnable).location.longitude,
-            ),
-            infoWindow: InfoWindow(title: 'Your Location'),
-            icon: BitmapDescriptor.defaultMarkerWithHue(
-                BitmapDescriptor.hueOrange),
-          ),
-        );
+    markers.add(
+      Marker(
+        markerId: MarkerId('Your Location'),
+        position: LatLng(
+          (_locationBloc.state as LocationEnable).location.latitude,
+          (_locationBloc.state as LocationEnable).location.longitude,
+        ),
+        infoWindow: InfoWindow(title: 'Your Location'),
+        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
+      ),
+    );
   }
 
   @override
@@ -194,18 +194,18 @@ class _DepotPageState extends State<DepotPage> {
           child: Column(
             children: [
               HeaderBar(onPressed: _backAction, label: widget.depot.name),
-              SizedBox(height: 20.0),
+              const SizedBox(height: 20.0),
               DepotDescription(depot: widget.depot),
               Container(
-                margin: EdgeInsets.only(top: 20.0),
+                margin: const EdgeInsets.only(top: 20.0),
+                padding: const EdgeInsets.all(20.0),
                 width: MediaQuery.of(context).size.width,
-                padding: EdgeInsets.all(20.0),
                 decoration: Style.containerDecoration,
                 child: Text(
                     (_locationBloc.state as LocationEnable).location.address),
               ),
               Container(
-                margin: EdgeInsets.only(top: 20.0),
+                margin: const EdgeInsets.only(top: 20.0),
                 width: MediaQuery.of(context).size.width,
                 height: 300,
                 decoration: Style.containerDecoration,
@@ -222,13 +222,13 @@ class _DepotPageState extends State<DepotPage> {
                     zoomControlsEnabled: true,
                     rotateGesturesEnabled: false,
                     scrollGesturesEnabled: false,
-                    markers: Set<Marker>.from(this.markers),
+                    markers: Set<Marker>.from(markers),
                   ),
                 ),
               ),
               Container(
-                margin: EdgeInsets.only(top: 20.0),
-                padding: EdgeInsets.all(20.0),
+                margin: const EdgeInsets.only(top: 20.0),
+                padding: const EdgeInsets.all(20.0),
                 width: MediaQuery.of(context).size.width,
                 decoration: Style.containerDecoration,
                 child: Column(
@@ -237,33 +237,33 @@ class _DepotPageState extends State<DepotPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        HomeButton(
+                        CustomIconButton(
                           label: 'Kurang',
                           icon: Icons.remove,
-                          onPressed: this._removeGallonAction,
+                          onPressed: _removeGallonAction,
                           isDense: true,
                         ),
                         Container(
-                          padding: EdgeInsets.all(10.0),
-                          margin: EdgeInsets.only(top: 20.0),
+                          padding: const EdgeInsets.all(10.0),
+                          margin: const EdgeInsets.only(top: 20.0),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10.0),
                             border: Border.all(color: Colors.grey),
                           ),
-                          child: Text('${this._gallon} Galon'),
+                          child: Text('${_gallon} Galon'),
                         ),
-                        HomeButton(
+                        CustomIconButton(
                           label: 'Tambah',
                           icon: Icons.add,
-                          onPressed: this._addGallonAction,
+                          onPressed: _addGallonAction,
                           isDense: true,
                         ),
                       ],
                     ),
-                    SizedBox(height: 10.0),
+                    const SizedBox(height: 10.0),
                     LongButton(
                       context: context,
-                      onPressed: this._orderAction,
+                      onPressed: _orderAction,
                       icon: Icons.shopping_cart,
                       text: 'Order isi ulang galon',
                     )

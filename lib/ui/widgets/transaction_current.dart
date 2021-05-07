@@ -33,13 +33,13 @@ class TransactionCurrent extends StatelessWidget {
                     : CachedNetworkImageProvider(transaction.depot.image),
               ),
             ),
-            SizedBox(width: 5.0),
+            const SizedBox(width: 5.0),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(transaction.depot.address),
-                  SizedBox(height: 30.0),
+                  const SizedBox(height: 30.0),
                   Align(
                     alignment: Alignment.centerRight,
                     child: Text('${transaction.createdAt}'),
@@ -49,9 +49,9 @@ class TransactionCurrent extends StatelessWidget {
             ),
           ],
         ),
-        SizedBox(height: 20.0),
+        const SizedBox(height: 20.0),
         Container(
-          padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
+          padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
           width: MediaQuery.of(context).size.width,
           decoration: Style.containerDecoration,
           child: Row(
@@ -59,28 +59,28 @@ class TransactionCurrent extends StatelessWidget {
             children: [
               Text(
                 transaction.depotName,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 15.0,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               Text(
                 transaction.statusDescription,
-                style: TextStyle(fontSize: 15.0),
+                style: const TextStyle(fontSize: 15.0),
               ),
             ],
           ),
         ),
-        SizedBox(height: 10.0),
+        const SizedBox(height: 10.0),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            HomeButton(
+            CustomIconButton(
               label: 'Telepon',
               icon: Icons.phone,
               onPressed: onTapPhone,
             ),
-            HomeButton(
+            CustomIconButton(
               label: 'Chat',
               icon: Icons.chat,
               onPressed: onTapChat,

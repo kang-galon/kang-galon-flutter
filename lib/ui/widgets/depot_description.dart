@@ -16,7 +16,7 @@ class DepotDescription extends StatelessWidget {
       children: [
         Container(
           width: MediaQuery.of(context).size.width,
-          padding: EdgeInsets.all(20.0),
+          padding: const EdgeInsets.all(20.0),
           decoration: Style.containerDecoration,
           child: Column(
             children: [
@@ -33,16 +33,16 @@ class DepotDescription extends StatelessWidget {
                           : CachedNetworkImageProvider(depot.image),
                     ),
                   ),
-                  SizedBox(width: 5.0),
+                  const SizedBox(width: 5.0),
                   Expanded(child: Text(depot.address)),
                 ],
               ),
-              SizedBox(height: 10.0),
+              const SizedBox(height: 10.0),
               Row(
                 children: [
                   Text(
                     isDistance ? '${depot.distance} km' : '',
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                   Spacer(),
                   RatingBar.builder(
@@ -59,7 +59,7 @@ class DepotDescription extends StatelessWidget {
                     ),
                     onRatingUpdate: (double value) {},
                   ),
-                  SizedBox(width: 5.0),
+                  const SizedBox(width: 5.0),
                   Text(
                     depot.rating.toString(),
                     textAlign: TextAlign.right,
@@ -69,10 +69,10 @@ class DepotDescription extends StatelessWidget {
             ],
           ),
         ),
-        SizedBox(height: 20.0),
+        const SizedBox(height: 20.0),
         Container(
           width: MediaQuery.of(context).size.width,
-          padding: EdgeInsets.all(20.0),
+          padding: const EdgeInsets.all(20.0),
           decoration: Style.containerDecoration,
           child: Row(
             children: [

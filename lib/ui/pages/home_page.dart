@@ -6,40 +6,31 @@ import 'package:kang_galon/core/blocs/event_state.dart';
 import 'package:kang_galon/core/models/models.dart' as model;
 import 'package:kang_galon/core/models/models.dart';
 import 'package:kang_galon/core/viewmodels/bloc.dart';
+import 'package:kang_galon/ui/arguments/arguments.dart';
 import 'package:kang_galon/ui/pages/pages.dart';
 import 'package:kang_galon/ui/widgets/widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HomePage extends StatelessWidget {
-  void _mapsAction(BuildContext context) {
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => MapsPage()));
-  }
+  static const String routeName = '/home';
 
-  void _detectMapsAction(LocationBloc locationBloc) {
-    locationBloc.add(LocationCurrent());
-  }
+  void _mapsAction(BuildContext context) =>
+      Navigator.pushNamed(context, MapsPage.routeName);
 
-  void _allDepotAction(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => NearDepotPage()),
-    );
-  }
+  void _detectMapsAction(LocationBloc locationBloc) =>
+      locationBloc.add(LocationCurrent());
 
-  void _historyAction(BuildContext context) {
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => HistoryPage()));
-  }
+  void _allDepotAction(BuildContext context) =>
+      Navigator.pushNamed(context, NearDepotPage.routeName);
 
-  void _accountAction(BuildContext context) {
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => AccountPage()));
-  }
+  void _historyAction(BuildContext context) =>
+      Navigator.pushNamed(context, HistoryPage.routeName);
 
-  void _phoneAction(BuildContext context, Depot depot) async {
-    await launch('tel:${depot.phoneNumber}');
-  }
+  void _accountAction(BuildContext context) =>
+      Navigator.pushNamed(context, AccountPage.routeName);
+
+  void _phoneAction(BuildContext context, Depot depot) async =>
+      await launch('tel:${depot.phoneNumber}');
 
   void _chatAction(BuildContext context) async {
     // FirebaseMessaging messaging = FirebaseMessaging.instance;
@@ -47,15 +38,12 @@ class HomePage extends StatelessWidget {
     // print(fire.FirebaseAuth.instance.currentUser.uid);
     // print(await fire.FirebaseAuth.instance.currentUser.getIdToken());
 
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => ChatsPage()));
+    Navigator.pushNamed(context, ChatsPage.routeName);
   }
 
   void _detailDepotAction(BuildContext context, model.Depot depot) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => DepotPage(depot: depot)),
-    );
+    DepotArguments args = DepotArguments(depot);
+    Navigator.pushNamed(context, DepotPage.routeName, arguments: args);
   }
 
   @override
@@ -83,7 +71,7 @@ class HomePage extends StatelessWidget {
                     );
                   },
                 ),
-                SizedBox(height: 30.0),
+                const SizedBox(height: 30.0),
                 Container(
                   padding: EdgeInsets.all(10.0),
                   width: MediaQuery.of(context).size.width,
@@ -120,16 +108,16 @@ class HomePage extends StatelessWidget {
                               );
                             }
 
-                            return SizedBox.shrink();
+                            return const SizedBox.shrink();
                           },
                         ),
                       ),
                     ],
                   ),
                 ),
-                SizedBox(height: 30.0),
+                const SizedBox(height: 30.0),
                 Container(
-                  padding: EdgeInsets.all(10.0),
+                  padding: const EdgeInsets.all(10.0),
                   width: MediaQuery.of(context).size.width,
                   decoration: Style.containerDecoration,
                   child: BlocConsumer<LocationBloc, LocationState>(
@@ -149,7 +137,7 @@ class HomePage extends StatelessWidget {
                               text: 'Ubah lokasi anda',
                             ),
                             Padding(
-                              padding: EdgeInsets.symmetric(
+                              padding: const EdgeInsets.symmetric(
                                   vertical: 10.0, horizontal: 20.0),
                               child: Text(state.location.address),
                             ),
@@ -161,7 +149,7 @@ class HomePage extends StatelessWidget {
                           state is LocationServiceUnable ||
                           state is LocationError) {
                         return Padding(
-                          padding: EdgeInsets.symmetric(vertical: 10.0),
+                          padding: const EdgeInsets.symmetric(vertical: 10.0),
                           child: Column(
                             children: [
                               LongButton(
@@ -171,18 +159,18 @@ class HomePage extends StatelessWidget {
                                 icon: Icons.refresh,
                                 text: 'Deteksi lokasi anda',
                               ),
-                              SizedBox(height: 10.0),
+                              const SizedBox(height: 10.0),
                               Text(state.toString()),
                             ],
                           ),
                         );
                       }
 
-                      return SizedBox.shrink();
+                      return const SizedBox.shrink();
                     },
                   ),
                 ),
-                SizedBox(height: 30.0),
+                const SizedBox(height: 30.0),
                 BlocConsumer<LocationBloc, LocationState>(
                   listener: (context, event) {
                     if (event is LocationEnable || event is LocationSet) {
@@ -203,7 +191,7 @@ class HomePage extends StatelessWidget {
                         builder: (context, state) {
                           if (state is DepotFetchListSuccess) {
                             return Container(
-                              padding: EdgeInsets.all(10.0),
+                              padding: const EdgeInsets.all(10.0),
                               decoration: Style.containerDecoration,
                               child: Column(
                                 children: [
@@ -235,7 +223,7 @@ class HomePage extends StatelessWidget {
                           } else if (state is DepotEmpty ||
                               state is DepotError) {
                             return Container(
-                              padding: EdgeInsets.all(10.0),
+                              padding: const EdgeInsets.all(10.0),
                               width: double.infinity,
                               decoration: Style.containerDecoration,
                               child: Text(
@@ -245,12 +233,12 @@ class HomePage extends StatelessWidget {
                             );
                           }
 
-                          return SizedBox.shrink();
+                          return const SizedBox.shrink();
                         },
                       );
                     }
 
-                    return SizedBox.shrink();
+                    return const SizedBox.shrink();
                   },
                 ),
               ],

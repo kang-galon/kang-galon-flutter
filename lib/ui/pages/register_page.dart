@@ -3,15 +3,42 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kang_galon/core/blocs/event_state.dart';
 import 'package:kang_galon/core/viewmodels/bloc.dart';
+import 'package:kang_galon/ui/arguments/arguments.dart';
 import 'package:kang_galon/ui/pages/pages.dart';
 import 'package:kang_galon/ui/widgets/widgets.dart';
 
-class RegisterPage extends StatelessWidget {
-  final _formKey = GlobalKey<FormState>();
-  final _phoneNumberController = TextEditingController();
-  final _nameController = TextEditingController();
+class RegisterPage extends StatefulWidget {
+  static const String routeName = '/register';
 
-  void _registerAction(BuildContext context, UserBloc userBloc) {
+  @override
+  _RegisterPageState createState() => _RegisterPageState();
+}
+
+class _RegisterPageState extends State<RegisterPage> {
+  GlobalKey<FormState> _formKey;
+  TextEditingController _phoneNumberController;
+  TextEditingController _nameController;
+  UserBloc _userBloc;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _formKey = GlobalKey();
+    _phoneNumberController = TextEditingController();
+    _nameController = TextEditingController();
+    _userBloc = BlocProvider.of<UserBloc>(context);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+
+    _phoneNumberController.dispose();
+    _nameController.dispose();
+  }
+
+  void _registerAction() {
     if (_formKey.currentState.validate()) {
       FocusScope.of(context).unfocus();
 
@@ -19,20 +46,19 @@ class RegisterPage extends StatelessWidget {
 
       // Check user is exist
       UserIsExist userIsExist = UserIsExist(phoneNumber: phoneNumber);
-      userBloc.add(userIsExist);
+      _userBloc.add(userIsExist);
     }
   }
 
-  void _loginAction(BuildContext context) {
-    Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => LoginPage()));
+  void _loginAction() {
+    Navigator.pop(context);
   }
 
-  void _sendOtp(BuildContext context, UserBloc userBloc) async {
+  void _sendOtp() async {
     String phoneNumber = '+62' + _phoneNumberController.text;
     String name = _nameController.text;
 
-    await userBloc.sendOtp(
+    await _userBloc.sendOtp(
       phoneNumber,
       (error) {
         showSnackbar(context, 'OTP gagal dikirim');
@@ -40,16 +66,14 @@ class RegisterPage extends StatelessWidget {
       (verificationId, forceResendingToken) {
         showSnackbar(context, 'OTP berhasil dikirim');
 
-        Navigator.pushReplacement(context, MaterialPageRoute(
-          builder: (context) {
-            return VerificationOtpPage(
-              verificationId: verificationId,
-              phoneNumber: phoneNumber,
-              name: name,
-              isLogin: false,
-            );
-          },
-        ));
+        VerificationOtpArguments args =
+            VerificationOtpArguments(verificationId, phoneNumber, name);
+
+        Navigator.pushReplacementNamed(
+          context,
+          VerificationOtpPage.routeName,
+          arguments: args,
+        );
       },
     );
   }
@@ -72,8 +96,6 @@ class RegisterPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    UserBloc userBloc = BlocProvider.of<UserBloc>(context);
-
     return Scaffold(
       body: Center(
         child: SingleChildScrollView(
@@ -93,35 +115,74 @@ class RegisterPage extends StatelessWidget {
                 'Daftar dengan nomor ponsel',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
-              Padding(
-                padding: EdgeInsets.only(top: 10.0),
-                child: Text(
-                  'Masukkan nomor ponsel Anda\nkami akan mengirimkan OTP untuk memverifikasi',
-                  textAlign: TextAlign.center,
-                ),
+              const SizedBox(height: 10.0),
+              Text(
+                'Masukkan nomor ponsel Anda\nkami akan mengirimkan OTP untuk memverifikasi',
+                textAlign: TextAlign.center,
               ),
-              Padding(
-                padding:
-                    const EdgeInsets.only(top: 30.0, left: 20.0, right: 20.0),
-                child: Wrap(
-                  children: [
-                    Container(
-                      decoration: Style.containerDecoration,
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(
-                          vertical: 20.0,
-                          horizontal: 30.0,
-                        ),
-                        child: Form(
-                          key: _formKey,
-                          child: Column(
-                            children: [
-                              TextFormField(
-                                controller: _nameController,
-                                validator: _nameValidator,
+              Wrap(
+                children: [
+                  Container(
+                    margin: const EdgeInsets.only(
+                        top: 30.0, left: 20.0, right: 20.0),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 20.0, horizontal: 30.0),
+                    decoration: Style.containerDecoration,
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        children: [
+                          TextFormField(
+                            controller: _nameController,
+                            validator: _nameValidator,
+                            decoration: InputDecoration(
+                              counterText: '',
+                              hintText: 'Nama',
+                              fillColor: Colors.grey.shade200,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(5.0),
+                                borderSide: BorderSide(
+                                  width: 0,
+                                  style: BorderStyle.none,
+                                ),
+                              ),
+                              filled: true,
+                            ),
+                          ),
+                          const SizedBox(height: 10.0),
+                          BlocConsumer<UserBloc, UserState>(
+                            listener: (context, state) {
+                              if (state is UserDoesntExist) {
+                                _sendOtp();
+                              }
+
+                              if (state is UserError) {
+                                showSnackbar(context, state.toString());
+                              }
+                            },
+                            builder: (context, state) {
+                              return TextFormField(
+                                controller: _phoneNumberController,
+                                maxLength: 11,
+                                keyboardType: TextInputType.number,
+                                validator: _phoneNumberValidator,
+                                inputFormatters: <TextInputFormatter>[
+                                  FilteringTextInputFormatter.allow(
+                                      RegExp(r'[0-9]')),
+                                ],
                                 decoration: InputDecoration(
                                   counterText: '',
-                                  hintText: 'Nama',
+                                  errorText: (state is UserExist)
+                                      ? 'Nomor sudah terdaftar'
+                                      : '',
+                                  prefixIcon: Padding(
+                                    padding: const EdgeInsets.fromLTRB(
+                                        15, 15, 5, 15),
+                                    child: Text(
+                                      '+62',
+                                      style: const TextStyle(fontSize: 15.0),
+                                    ),
+                                  ),
                                   fillColor: Colors.grey.shade200,
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(5.0),
@@ -132,89 +193,40 @@ class RegisterPage extends StatelessWidget {
                                   ),
                                   filled: true,
                                 ),
-                              ),
-                              SizedBox(height: 10.0),
-                              BlocConsumer<UserBloc, UserState>(
-                                listener: (context, state) {
-                                  if (state is UserDoesntExist) {
-                                    _sendOtp(context, userBloc);
-                                  }
-
-                                  if (state is UserError) {
-                                    showSnackbar(context, state.toString());
-                                  }
-                                },
-                                builder: (context, state) {
-                                  return TextFormField(
-                                    controller: _phoneNumberController,
-                                    maxLength: 11,
-                                    keyboardType: TextInputType.number,
-                                    validator: _phoneNumberValidator,
-                                    inputFormatters: <TextInputFormatter>[
-                                      FilteringTextInputFormatter.allow(
-                                          RegExp(r'[0-9]')),
-                                    ],
-                                    decoration: InputDecoration(
-                                      counterText: '',
-                                      errorText: (state is UserExist)
-                                          ? 'Nomor sudah terdaftar'
-                                          : '',
-                                      prefixIcon: Padding(
-                                        padding:
-                                            EdgeInsets.fromLTRB(15, 15, 5, 15),
-                                        child: Text(
-                                          '+62',
-                                          style: TextStyle(fontSize: 15.0),
-                                        ),
-                                      ),
-                                      fillColor: Colors.grey.shade200,
-                                      border: OutlineInputBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(5.0),
-                                        borderSide: BorderSide(
-                                          width: 0,
-                                          style: BorderStyle.none,
-                                        ),
-                                      ),
-                                      filled: true,
-                                    ),
-                                  );
-                                },
-                              ),
-                              SizedBox(height: 10.0),
-                              BlocBuilder<UserBloc, UserState>(
-                                builder: (context, state) {
-                                  if (state is UserLoading) {
-                                    return ElevatedButton(
-                                      onPressed: () {},
-                                      child: SizedBox(
-                                        width: 20.0,
-                                        height: 20.0,
-                                        child: CircularProgressIndicator(
-                                          backgroundColor: Colors.white,
-                                          strokeWidth: 3.0,
-                                        ),
-                                      ),
-                                    );
-                                  } else {
-                                    return ElevatedButton(
-                                      onPressed: () =>
-                                          _registerAction(context, userBloc),
-                                      child: Text('Daftar'),
-                                    );
-                                  }
-                                },
-                              ),
-                            ],
+                              );
+                            },
                           ),
-                        ),
+                          const SizedBox(height: 10.0),
+                          BlocBuilder<UserBloc, UserState>(
+                            builder: (context, state) {
+                              if (state is UserLoading) {
+                                return ElevatedButton(
+                                  onPressed: () {},
+                                  child: const SizedBox(
+                                    width: 20.0,
+                                    height: 20.0,
+                                    child: CircularProgressIndicator(
+                                      backgroundColor: Colors.white,
+                                      strokeWidth: 3.0,
+                                    ),
+                                  ),
+                                );
+                              } else {
+                                return ElevatedButton(
+                                  onPressed: () => _registerAction(),
+                                  child: Text('Daftar'),
+                                );
+                              }
+                            },
+                          ),
+                        ],
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
               Container(
-                margin: EdgeInsets.only(top: 20.0),
+                margin: const EdgeInsets.only(top: 20.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -224,11 +236,11 @@ class RegisterPage extends StatelessWidget {
                         return TextButton(
                           onPressed: (state is UserLoading)
                               ? () {}
-                              : () => _loginAction(context),
+                              : () => _loginAction(),
                           child: Text('Login'),
                           style: ButtonStyle(
                             padding: MaterialStateProperty.all<EdgeInsets>(
-                                EdgeInsets.all(0.0)),
+                                const EdgeInsets.all(0.0)),
                             minimumSize:
                                 MaterialStateProperty.all<Size>(Size.zero),
                           ),

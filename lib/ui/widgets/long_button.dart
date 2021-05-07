@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 class LongButton extends StatelessWidget {
   final BuildContext context;
@@ -17,7 +16,7 @@ class LongButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return OutlinedButton(
-      onPressed: this.onPressed,
+      onPressed: onPressed,
       style: ButtonStyle(
         backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
         elevation: MaterialStateProperty.all<double>(2.0),
@@ -29,16 +28,16 @@ class LongButton extends StatelessWidget {
       ),
       child: Container(
         width: MediaQuery.of(context).size.width * 0.6,
-        padding: EdgeInsets.symmetric(
+        padding: const EdgeInsets.symmetric(
           horizontal: 10.0,
           vertical: 5.0,
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Icon(this.icon),
+            Icon(icon),
             Text(
-              this.text,
+              text,
               textAlign: TextAlign.center,
             ),
             Icon(Icons.chevron_right),

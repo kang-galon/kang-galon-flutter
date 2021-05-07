@@ -28,5 +28,5 @@ class Style {
   );
 
   static final EdgeInsets mainPadding =
-      EdgeInsets.only(top: 50.0, left: 10.0, right: 10.0, bottom: 30.0);
+      const EdgeInsets.only(top: 50.0, left: 10.0, right: 10.0, bottom: 30.0);
 }

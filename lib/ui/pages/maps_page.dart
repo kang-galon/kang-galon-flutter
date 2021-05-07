@@ -8,6 +8,7 @@ import 'package:kang_galon/core/models/models.dart';
 import 'package:kang_galon/core/viewmodels/bloc.dart';
 
 class MapsPage extends StatelessWidget {
+  static const String routeName = '/maps';
   final Completer<GoogleMapController> _mapsController = Completer();
   final List<Marker> _markers = <Marker>[];
   final String _infoWindowTitle = 'My Position';
@@ -85,7 +86,7 @@ class MapsPage extends StatelessWidget {
               child: Column(
                 children: [
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 10.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -93,7 +94,7 @@ class MapsPage extends StatelessWidget {
                           child: Icon(Icons.chevron_left),
                           style: ButtonStyle(
                             padding: MaterialStateProperty.all<EdgeInsets>(
-                              EdgeInsets.all(10.0),
+                              const EdgeInsets.all(10.0),
                             ),
                             minimumSize:
                                 MaterialStateProperty.all<Size>(Size.zero),
@@ -106,13 +107,13 @@ class MapsPage extends StatelessWidget {
                           child: Row(
                             children: [
                               Icon(Icons.map),
-                              SizedBox(width: 5.0),
+                              const SizedBox(width: 5.0),
                               Text('Ubah posisi'),
                             ],
                           ),
                           style: ButtonStyle(
                             padding: MaterialStateProperty.all<EdgeInsets>(
-                              EdgeInsets.symmetric(
+                              const EdgeInsets.symmetric(
                                   vertical: 10.0, horizontal: 20.0),
                             ),
                             shape: MaterialStateProperty.all<
@@ -127,11 +128,11 @@ class MapsPage extends StatelessWidget {
                       ],
                     ),
                   ),
-                  SizedBox(height: 10.0),
+                  const SizedBox(height: 10.0),
                   Container(
                     width: screenSize.width,
-                    padding: EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 30.0),
-                    decoration: BoxDecoration(
+                    padding: const EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 30.0),
+                    decoration: const BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.only(
                           topRight: Radius.circular(20.0),

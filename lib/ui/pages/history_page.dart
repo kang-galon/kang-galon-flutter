@@ -2,20 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kang_galon/core/blocs/event_state.dart';
 import 'package:kang_galon/core/viewmodels/bloc.dart';
+import 'package:kang_galon/ui/arguments/transaction_arguments.dart';
 import 'package:kang_galon/ui/pages/pages.dart';
 import 'package:kang_galon/ui/widgets/widgets.dart';
 
 class HistoryPage extends StatelessWidget {
+  static const String routeName = '/history';
+
   void _backAction(BuildContext context) {
     Navigator.pop(context);
   }
 
   void _detailTransactionAction(
       BuildContext context, TransactionBloc transactionBloc, int id) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => TransactionPage(id: id)),
-    );
+    TransactionArguments args = TransactionArguments(id);
+
+    Navigator.pushNamed(context, TransactionPage.routeName, arguments: args);
   }
 
   @override
@@ -35,9 +37,9 @@ class HistoryPage extends StatelessWidget {
                 onPressed: () => _backAction(context),
                 label: 'Riwayat Transaksi',
               ),
-              SizedBox(height: 20.0),
+              const SizedBox(height: 20.0),
               Container(
-                padding: EdgeInsets.all(10.0),
+                padding: const EdgeInsets.all(10.0),
                 width: MediaQuery.of(context).size.width,
                 decoration: Style.containerDecoration,
                 child: BlocConsumer<TransactionBloc, TransactionState>(
@@ -75,7 +77,7 @@ class HistoryPage extends StatelessWidget {
                       );
                     }
 
-                    return SizedBox.shrink();
+                    return const SizedBox.shrink();
                   },
                 ),
               ),

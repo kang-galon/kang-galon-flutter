@@ -24,7 +24,7 @@ class UserDescription extends StatelessWidget {
               borderRadius: BorderRadius.circular(10),
               onTap: onTap,
               child: Container(
-                margin: EdgeInsets.all(10.0),
+                margin: const EdgeInsets.all(10.0),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   border: Border.all(
@@ -40,25 +40,25 @@ class UserDescription extends StatelessWidget {
             ),
           ),
         ),
-        SizedBox(width: 20.0),
+        const SizedBox(width: 20.0),
         Expanded(
           child: Container(
             height: 65.0,
-            padding: EdgeInsets.all(20.0),
+            padding: const EdgeInsets.all(20.0),
             decoration: Style.containerDecoration,
             alignment: Alignment.centerLeft,
             child: Row(
               children: [
                 Text(
                   'Hai, ',
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 15.0,
                     letterSpacing: 0.5,
                   ),
                 ),
                 Text(
                   name,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 15.0,
                     fontWeight: FontWeight.w500,
                     letterSpacing: 0.5,

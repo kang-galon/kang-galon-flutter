@@ -2,23 +2,12 @@ import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:kang_galon/core/viewmodels/bloc.dart';
+import 'package:kang_galon/ui/arguments/arguments.dart';
 import 'package:kang_galon/ui/pages/pages.dart';
 import 'package:kang_galon/ui/widgets/widgets.dart';
-
-// const AndroidNotificationChannel channel = AndroidNotificationChannel(
-//   'high_importance_channel', // id
-//   'High Importance Notifications', // title
-//   'This channel is used for important notifications.', // description
-//   importance: Importance.max,
-// );
-
-// final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-//     FlutterLocalNotificationsPlugin();
 
 class SplashPage extends StatefulWidget {
   @override
@@ -26,12 +15,16 @@ class SplashPage extends StatefulWidget {
 }
 
 class _SplashPageState extends State<SplashPage> {
-  bool _initialized = false;
-  bool _error = false;
+  bool _initialized;
+  bool _error;
 
   @override
   void initState() {
     super.initState();
+
+    _initialized = false;
+    _error = false;
+
     splashTimer();
   }
 
@@ -41,48 +34,55 @@ class _SplashPageState extends State<SplashPage> {
 
       await Firebase.initializeApp();
 
-      // await flutterLocalNotificationsPlugin
-      //     .resolvePlatformSpecificImplementation<
-      //         AndroidFlutterLocalNotificationsPlugin>()
-      //     ?.createNotificationChannel(channel);
-
-      // var initializationSettingAndroid =
-      //     AndroidInitializationSettings('@mipmap/ic_launcher');
-      // var initializationSettings =
-      //     InitializationSettings(android: initializationSettingAndroid);
-
-      // flutterLocalNotificationsPlugin.initialize(initializationSettings);
-      // FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      //   RemoteNotification notification = message.notification;
-      //   AndroidNotification android = message.notification?.android;
-
-      //   if (notification != null && android != null) {
-      //     flutterLocalNotificationsPlugin.show(
-      //         notification.hashCode,
-      //         notification.title,
-      //         notification.body,
-      //         NotificationDetails(
-      //           android: AndroidNotificationDetails(
-      //             channel.id,
-      //             channel.name,
-      //             channel.description,
-      //             icon: android?.smallIcon,
-      //             // other properties...
-      //           ),
-      //         ));
-      //   }
-      // });
-
       Timer(duration, () {
-        setState(() {
-          _initialized = true;
-        });
+        setState(() => _initialized = true);
       });
     } catch (e) {
-      setState(() {
-        _error = true;
-      });
+      setState(() => _error = true);
     }
+  }
+
+  Map<String, Widget Function(BuildContext)> get _routes => {
+        AccountPage.routeName: (_) => AccountPage(),
+        ChatsPage.routeName: (_) => ChatsPage(),
+        HistoryPage.routeName: (_) => HistoryPage(),
+        HomePage.routeName: (_) => HomePage(),
+        LoginPage.routeName: (_) => LoginPage(),
+        MapsPage.routeName: (_) => MapsPage(),
+        NearDepotPage.routeName: (_) => NearDepotPage(),
+        RegisterPage.routeName: (_) => RegisterPage(),
+      };
+
+  Route _buildOnGenerateRoute(RouteSettings settings) {
+    if (settings.name == DepotPage.routeName)
+      return MaterialPageRoute(builder: (context) {
+        final DepotArguments args = settings.arguments as DepotArguments;
+
+        return DepotPage(depot: args.depot);
+      });
+
+    if (settings.name == TransactionPage.routeName)
+      return MaterialPageRoute(builder: (context) {
+        final TransactionArguments args =
+            settings.arguments as TransactionArguments;
+
+        return TransactionPage(id: args.id);
+      });
+
+    if (settings.name == VerificationOtpPage.routeName)
+      return MaterialPageRoute(builder: (context) {
+        final VerificationOtpArguments args =
+            settings.arguments as VerificationOtpArguments;
+
+        return VerificationOtpPage(
+          name: args.name,
+          phoneNumber: args.phoneNumber,
+          verificationId: args.verificationId,
+          isLogin: args.isLogin,
+        );
+      });
+
+    return null;
   }
 
   @override
@@ -119,7 +119,11 @@ class _SplashPageState extends State<SplashPage> {
               create: (context) => TransactionCurrentBloc()),
           BlocProvider<ChatsBloc>(create: (context) => ChatsBloc()),
         ],
-        child: MaterialApp(home: LoginPage()),
+        child: MaterialApp(
+          routes: _routes,
+          initialRoute: LoginPage.routeName,
+          onGenerateRoute: (settings) => _buildOnGenerateRoute(settings),
+        ),
       );
     } else {
       return MultiBlocProvider(
@@ -134,7 +138,11 @@ class _SplashPageState extends State<SplashPage> {
               create: (context) => TransactionCurrentBloc()),
           BlocProvider<ChatsBloc>(create: (context) => ChatsBloc()),
         ],
-        child: MaterialApp(home: HomePage()),
+        child: MaterialApp(
+          routes: _routes,
+          initialRoute: HomePage.routeName,
+          onGenerateRoute: (settings) => _buildOnGenerateRoute(settings),
+        ),
       );
     }
   }

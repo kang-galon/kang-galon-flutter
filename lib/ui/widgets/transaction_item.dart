@@ -21,7 +21,7 @@ class TransactionItem extends StatelessWidget {
           borderRadius: BorderRadius.circular(10.0),
         ),
         child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 5.0, vertical: 10.0),
+          padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 10.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -30,7 +30,7 @@ class TransactionItem extends StatelessWidget {
                 children: [
                   Text(
                     transaction.depotName,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 15.0,
                     ),
@@ -38,20 +38,20 @@ class TransactionItem extends StatelessWidget {
                   Icon(Icons.chevron_right),
                 ],
               ),
-              SizedBox(height: 5.0),
+              const SizedBox(height: 5.0),
               Text(
                 transaction.statusDescription,
-                style: TextStyle(
+                style: const TextStyle(
                   color: Colors.grey,
                   fontWeight: FontWeight.bold,
                   fontSize: 15.0,
                 ),
               ),
-              SizedBox(height: 10.0),
+              const SizedBox(height: 10.0),
               Row(
                 children: [
                   Text(transaction.createdAt),
-                  Spacer(),
+                  const Spacer(),
                   RatingBar.builder(
                     initialRating: transaction.rating,
                     minRating: 1,
@@ -66,7 +66,7 @@ class TransactionItem extends StatelessWidget {
                     ),
                     onRatingUpdate: (double value) {},
                   ),
-                  SizedBox(width: 5.0),
+                  const SizedBox(width: 5.0),
                   Text(transaction.rating.toString()),
                 ],
               ),

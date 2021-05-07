@@ -20,13 +20,13 @@ class HeaderBar extends StatelessWidget {
           ),
           shape: CircleBorder(),
           color: Colors.white,
-          padding: EdgeInsets.all(10.0),
+          padding: const EdgeInsets.all(10.0),
           elevation: 5.0,
           onPressed: onPressed,
         ),
         Expanded(
           child: Container(
-            padding: EdgeInsets.all(20.0),
+            padding: const EdgeInsets.all(20.0),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(10.0),
@@ -41,7 +41,7 @@ class HeaderBar extends StatelessWidget {
             ),
             child: Text(
               label,
-              style: TextStyle(fontSize: 15.0),
+              style: const TextStyle(fontSize: 15.0),
               textAlign: TextAlign.center,
             ),
           ),

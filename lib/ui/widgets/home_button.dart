@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-class HomeButton extends StatelessWidget {
+class CustomIconButton extends StatelessWidget {
   final String label;
   final IconData icon;
   final void Function() onPressed;
   final bool isDense;
 
-  HomeButton({
+  CustomIconButton({
     @required this.label,
     @required this.icon,
     @required this.onPressed,
@@ -16,26 +16,26 @@ class HomeButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextButton(
-      onPressed: this.onPressed,
+      onPressed: onPressed,
       style: ButtonStyle(
         minimumSize: isDense
             ? MaterialStateProperty.all<Size>(Size(60.0, 60.0))
             : MaterialStateProperty.all<Size>(Size(100.0, 60.0)),
       ),
       child: Padding(
-        padding: EdgeInsets.all(5.0),
+        padding: const EdgeInsets.all(5.0),
         child: Column(
           children: [
             Container(
-              child: Icon(this.icon),
-              padding: EdgeInsets.all(10.0),
-              margin: EdgeInsets.only(bottom: 5.0),
+              child: Icon(icon),
+              padding: const EdgeInsets.all(10.0),
+              margin: const EdgeInsets.only(bottom: 5.0),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10.0),
                 border: Border.all(color: Colors.grey),
               ),
             ),
-            Text(this.label),
+            Text(label),
           ],
         ),
       ),
