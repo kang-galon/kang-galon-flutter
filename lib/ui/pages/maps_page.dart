@@ -7,20 +7,49 @@ import 'package:kang_galon/core/blocs/event_state.dart';
 import 'package:kang_galon/core/models/models.dart';
 import 'package:kang_galon/core/viewmodels/bloc.dart';
 
-class MapsPage extends StatelessWidget {
+class MapsPage extends StatefulWidget {
   static const String routeName = '/maps';
-  final Completer<GoogleMapController> _mapsController = Completer();
-  final List<Marker> _markers = <Marker>[];
+
+  @override
+  _MapsPageState createState() => _MapsPageState();
+}
+
+class _MapsPageState extends State<MapsPage> {
   final String _infoWindowTitle = 'My Position';
   final String _markerId = 'My Location';
+  LocationBloc _locationBloc;
+  double _latitude;
+  double _longitude;
+  Completer<GoogleMapController> _mapsController;
+  List<Marker> _markers;
 
-  void _setMarkerLocation(LocationBloc locationBloc, LatLng latLng) {
-    Location location = Location(
-        address: '', latitude: latLng.latitude, longitude: latLng.longitude);
+  @override
+  void initState() {
+    super.initState();
 
-    locationBloc.add(
-      LocationSet(location: location),
-    );
+    _mapsController = Completer();
+    _markers = <Marker>[];
+    _locationBloc = BlocProvider.of<LocationBloc>(context);
+
+    // set current position
+    LocationState locationState = _locationBloc.state;
+    if (locationState is LocationEnable) {
+      _latitude = locationState.location.latitude;
+      _longitude = locationState.location.longitude;
+
+      _setMarkerLocation();
+    }
+  }
+
+  @override
+  void dispose() async {
+    super.dispose();
+
+    (await _mapsController.future).dispose();
+  }
+
+  void _setMarkerLocation() {
+    LatLng latLng = LatLng(_latitude, _longitude);
 
     // create marker
     _markers.add(
@@ -33,78 +62,74 @@ class MapsPage extends StatelessWidget {
     );
   }
 
-  void _backAction(BuildContext context) {
+  void _changeLocation() {
+    Location location = Location(latitude: _latitude, longitude: _longitude);
+    LocationSet locationSet = LocationSet(location: location);
+    _locationBloc.add(locationSet);
+
+    _backAction();
+  }
+
+  void _backAction() {
     Navigator.pop(context);
   }
 
   @override
   Widget build(BuildContext context) {
-    Size screenSize = MediaQuery.of(context).size;
-    LocationBloc locationBloc = BlocProvider.of<LocationBloc>(context);
-    double latitude = 0.0;
-    double longitude = 0.0;
-
-    LocationState locationState = locationBloc.state;
-    if (locationState is LocationEnable) {
-      latitude = locationState.location.latitude;
-      longitude = locationState.location.longitude;
-    }
-
-    // current location
-    _setMarkerLocation(locationBloc, LatLng(latitude, longitude));
-
     return Scaffold(
       body: Stack(
         children: [
           Container(
-            child: BlocBuilder<LocationBloc, LocationState>(
-              bloc: locationBloc,
-              builder: (BuildContext context, state) {
-                return GoogleMap(
-                  initialCameraPosition: CameraPosition(
-                    target: LatLng(latitude, longitude),
-                    zoom: 20.0,
-                  ),
-                  myLocationEnabled: false,
-                  myLocationButtonEnabled: false,
-                  zoomControlsEnabled: false,
-                  markers: Set<Marker>.from(_markers),
-                  onMapCreated: (controller) =>
-                      _mapsController.complete(controller),
-                  onTap: (latLng) async {
-                    _setMarkerLocation(locationBloc, latLng);
-                  },
-                );
+            child: GoogleMap(
+              initialCameraPosition: CameraPosition(
+                target: LatLng(_latitude, _longitude),
+                zoom: 20.0,
+              ),
+              myLocationEnabled: false,
+              myLocationButtonEnabled: false,
+              zoomControlsEnabled: false,
+              markers: Set<Marker>.from(_markers),
+              onMapCreated: (controller) =>
+                  _mapsController.complete(controller),
+              onTap: (latLng) {
+                setState(() {
+                  _latitude = latLng.latitude;
+                  _longitude = latLng.longitude;
+
+                  _setMarkerLocation();
+                });
               },
             ),
           ),
           Positioned(
             bottom: 0.0,
-            child: Container(
-              width: screenSize.width,
-              color: Colors.transparent,
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        ElevatedButton(
-                          child: Icon(Icons.chevron_left),
-                          style: ButtonStyle(
-                            padding: MaterialStateProperty.all<EdgeInsets>(
-                              const EdgeInsets.all(10.0),
-                            ),
-                            minimumSize:
-                                MaterialStateProperty.all<Size>(Size.zero),
-                            shape: MaterialStateProperty.all<CircleBorder>(
-                                CircleBorder()),
+            left: 0.0,
+            right: 0.0,
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      ElevatedButton(
+                        child: Icon(Icons.chevron_left),
+                        style: ButtonStyle(
+                          padding: MaterialStateProperty.all<EdgeInsets>(
+                            const EdgeInsets.all(10.0),
                           ),
-                          onPressed: () => _backAction(context),
+                          minimumSize:
+                              MaterialStateProperty.all<Size>(Size.zero),
+                          shape: MaterialStateProperty.all<CircleBorder>(
+                              CircleBorder()),
                         ),
-                        ElevatedButton(
+                        onPressed: () => _backAction(),
+                      ),
+                      const SizedBox(width: 10.0),
+                      Expanded(
+                        child: ElevatedButton(
                           child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Icon(Icons.map),
                               const SizedBox(width: 5.0),
@@ -123,40 +148,14 @@ class MapsPage extends StatelessWidget {
                               ),
                             ),
                           ),
-                          onPressed: () => _backAction(context),
+                          onPressed: () => _changeLocation(),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 10.0),
-                  Container(
-                    width: screenSize.width,
-                    padding: const EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 30.0),
-                    decoration: const BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.only(
-                          topRight: Radius.circular(20.0),
-                          topLeft: Radius.circular(20.0),
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey,
-                            blurRadius: 2.0,
-                            offset: Offset(0.0, -1.0),
-                          )
-                        ]),
-                    child: BlocBuilder<LocationBloc, LocationState>(
-                      builder: (context, state) {
-                        if (state is LocationEnable) {
-                          return Text(state.location.address);
-                        }
-
-                        return Text('');
-                      },
-                    ),
-                  )
-                ],
-              ),
+                ),
+                const SizedBox(height: 10.0),
+              ],
             ),
           ),
         ],
