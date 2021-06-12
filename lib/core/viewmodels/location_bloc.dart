@@ -14,24 +14,24 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
 
   @override
   Stream<LocationState> mapEventToState(LocationEvent event) async* {
-    _serviceEnabled = await this._location.serviceEnabled();
+    _serviceEnabled = await _location.serviceEnabled();
     if (!_serviceEnabled) {
-      _serviceEnabled = await this._location.requestService();
+      _serviceEnabled = await _location.requestService();
       if (!_serviceEnabled) {
         yield LocationServiceUnable();
       }
     }
 
-    _permissionGranted = await this._location.hasPermission();
+    _permissionGranted = await _location.hasPermission();
     if (_permissionGranted == PermissionStatus.denied) {
-      _permissionGranted = await this._location.requestPermission();
+      _permissionGranted = await _location.requestPermission();
       if (_permissionGranted != PermissionStatus.granted) {
         yield LocationPermissionUnable();
       }
     }
 
     if (event is LocationCurrent) {
-      LocationData locationData = await this._location.getLocation();
+      LocationData locationData = await _location.getLocation();
       String address = 'Alamat tidak tersedia';
 
       try {

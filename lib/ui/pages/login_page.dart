@@ -85,7 +85,7 @@ class _LoginPageState extends State<LoginPage> {
     }
 
     if (value.length < 11) {
-      return 'Min 11 number';
+      return 'Minimal 11 angka';
     }
 
     return null;
@@ -164,7 +164,8 @@ class _LoginPageState extends State<LoginPage> {
                                   : '',
                               counterText: '',
                               prefixIcon: Padding(
-                                padding: EdgeInsets.fromLTRB(15, 15, 5, 15),
+                                padding:
+                                    const EdgeInsets.fromLTRB(15, 15, 5, 15),
                                 child: Text(
                                   '+62',
                                   style: TextStyle(fontSize: 15.0),

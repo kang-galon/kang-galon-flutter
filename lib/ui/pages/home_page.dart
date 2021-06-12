@@ -33,6 +33,7 @@ class HomePage extends StatelessWidget {
       await launch('tel:${depot.phoneNumber}');
 
   void _chatAction(BuildContext context) async {
+    print(await fire.FirebaseAuth.instance.currentUser.getIdToken());
     // FirebaseMessaging messaging = FirebaseMessaging.instance;
     // print(await messaging.getToken());
     // print(fire.FirebaseAuth.instance.currentUser.uid);

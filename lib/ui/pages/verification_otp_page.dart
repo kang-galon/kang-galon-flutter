@@ -21,13 +21,6 @@ class VerificationOtpPage extends StatelessWidget {
     @required this.isLogin,
   });
 
-  BoxDecoration get _pinPutDecoration {
-    return BoxDecoration(
-      border: Border.all(color: Colors.deepPurpleAccent),
-      borderRadius: BorderRadius.circular(5.0),
-    );
-  }
-
   void _pinSubmitAction(String pin, UserBloc userBloc) {
     // if login
     if (isLogin) {
@@ -75,11 +68,11 @@ class VerificationOtpPage extends StatelessWidget {
               ),
             ),
             Text(
-              'Verification',
+              'Verifikasi',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10.0),
-            Text('Enter OTP code sent to your number ' + phoneNumber),
+            Text('Masukkan OTP yang telah dikirim ke ' + phoneNumber),
             Wrap(
               children: [
                 Container(
@@ -100,16 +93,23 @@ class VerificationOtpPage extends StatelessWidget {
                         return PinPut(
                           fieldsCount: 6,
                           onSubmit: (pin) => _pinSubmitAction(pin, userBloc),
+                          keyboardType: TextInputType.number,
                           inputFormatters: <TextInputFormatter>[
                             FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
                           ],
-                          submittedFieldDecoration: _pinPutDecoration,
-                          selectedFieldDecoration: _pinPutDecoration,
-                          followingFieldDecoration: _pinPutDecoration.copyWith(
+                          submittedFieldDecoration: BoxDecoration(
+                            border: Border.all(color: Colors.deepPurpleAccent),
                             borderRadius: BorderRadius.circular(5.0),
+                          ),
+                          selectedFieldDecoration: BoxDecoration(
+                            border: Border.all(color: Colors.deepPurpleAccent),
+                            borderRadius: BorderRadius.circular(5.0),
+                          ),
+                          followingFieldDecoration: BoxDecoration(
                             border: Border.all(
                               color: Colors.deepPurpleAccent.withOpacity(.5),
                             ),
+                            borderRadius: BorderRadius.circular(5.0),
                           ),
                         );
                       }
