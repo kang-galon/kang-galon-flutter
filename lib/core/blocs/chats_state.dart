@@ -26,20 +26,15 @@ class ChatsError extends ChatsState {
 }
 
 class ChatsSendMessageSuccess extends ChatsState {
-  final Depot depot;
-  final List<Chats> chats;
-
-  ChatsSendMessageSuccess({this.depot, this.chats});
-
   @override
-  List<Object> get props => [depot, chats];
+  List<Object> get props => [];
 }
 
 class ChatsGetMessageSuccess extends ChatsState {
   final Chats chats;
 
-  ChatsGetMessageSuccess({this.chats});
+  ChatsGetMessageSuccess({required this.chats});
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [chats];
 }

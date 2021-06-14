@@ -3,13 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:kang_galon/core/models/models.dart';
 import 'package:kang_galon/ui/config/pallette.dart';
-import 'package:kang_galon/ui/pages/pages.dart';
 
 class DepotDescription extends StatelessWidget {
   final Depot depot;
   final bool isDistance;
 
-  DepotDescription({@required this.depot, this.isDistance = true});
+  DepotDescription({required this.depot, this.isDistance = true});
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +30,8 @@ class DepotDescription extends StatelessWidget {
                       fit: BoxFit.fitWidth,
                       image: depot.image == null
                           ? AssetImage('assets/images/shop.png')
-                          : CachedNetworkImageProvider(depot.image),
+                          : CachedNetworkImageProvider(depot.image!)
+                              as ImageProvider,
                     ),
                   ),
                   const SizedBox(width: 5.0),

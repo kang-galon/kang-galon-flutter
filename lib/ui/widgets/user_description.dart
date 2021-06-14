@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:kang_galon/ui/config/pallette.dart';
-import 'package:kang_galon/ui/pages/pages.dart';
 
 class UserDescription extends StatelessWidget {
-  final Function() onTap;
+  final VoidCallback onTap;
   final String name;
 
   UserDescription({
-    @required this.onTap,
-    @required this.name,
+    required this.onTap,
+    required this.name,
   });
 
   @override

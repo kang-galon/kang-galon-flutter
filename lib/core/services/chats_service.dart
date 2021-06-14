@@ -6,9 +6,9 @@ import 'package:kang_galon/core/services/services.dart';
 import 'package:http/http.dart' as http;
 
 class ChatsService {
-  Future<Chats> getMessage() async {
+  static Future<Chats> getMessage() async {
     Uri uri = url('/client/chats');
-    String token = await FirebaseAuth.instance.currentUser.getIdToken();
+    String token = await FirebaseAuth.instance.currentUser!.getIdToken();
 
     var response =
         await http.get(uri, headers: {'Authorization': 'Bearer $token'});
@@ -21,10 +21,10 @@ class ChatsService {
     }
   }
 
-  Future<void> sendMessage(
+  static Future<void> sendMessage(
       String depotPhoneNumber, int transactionId, String message) async {
     Uri uri = url('/client/chats/send');
-    String token = await FirebaseAuth.instance.currentUser.getIdToken();
+    String token = await FirebaseAuth.instance.currentUser!.getIdToken();
 
     var response = await http.post(
       uri,
@@ -35,5 +35,10 @@ class ChatsService {
         'message': message
       },
     );
+
+    var json = jsonDecode(response.body);
+    if (!json['success']) {
+      throw Exception(json['message']);
+    }
   }
 }

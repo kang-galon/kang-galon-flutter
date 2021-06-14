@@ -4,37 +4,31 @@ import 'package:kang_galon/core/models/models.dart';
 import 'package:kang_galon/core/services/services.dart';
 
 class ChatsBloc extends Bloc<ChatsEvent, ChatsState> {
-  final ChatsService chatsService = ChatsService();
-
   ChatsBloc() : super(ChatsUninitialized());
 
   @override
   Stream<ChatsState> mapEventToState(ChatsEvent event) async* {
-    if (event is ChatSendMessage) {
-      try {
+    try {
+      if (event is ChatSendMessage) {
         yield ChatsLoading();
 
-        await chatsService.sendMessage(
+        await ChatsService.sendMessage(
             event.depotPhoneNumber, event.transactionId, event.message);
 
         yield ChatsSendMessageSuccess();
-      } catch (e) {
-        print(e);
-        yield ChatsError();
       }
-    }
 
-    if (event is ChatGetMessage) {
-      try {
+      if (event is ChatGetMessage) {
         yield ChatsLoading();
 
-        Chats chats = await chatsService.getMessage();
+        Chats chats = await ChatsService.getMessage();
 
         yield ChatsGetMessageSuccess(chats: chats);
-      } catch (e) {
-        print(e);
-        yield ChatsError();
       }
+    } catch (e) {
+      print('ChatsBloc - $e');
+
+      yield ChatsError();
     }
   }
 }

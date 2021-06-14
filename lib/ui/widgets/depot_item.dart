@@ -6,14 +6,14 @@ import 'package:kang_galon/ui/config/pallette.dart';
 import 'package:shimmer/shimmer.dart';
 
 class DepotItem extends StatelessWidget {
-  final Depot depot;
-  final Function onTap;
+  final Depot? depot;
+  final VoidCallback? onTap;
   final bool isContainer;
   final bool isLoading;
 
   DepotItem({
-    @required this.depot,
-    @required this.onTap,
+    required this.depot,
+    required this.onTap,
     this.isContainer = false,
   }) : this.isLoading = false;
 
@@ -55,9 +55,10 @@ class DepotItem extends StatelessWidget {
                           width: 70.0,
                           height: 70.0,
                           fit: BoxFit.fill,
-                          image: depot.image == null
+                          image: depot!.image == null
                               ? AssetImage('assets/images/shop.png')
-                              : CachedNetworkImageProvider(depot.image),
+                              : CachedNetworkImageProvider(depot!.image!)
+                                  as ImageProvider,
                         ),
                       ),
                 const SizedBox(width: 10.0),
@@ -79,7 +80,7 @@ class DepotItem extends StatelessWidget {
                             )
                           : Row(
                               children: [
-                                Text(depot.name),
+                                Text(depot!.name),
                                 const Spacer(),
                                 Icon(
                                   Icons.arrow_forward_ios,
@@ -102,7 +103,7 @@ class DepotItem extends StatelessWidget {
                               ),
                             )
                           : Text(
-                              this.depot.address,
+                              depot!.address,
                               overflow: TextOverflow.ellipsis,
                               maxLines: 2,
                             ),
@@ -128,12 +129,12 @@ class DepotItem extends StatelessWidget {
                                 ),
                                 const SizedBox(width: 2.0),
                                 Text(
-                                  '${depot.distance} km',
+                                  '${depot!.distance} km',
                                   style: TextStyle(fontWeight: FontWeight.bold),
                                 ),
                                 const Spacer(),
                                 RatingBar.builder(
-                                  initialRating: depot.rating,
+                                  initialRating: depot!.rating,
                                   minRating: 1,
                                   direction: Axis.horizontal,
                                   allowHalfRating: true,
@@ -148,7 +149,7 @@ class DepotItem extends StatelessWidget {
                                 ),
                                 const SizedBox(width: 5.0),
                                 Text(
-                                  depot.rating.toString(),
+                                  depot!.rating.toString(),
                                   textAlign: TextAlign.right,
                                 ),
                               ],

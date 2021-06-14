@@ -8,7 +8,7 @@ abstract class DepotEvent extends Equatable {
 class DepotFetchList extends DepotEvent {
   final Location location;
 
-  DepotFetchList({this.location});
+  DepotFetchList({required this.location});
 
   @override
   List<Object> get props => [location];

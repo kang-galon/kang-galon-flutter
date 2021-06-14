@@ -1,14 +1,13 @@
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:geocoder/geocoder.dart';
 import 'package:kang_galon/core/blocs/event_state.dart';
+import 'package:kang_galon/core/helper/map_helper.dart';
 import 'package:kang_galon/core/models/location.dart' as model;
 import 'package:location/location.dart';
 
 class LocationBloc extends Bloc<LocationEvent, LocationState> {
-  Location _location = Location();
-  bool _serviceEnabled;
-  PermissionStatus _permissionGranted;
+  final Location _location = Location();
+  late bool _serviceEnabled;
+  late PermissionStatus _permissionGranted;
 
   LocationBloc() : super(LocationServiceUnable());
 
@@ -32,39 +31,21 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
 
     if (event is LocationCurrent) {
       LocationData locationData = await _location.getLocation();
-      String address = 'Alamat tidak tersedia';
-
-      try {
-        Coordinates coordinates =
-            Coordinates(locationData.latitude, locationData.longitude);
-        List<Address> addresses =
-            await Geocoder.local.findAddressesFromCoordinates(coordinates);
-        address = addresses.first.addressLine;
-      } on PlatformException {
-        yield LocationError();
-      }
+      String address = await MapHelper.getAddressLocation(
+          locationData.latitude!, locationData.longitude!);
 
       yield LocationEnable(
         location: model.Location(
           address: address,
-          latitude: locationData.latitude,
-          longitude: locationData.longitude,
+          latitude: locationData.latitude!,
+          longitude: locationData.longitude!,
         ),
       );
     }
 
     if (event is LocationSet) {
-      String address = 'Alamat tidak tersedia';
-
-      try {
-        Coordinates coordinates =
-            Coordinates(event.location.latitude, event.location.longitude);
-        List<Address> addresses =
-            await Geocoder.local.findAddressesFromCoordinates(coordinates);
-        address = addresses.first.addressLine;
-      } on PlatformException {
-        yield LocationError();
-      }
+      String address = await MapHelper.getAddressLocation(
+          event.location.latitude, event.location.longitude);
 
       yield LocationEnable(
         location: model.Location(

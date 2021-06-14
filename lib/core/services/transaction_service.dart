@@ -6,10 +6,10 @@ import 'package:kang_galon/core/models/models.dart';
 import 'package:kang_galon/core/services/services.dart';
 
 class TransactionService {
-  Future<bool> addTransaction(
+  static Future<bool> addTransaction(
       String depotPhoneNumber, String clientLocation, int gallon) async {
     Uri uri = url('/client/transaction');
-    String token = await FirebaseAuth.instance.currentUser.getIdToken();
+    String token = await FirebaseAuth.instance.currentUser!.getIdToken();
 
     var response = await http.post(uri, headers: {
       'Authorization': 'Bearer ' + token,
@@ -23,9 +23,9 @@ class TransactionService {
     return json['success'];
   }
 
-  Future<List<Transaction>> getTransactions() async {
+  static Future<List<Transaction>> getTransactions() async {
     Uri uri = url('/client/transaction');
-    String token = await FirebaseAuth.instance.currentUser.getIdToken();
+    String token = await FirebaseAuth.instance.currentUser!.getIdToken();
 
     var response = await http.get(uri, headers: {
       'Authorization': 'Bearer ' + token,
@@ -39,9 +39,9 @@ class TransactionService {
     }
   }
 
-  Future<Transaction> getDetailTransactions(int id) async {
+  static Future<Transaction> getDetailTransactions(int id) async {
     Uri uri = url('/client/transaction/$id');
-    String token = await FirebaseAuth.instance.currentUser.getIdToken();
+    String token = await FirebaseAuth.instance.currentUser!.getIdToken();
 
     var response = await http.get(uri, headers: {
       'Authorization': 'Bearer ' + token,
@@ -55,9 +55,9 @@ class TransactionService {
     }
   }
 
-  Future<Transaction> getCurrentTransactions() async {
+  static Future<Transaction?> getCurrentTransactions() async {
     Uri uri = url('/client/transaction/current');
-    String token = await FirebaseAuth.instance.currentUser.getIdToken();
+    String token = await FirebaseAuth.instance.currentUser!.getIdToken();
 
     var response = await http.get(uri, headers: {
       'Authorization': 'Bearer ' + token,
@@ -71,9 +71,9 @@ class TransactionService {
     }
   }
 
-  Future<void> denyCurrentTransaction() async {
+  static Future<void> denyCurrentTransaction() async {
     Uri uri = url('/client/transaction/current/deny');
-    String token = await FirebaseAuth.instance.currentUser.getIdToken();
+    String token = await FirebaseAuth.instance.currentUser!.getIdToken();
 
     var response = await http.post(uri, headers: {
       'Authorization': 'Bearer ' + token,

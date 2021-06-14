@@ -18,10 +18,10 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  LocationBloc _locationBloc;
-  DepotBloc _depotBloc;
-  TransactionCurrentBloc _transactionCurrentBloc;
-  RefreshController _refreshController;
+  late LocationBloc _locationBloc;
+  late DepotBloc _depotBloc;
+  late TransactionCurrentBloc _transactionCurrentBloc;
+  late RefreshController _refreshController;
 
   @override
   void initState() {
@@ -77,7 +77,7 @@ class _HomePageState extends State<HomePage> {
       await launch('tel:${depot.phoneNumber}');
 
   void _chatAction() async {
-    print(await fire.FirebaseAuth.instance.currentUser.getIdToken());
+    print(await fire.FirebaseAuth.instance.currentUser!.getIdToken());
     // FirebaseMessaging messaging = FirebaseMessaging.instance;
     // print(await messaging.getToken());
     // print(fire.FirebaseAuth.instance.currentUser.uid);

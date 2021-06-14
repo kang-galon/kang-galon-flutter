@@ -13,22 +13,22 @@ class Transaction {
   final int gallon;
   final double rating;
   final String createdAt;
-  final Depot depot;
+  final Depot? depot;
 
   Transaction({
-    this.id,
-    this.depotName,
-    this.depotPhoneNumber,
-    this.clientPhoneNumber,
-    this.clientLocation,
-    this.status,
-    this.statusDescription,
-    this.totalPrice,
-    this.totalPriceDescription,
-    this.gallon,
-    this.rating,
-    this.createdAt,
-    this.depot,
+    required this.id,
+    required this.depotName,
+    required this.depotPhoneNumber,
+    required this.clientPhoneNumber,
+    required this.clientLocation,
+    required this.status,
+    required this.statusDescription,
+    required this.totalPrice,
+    required this.totalPriceDescription,
+    required this.gallon,
+    required this.rating,
+    required this.createdAt,
+    required this.depot,
   });
 
   static List<Transaction> fromJsonToList(dynamic json) {
@@ -48,6 +48,7 @@ class Transaction {
         gallon: transaction['gallon'],
         rating: double.parse(transaction['rating'].toString()),
         createdAt: transaction['created_at'],
+        depot: null,
       ));
     }
 
@@ -57,6 +58,7 @@ class Transaction {
   static Transaction fromJsonToModel(dynamic json) {
     Depot depot = Depot(
       phoneNumber: json['depot']['phone_number'],
+      name: json['depot']['name'],
       image: json['depot']['image'],
       latitude: json['depot']['latitude'],
       longitude: json['depot']['longitude'],

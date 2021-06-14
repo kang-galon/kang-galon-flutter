@@ -53,7 +53,7 @@ class TransactionAddFailed extends TransactionState {
 class TransactionFetchListSuccess extends TransactionState {
   final List<Transaction> transactions;
 
-  TransactionFetchListSuccess({this.transactions});
+  TransactionFetchListSuccess({required this.transactions});
 
   @override
   List<Object> get props => [];
@@ -62,7 +62,7 @@ class TransactionFetchListSuccess extends TransactionState {
 class TransactionFetchDetailSuccess extends TransactionState {
   final Transaction transaction;
 
-  TransactionFetchDetailSuccess({this.transaction});
+  TransactionFetchDetailSuccess({required this.transaction});
 
   @override
   List<Object> get props => [transaction];
@@ -71,7 +71,7 @@ class TransactionFetchDetailSuccess extends TransactionState {
 class TransactionFetchCurrentSuccess extends TransactionState {
   final Transaction transaction;
 
-  TransactionFetchCurrentSuccess({this.transaction});
+  TransactionFetchCurrentSuccess({required this.transaction});
 
   @override
   List<Object> get props => [transaction];

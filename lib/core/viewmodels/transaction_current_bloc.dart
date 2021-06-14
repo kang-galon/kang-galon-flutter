@@ -4,8 +4,6 @@ import 'package:kang_galon/core/models/models.dart';
 import 'package:kang_galon/core/services/services.dart';
 
 class TransactionCurrentBloc extends Bloc<TransactionEvent, TransactionState> {
-  final TransactionService _transactionService = TransactionService();
-
   TransactionCurrentBloc() : super(TransactionEmpty());
 
   @override
@@ -14,8 +12,8 @@ class TransactionCurrentBloc extends Bloc<TransactionEvent, TransactionState> {
       if (event is TransactionFetchCurrent) {
         yield TransactionLoading();
 
-        Transaction transaction =
-            await _transactionService.getCurrentTransactions();
+        Transaction? transaction =
+            await TransactionService.getCurrentTransactions();
 
         if (transaction == null) {
           yield TransactionEmpty();
@@ -27,12 +25,13 @@ class TransactionCurrentBloc extends Bloc<TransactionEvent, TransactionState> {
       if (event is TransactionDenyCurrent) {
         yield TransactionLoading();
 
-        await _transactionService.denyCurrentTransaction();
+        await TransactionService.denyCurrentTransaction();
 
         yield TransactionEmpty();
       }
     } catch (e) {
-      print(e);
+      print('TransactionCurrent - $e');
+
       yield TransactionError();
     }
   }

@@ -9,7 +9,10 @@ class TransactionAdd extends TransactionEvent {
   final String clientLocation;
   final int gallon;
 
-  TransactionAdd({this.depotPhoneNumber, this.clientLocation, this.gallon});
+  TransactionAdd(
+      {required this.depotPhoneNumber,
+      required this.clientLocation,
+      required this.gallon});
 
   @override
   List<Object> get props => [depotPhoneNumber, clientLocation, gallon];
@@ -23,7 +26,7 @@ class TransactionFetchList extends TransactionEvent {
 class TransactionFetchDetail extends TransactionEvent {
   final int id;
 
-  TransactionFetchDetail({this.id});
+  TransactionFetchDetail({required this.id});
 
   @override
   List<Object> get props => [id];

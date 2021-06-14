@@ -11,10 +11,10 @@ class TransactionCurrent extends StatelessWidget {
   final VoidCallback onDenyTransaction;
 
   const TransactionCurrent({
-    @required this.transaction,
-    @required this.onTapPhone,
-    @required this.onTapChat,
-    @required this.onDenyTransaction,
+    required this.transaction,
+    required this.onTapPhone,
+    required this.onTapChat,
+    required this.onDenyTransaction,
   });
 
   void _denyAction(BuildContext context) {
@@ -49,6 +49,11 @@ class TransactionCurrent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var customIconButton = CustomIconButton(
+      label: 'Telepon',
+      icon: Icons.phone,
+      onPressed: () => onTapPhone(transaction.depot!),
+    );
     return Column(
       children: [
         Row(
@@ -59,9 +64,10 @@ class TransactionCurrent extends StatelessWidget {
               child: Image(
                 width: 100.0,
                 fit: BoxFit.fitWidth,
-                image: transaction.depot.image == null
+                image: transaction.depot!.image == null
                     ? AssetImage('assets/images/shop.png')
-                    : CachedNetworkImageProvider(transaction.depot.image),
+                    : CachedNetworkImageProvider(transaction.depot!.image!)
+                        as ImageProvider,
               ),
             ),
             const SizedBox(width: 5.0),
@@ -69,7 +75,7 @@ class TransactionCurrent extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(transaction.depot.address),
+                  Text(transaction.depot!.address),
                   const SizedBox(height: 30.0),
                   Align(
                     alignment: Alignment.centerRight,
@@ -84,11 +90,7 @@ class TransactionCurrent extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CustomIconButton(
-              label: 'Telepon',
-              icon: Icons.phone,
-              onPressed: () => onTapPhone(transaction.depot),
-            ),
+            customIconButton,
             CustomIconButton(
               label: 'Chat',
               icon: Icons.chat,

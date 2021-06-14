@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:kang_galon/core/services/services.dart';
 
 class UserService {
-  Future<void> register(String phoneNumber, String name, String uid,
+  static Future<void> register(String phoneNumber, String name, String uid,
       String deviceId, String token) async {
     Uri uri = url('/client/register');
 
@@ -26,7 +26,7 @@ class UserService {
     }
   }
 
-  Future<bool> isUserExist(String phoneNumber) async {
+  static Future<bool> isUserExist(String phoneNumber) async {
     Uri uri = url('/client/check-user');
     var response = await http.post(
       uri,
@@ -39,9 +39,9 @@ class UserService {
     return response.statusCode == 200;
   }
 
-  Future<void> updateProfile(String name) async {
+  static Future<void> updateProfile(String name) async {
     Uri uri = url('/client');
-    var token = await FirebaseAuth.instance.currentUser.getIdToken();
+    var token = await FirebaseAuth.instance.currentUser!.getIdToken();
 
     var response = await http.patch(
       uri,

@@ -14,9 +14,9 @@ class AccountPage extends StatefulWidget {
 }
 
 class _AccountPageState extends State<AccountPage> {
-  UserBloc _userBloc;
-  GlobalKey<FormState> _formKey;
-  TextEditingController _textEditingController;
+  late UserBloc _userBloc;
+  late GlobalKey<FormState> _formKey;
+  late TextEditingController _textEditingController;
 
   @override
   void initState() {
@@ -44,8 +44,16 @@ class _AccountPageState extends State<AccountPage> {
     super.dispose();
   }
 
-  void _saveAction() async {
-    if (_formKey.currentState.validate()) {
+  String? _formValidator(String? value) {
+    if (value != null && value.isEmpty) {
+      return 'Wajib diisi';
+    }
+
+    return null;
+  }
+
+  void _saveAction() {
+    if (_formKey.currentState!.validate()) {
       _userBloc.add(UserUpdate(name: _textEditingController.text));
     }
   }
@@ -77,8 +85,7 @@ class _AccountPageState extends State<AccountPage> {
                   children: [
                     TextFormField(
                       controller: _textEditingController,
-                      validator: (value) =>
-                          value.isEmpty ? 'Tidak boleh kosong' : null,
+                      validator: _formValidator,
                       decoration: InputDecoration(
                         hintText: 'nama',
                         fillColor: Colors.grey.shade200,
@@ -92,7 +99,7 @@ class _AccountPageState extends State<AccountPage> {
                         ),
                       ),
                     ),
-                    SizedBox(height: 10.0),
+                    const SizedBox(height: 10.0),
                     BlocConsumer<UserBloc, UserState>(
                       listener: (context, state) {
                         if (state is UserError) {
@@ -144,7 +151,7 @@ class _AccountPageState extends State<AccountPage> {
                         );
                       },
                     ),
-                    SizedBox(height: 10.0),
+                    const SizedBox(height: 10.0),
                     OutlinedButton(
                       onPressed: _logOutAction,
                       style: ButtonStyle(

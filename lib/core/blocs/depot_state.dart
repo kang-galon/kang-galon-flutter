@@ -38,7 +38,7 @@ class DepotError extends DepotState {
 class DepotFetchListSuccess extends DepotState {
   final List<Depot> depots;
 
-  DepotFetchListSuccess({this.depots});
+  DepotFetchListSuccess({required this.depots});
 
   @override
   List<Object> get props => [depots];

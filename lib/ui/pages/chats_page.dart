@@ -24,7 +24,7 @@ class ChatsPage extends StatelessWidget {
     if (current is TransactionFetchCurrentSuccess) {
       if (_textEditingController.text.isNotEmpty) {
         chatsBloc.add(ChatSendMessage(
-          depotPhoneNumber: current.transaction.depot.phoneNumber,
+          depotPhoneNumber: current.transaction.depot!.phoneNumber,
           transactionId: current.transaction.id,
           message: _textEditingController.text,
         ));
@@ -35,7 +35,7 @@ class ChatsPage extends StatelessWidget {
   }
 
   void getToken() async {
-    print(await FirebaseAuth.instance.currentUser.getIdToken());
+    print(await FirebaseAuth.instance.currentUser!.getIdToken());
   }
 
   @override
@@ -172,8 +172,8 @@ class ChatsBallon extends StatelessWidget {
   final bool isMe;
 
   ChatsBallon({
-    @required this.text,
-    @required this.dateTime,
+    required this.text,
+    required this.dateTime,
     this.isMe = false,
   });
 

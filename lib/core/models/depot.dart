@@ -10,21 +10,21 @@ class Depot {
   final bool isOpen;
   final String isOpenDesc;
   final double distance;
-  final String image;
+  final String? image;
 
   Depot({
-    this.phoneNumber,
-    this.name,
-    this.latitude,
-    this.longitude,
-    this.address,
-    this.rating,
-    this.price,
-    this.priceDesc,
-    this.isOpen,
-    this.isOpenDesc,
-    this.distance,
-    this.image,
+    required this.phoneNumber,
+    required this.name,
+    required this.latitude,
+    required this.longitude,
+    required this.address,
+    required this.rating,
+    required this.price,
+    required this.priceDesc,
+    required this.isOpen,
+    required this.isOpenDesc,
+    required this.image,
+    this.distance = 0,
   });
 
   static List<Depot> fromJsonToList(dynamic json) {

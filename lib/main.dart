@@ -21,14 +21,14 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
   flutterLocalNotificationsPlugin.show(
       message.notification.hashCode,
-      message.notification.title,
-      message.notification.body,
+      message.notification!.title,
+      message.notification!.body,
       NotificationDetails(
         android: AndroidNotificationDetails(
           channel.id,
           channel.name,
           channel.description,
-          icon: message.notification.android?.smallIcon,
+          icon: message.notification!.android?.smallIcon,
         ),
       ));
 }
@@ -52,8 +52,8 @@ void main() async {
 
   flutterLocalNotificationsPlugin.initialize(initializationSettings);
   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-    RemoteNotification notification = message.notification;
-    AndroidNotification android = message.notification?.android;
+    RemoteNotification? notification = message.notification;
+    AndroidNotification? android = message.notification?.android;
 
     if (notification != null && android != null) {
       flutterLocalNotificationsPlugin.show(
@@ -65,8 +65,7 @@ void main() async {
               channel.id,
               channel.name,
               channel.description,
-              icon: android?.smallIcon,
-              // other properties...
+              icon: android.smallIcon,
             ),
           ));
     }

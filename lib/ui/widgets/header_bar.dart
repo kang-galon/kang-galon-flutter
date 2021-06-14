@@ -3,9 +3,7 @@ import 'package:flutter/material.dart';
 class HeaderBar extends StatelessWidget {
   final String label;
 
-  HeaderBar({
-    @required this.label,
-  });
+  HeaderBar({required this.label});
 
   @override
   Widget build(BuildContext context) {

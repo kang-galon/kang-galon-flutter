@@ -13,7 +13,7 @@ class LocationCurrent extends LocationEvent {
 class LocationSet extends LocationEvent {
   final Location location;
 
-  LocationSet({this.location});
+  LocationSet({required this.location});
 
   @override
   List<Object> get props => [location];

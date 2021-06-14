@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 
 class LongButton extends StatelessWidget {
   final BuildContext context;
-  final void Function() onPressed;
+  final VoidCallback onPressed;
   final IconData icon;
   final String text;
 
   LongButton({
-    @required this.context,
-    @required this.onPressed,
-    @required this.icon,
-    @required this.text,
+    required this.context,
+    required this.onPressed,
+    required this.icon,
+    required this.text,
   });
 
   @override

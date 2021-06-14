@@ -14,12 +14,12 @@ class MapsPage extends StatefulWidget {
 
 class _MapsPageState extends State<MapsPage> {
   final String _infoWindowTitle = 'My Position';
-  final String _markerId = 'My Location';
-  LocationBloc _locationBloc;
-  double _latitude;
-  double _longitude;
-  Completer<GoogleMapController> _mapsController;
-  List<Marker> _markers;
+  final String _markerId = 'my_location';
+  late LocationBloc _locationBloc;
+  late double _latitude;
+  late double _longitude;
+  late Completer<GoogleMapController> _mapsController;
+  late List<Marker> _markers;
 
   @override
   void initState() {
@@ -61,7 +61,8 @@ class _MapsPageState extends State<MapsPage> {
   }
 
   void _changeLocation() {
-    Location location = Location(latitude: _latitude, longitude: _longitude);
+    Location location =
+        Location(latitude: _latitude, longitude: _longitude, address: '');
     LocationSet locationSet = LocationSet(location: location);
     _locationBloc.add(locationSet);
 

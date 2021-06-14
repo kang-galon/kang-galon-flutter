@@ -4,11 +4,12 @@ class Chats {
   final Depot depot;
   final List<Message> messages;
 
-  Chats({this.depot, this.messages});
+  Chats({required this.depot, required this.messages});
 
   factory Chats.fromJson(dynamic json) {
     Depot depot = Depot(
       phoneNumber: json['depot']['phone_number'],
+      name: json['depot']['name'],
       image: json['depot']['image'],
       latitude: json['depot']['latitude'],
       longitude: json['depot']['longitude'],
@@ -38,5 +39,5 @@ class Message {
   final bool isMe;
   final String createdAt;
 
-  Message({this.message, this.isMe, this.createdAt});
+  Message({required this.message, required this.isMe, required this.createdAt});
 }

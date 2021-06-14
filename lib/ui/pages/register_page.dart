@@ -15,10 +15,10 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  GlobalKey<FormState> _formKey;
-  TextEditingController _phoneNumberController;
-  TextEditingController _nameController;
-  UserBloc _userBloc;
+  late GlobalKey<FormState> _formKey;
+  late TextEditingController _phoneNumberController;
+  late TextEditingController _nameController;
+  late UserBloc _userBloc;
 
   @override
   void initState() {
@@ -39,7 +39,7 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   void _registerAction() {
-    if (_formKey.currentState.validate()) {
+    if (_formKey.currentState!.validate()) {
       FocusScope.of(context).unfocus();
 
       String phoneNumber = '+62' + _phoneNumberController.text;
@@ -77,20 +77,24 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
-  String _phoneNumberValidator(String value) {
-    if (value.isEmpty) {
+  String? _phoneNumberValidator(String? value) {
+    if (value != null && value.isEmpty) {
       return 'Wajib diisi';
     }
 
-    if (value.length < 11) {
+    if (value != null && value.length < 11) {
       return 'Min 11 number';
     }
 
     return null;
   }
 
-  String _nameValidator(String value) {
-    return (value.isEmpty) ? 'Wajib diisi' : null;
+  String? _nameValidator(String? value) {
+    if (value != null && value.isEmpty) {
+      return 'Wajib diisi';
+    }
+
+    return null;
   }
 
   @override

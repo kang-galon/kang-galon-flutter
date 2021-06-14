@@ -15,9 +15,9 @@ class ChatSendMessage extends ChatsEvent {
   final String message;
 
   ChatSendMessage({
-    this.transactionId,
-    this.depotPhoneNumber,
-    this.message,
+    required this.transactionId,
+    required this.depotPhoneNumber,
+    required this.message,
   });
 
   @override

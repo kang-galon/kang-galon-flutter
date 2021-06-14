@@ -33,7 +33,7 @@ class LocationPermissionUnable extends LocationState {
 class LocationEnable extends LocationState {
   final Location location;
 
-  LocationEnable({this.location});
+  LocationEnable({required this.location});
 
   @override
   List<Object> get props => [location];

@@ -16,10 +16,10 @@ class VerificationOtpPage extends StatelessWidget {
   final bool isLogin;
 
   VerificationOtpPage({
-    @required this.verificationId,
-    @required this.phoneNumber,
-    @required this.name,
-    @required this.isLogin,
+    required this.verificationId,
+    required this.phoneNumber,
+    required this.name,
+    required this.isLogin,
   });
 
   void _pinSubmitAction(String pin, UserBloc userBloc) {

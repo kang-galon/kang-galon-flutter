@@ -12,7 +12,7 @@ class UserUninitialized extends UserState {
 class UserSuccess extends UserState {
   final String name;
 
-  UserSuccess({this.name});
+  UserSuccess({required this.name});
 
   @override
   List<Object> get props => [];

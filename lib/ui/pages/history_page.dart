@@ -13,7 +13,7 @@ class HistoryPage extends StatefulWidget {
 }
 
 class _HistoryPageState extends State<HistoryPage> {
-  TransactionBloc _transactionBloc;
+  late TransactionBloc _transactionBloc;
 
   @override
   void initState() {

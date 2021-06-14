@@ -7,14 +7,14 @@ import 'package:kang_galon/ui/widgets/widgets.dart';
 
 class TransactionPage extends StatefulWidget {
   final int id;
-  TransactionPage({@required this.id});
+  TransactionPage({required this.id});
 
   @override
   _TransactionPageState createState() => _TransactionPageState();
 }
 
 class _TransactionPageState extends State<TransactionPage> {
-  TransactionDetailBloc _transactionDetailBloc;
+  late TransactionDetailBloc _transactionDetailBloc;
 
   @override
   void initState() {
@@ -53,7 +53,7 @@ class _TransactionPageState extends State<TransactionPage> {
                       ),
                       const SizedBox(height: 20.0),
                       DepotDescription(
-                        depot: state.transaction.depot,
+                        depot: state.transaction.depot!,
                         isDistance: false,
                       ),
                       const SizedBox(height: 20.0),
@@ -64,7 +64,7 @@ class _TransactionPageState extends State<TransactionPage> {
                         child: Row(
                           children: [
                             Text(
-                              '${state.transaction.depot.priceDesc} ',
+                              '${state.transaction.depot!.priceDesc} ',
                               style: TextStyle(fontWeight: FontWeight.bold),
                             ),
                             Text('x ${state.transaction.gallon} Gallon'),

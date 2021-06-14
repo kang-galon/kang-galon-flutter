@@ -14,9 +14,9 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  GlobalKey<FormState> _formKey;
-  TextEditingController _textEditingController;
-  UserBloc _userBloc;
+  late GlobalKey<FormState> _formKey;
+  late TextEditingController _textEditingController;
+  late UserBloc _userBloc;
 
   @override
   void initState() {
@@ -35,7 +35,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void _loginAction() {
-    if (_formKey.currentState.validate()) {
+    if (_formKey.currentState!.validate()) {
       FocusScope.of(context).unfocus();
 
       String phoneNumber = '+62' + _textEditingController.text;
@@ -73,12 +73,12 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  String _phoneNumberValidator(String value) {
-    if (value.isEmpty) {
+  String? _phoneNumberValidator(String? value) {
+    if (value != null && value.isEmpty) {
       return 'Wajib diisi';
     }
 
-    if (value.length < 11) {
+    if (value != null && value.length < 11) {
       return 'Minimal 11 angka';
     }
 

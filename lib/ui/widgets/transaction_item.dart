@@ -5,13 +5,13 @@ import 'package:kang_galon/ui/config/pallette.dart';
 import 'package:shimmer/shimmer.dart';
 
 class TransactionItem extends StatelessWidget {
-  final Transaction transaction;
-  final VoidCallback onTap;
+  final Transaction? transaction;
+  final VoidCallback? onTap;
   final bool isLoading;
 
   TransactionItem({
-    @required this.transaction,
-    @required this.onTap,
+    required this.transaction,
+    required this.onTap,
   }) : this.isLoading = false;
 
   TransactionItem.loading()
@@ -48,7 +48,7 @@ class TransactionItem extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            transaction.depotName,
+                            transaction!.depotName,
                             style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 15.0,
@@ -74,7 +74,7 @@ class TransactionItem extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            transaction.statusDescription,
+                            transaction!.statusDescription,
                             style: const TextStyle(
                               color: Colors.grey,
                               fontWeight: FontWeight.bold,
@@ -84,10 +84,10 @@ class TransactionItem extends StatelessWidget {
                           const SizedBox(height: 10.0),
                           Row(
                             children: [
-                              Text(transaction.createdAt),
+                              Text(transaction!.createdAt),
                               const Spacer(),
                               RatingBar.builder(
-                                initialRating: transaction.rating,
+                                initialRating: transaction!.rating,
                                 minRating: 1,
                                 direction: Axis.horizontal,
                                 allowHalfRating: true,
@@ -101,7 +101,7 @@ class TransactionItem extends StatelessWidget {
                                 onRatingUpdate: (double value) {},
                               ),
                               const SizedBox(width: 5.0),
-                              Text(transaction.rating.toString()),
+                              Text(transaction!.rating.toString()),
                             ],
                           ),
                         ],

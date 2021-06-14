@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 class CustomIconButton extends StatelessWidget {
   final String label;
   final IconData icon;
-  final void Function() onPressed;
+  final VoidCallback onPressed;
   final bool isDense;
 
   CustomIconButton({
-    @required this.label,
-    @required this.icon,
-    @required this.onPressed,
+    required this.label,
+    required this.icon,
+    required this.onPressed,
     this.isDense = false,
   });
 

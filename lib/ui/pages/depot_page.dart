@@ -11,18 +11,18 @@ import 'package:kang_galon/ui/pages/pages.dart';
 
 class DepotPage extends StatefulWidget {
   final Depot depot;
-  DepotPage({@required this.depot});
+  DepotPage({required this.depot});
 
   @override
   _DepotPageState createState() => _DepotPageState();
 }
 
 class _DepotPageState extends State<DepotPage> {
-  List<Marker> _markers;
-  LocationBloc _locationBloc;
-  TransactionBloc _transactionBloc;
-  TransactionCurrentBloc _transactionCurrentBloc;
-  int _gallon = 1;
+  late List<Marker> _markers;
+  late LocationBloc _locationBloc;
+  late TransactionBloc _transactionBloc;
+  late TransactionCurrentBloc _transactionCurrentBloc;
+  late int _gallon;
 
   @override
   void initState() {
@@ -30,6 +30,9 @@ class _DepotPageState extends State<DepotPage> {
     _locationBloc = BlocProvider.of<LocationBloc>(context);
     _transactionBloc = BlocProvider.of<TransactionBloc>(context);
     _transactionCurrentBloc = BlocProvider.of<TransactionCurrentBloc>(context);
+
+    // set
+    _gallon = 1;
 
     // Depot marker
     _markers = <Marker>[];

@@ -11,7 +11,8 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   UserBloc() : super(UserUninitialized());
 
   UserBloc.currentUser()
-      : super(UserSuccess(name: FirebaseAuth.instance.currentUser.displayName));
+      : super(
+            UserSuccess(name: FirebaseAuth.instance.currentUser!.displayName!));
 
   @override
   Stream<UserState> mapEventToState(UserEvent event) async* {
@@ -20,19 +21,19 @@ class UserBloc extends Bloc<UserEvent, UserState> {
       if (event is UserRegister) {
         yield UserLoading();
 
-        PhoneAuthCredential phoneAuthCredential = PhoneAuthProvider.credential(
+        AuthCredential phoneAuthCredential = PhoneAuthProvider.credential(
           verificationId: event.verificationId,
           smsCode: event.pin,
         );
 
         await _firebaseAuth.signInWithCredential(phoneAuthCredential);
         var user = _firebaseAuth.currentUser;
-        String jwtToken = await user.getIdToken();
+        String jwtToken = await user!.getIdToken();
         String uid = user.uid;
-        String deviceId = await FirebaseMessaging.instance.getToken();
+        String? deviceId = await FirebaseMessaging.instance.getToken();
 
-        await _userService.register(
-            event.phoneNumber, event.name, uid, deviceId, jwtToken);
+        await UserService.register(
+            event.phoneNumber, event.name, uid, deviceId!, jwtToken);
 
         // reload profile user to avoid displayName null
         await user.reload();
@@ -43,7 +44,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
       if (event is UserLogin) {
         yield UserLoading();
 
-        PhoneAuthCredential phoneAuthCredential = PhoneAuthProvider.credential(
+        AuthCredential phoneAuthCredential = PhoneAuthProvider.credential(
           verificationId: event.verificationId,
           smsCode: event.pin,
         );
@@ -51,13 +52,13 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         await _firebaseAuth.signInWithCredential(phoneAuthCredential);
         var user = _firebaseAuth.currentUser;
 
-        yield UserSuccess(name: user.displayName);
+        yield UserSuccess(name: user!.displayName!);
       }
 
       if (event is UserIsExist) {
         yield UserLoading();
 
-        bool isUserExist = await _userService.isUserExist(event.phoneNumber);
+        bool isUserExist = await UserService.isUserExist(event.phoneNumber);
         yield isUserExist ? UserExist() : UserDoesntExist();
       }
 
@@ -65,15 +66,16 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         yield UserLoading();
 
         // update name on server
-        await this._userService.updateProfile(event.name);
+        await UserService.updateProfile(event.name);
 
         // reload profile user to avoid displayName null
-        await _firebaseAuth.currentUser.reload();
+        await _firebaseAuth.currentUser!.reload();
 
         yield UserSuccess(name: event.name);
       }
     } catch (e) {
-      print(e);
+      print('UserBloc - $e');
+
       yield UserError();
     }
   }
@@ -81,7 +83,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   Future<void> sendOtp(
     String phoneNumber,
     Function(FirebaseAuthException) verificationFailed,
-    Function(String verificationId, int forceResendingToken) codeSent,
+    Function(String verificationId, int? forceResendingToken) codeSent,
   ) async {
     await _firebaseAuth.verifyPhoneNumber(
       phoneNumber: phoneNumber,
