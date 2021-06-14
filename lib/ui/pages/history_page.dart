@@ -44,20 +44,19 @@ class _HistoryPageState extends State<HistoryPage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        body: Padding(
-          padding: Pallette.contentPadding,
-          child: CustomScrollView(
-            physics: BouncingScrollPhysics(),
-            slivers: [
-              SliverPadding(
-                padding: const EdgeInsets.only(bottom: 20.0),
-                sliver: SliverToBoxAdapter(
-                  child: HeaderBar(
-                    label: 'Riwayat Transaksi',
-                  ),
+        body: CustomScrollView(
+          slivers: [
+            SliverPadding(
+              padding: Pallette.contentPadding.copyWith(bottom: 0),
+              sliver: SliverToBoxAdapter(
+                child: HeaderBar(
+                  label: 'Riwayat Transaksi',
                 ),
               ),
-              BlocConsumer<TransactionBloc, TransactionState>(
+            ),
+            SliverPadding(
+              padding: Pallette.contentPadding,
+              sliver: BlocConsumer<TransactionBloc, TransactionState>(
                 listener: _transactionListener,
                 builder: (context, state) {
                   return SliverList(
@@ -94,8 +93,8 @@ class _HistoryPageState extends State<HistoryPage> {
                   );
                 },
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

@@ -15,5 +15,5 @@ class Pallette {
   );
 
   static final EdgeInsets contentPadding =
-      const EdgeInsets.symmetric(horizontal: 10.0, vertical: 20.0);
+      const EdgeInsets.only(left: 10.0, right: 10.0, top: 20.0, bottom: 20.0);
 }

@@ -8,11 +8,15 @@ import 'package:kang_galon/ui/config/pallette.dart';
 import 'package:kang_galon/ui/widgets/widgets.dart';
 import 'package:kang_galon/ui/pages/pages.dart';
 
-class NearDepotPage extends StatelessWidget {
+class NearDepotPage extends StatefulWidget {
   static const String routeName = '/near_depot';
 
-  void _detailDepotAction(BuildContext context, LocationBloc locationBloc,
-      TransactionBloc transactionBloc, Depot depot) {
+  @override
+  _NearDepotPageState createState() => _NearDepotPageState();
+}
+
+class _NearDepotPageState extends State<NearDepotPage> {
+  void _detailDepotAction(Depot depot) {
     DepotArguments args = DepotArguments(depot);
 
     Navigator.pushNamed(context, DepotPage.routeName, arguments: args);
@@ -20,46 +24,46 @@ class NearDepotPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    LocationBloc locationBloc = BlocProvider.of<LocationBloc>(context);
-    TransactionBloc transactionBloc = BlocProvider.of<TransactionBloc>(context);
-
-    return Scaffold(
-      body: SingleChildScrollView(
-        padding: Pallette.contentPadding,
-        child: Column(
-          children: [
-            HeaderBar(
-              label: 'Depot disekitar anda',
+    return SafeArea(
+      child: Scaffold(
+        body: CustomScrollView(
+          slivers: [
+            SliverPadding(
+              padding: Pallette.contentPadding.copyWith(bottom: 0),
+              sliver: SliverToBoxAdapter(
+                child: HeaderBar(label: 'Depot disekitar anda'),
+              ),
             ),
-            const SizedBox(height: 20.0),
-            Container(
-              padding: const EdgeInsets.all(10.0),
-              decoration: Pallette.containerDecoration,
-              child: BlocConsumer<DepotBloc, DepotState>(
+            SliverPadding(
+              padding: Pallette.contentPadding,
+              sliver: BlocConsumer<DepotBloc, DepotState>(
                 listener: (context, state) {
                   if (state is DepotError) {
                     showSnackbar(context, state.toString());
                   }
                 },
                 builder: (context, state) {
-                  if (state is DepotFetchListSuccess) {
-                    return ListView.builder(
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      itemBuilder: (context, index) {
-                        return DepotItem(
-                          depot: state.depots[index],
-                          onTap: () => _detailDepotAction(context, locationBloc,
-                              transactionBloc, state.depots[index]),
-                        );
+                  return SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) {
+                        if (state is DepotFetchListSuccess) {
+                          return DepotItem(
+                            depot: state.depots[index],
+                            onTap: () =>
+                                _detailDepotAction(state.depots[index]),
+                            isContainer: true,
+                          );
+                        }
+                        return const SizedBox.shrink();
                       },
-                      itemCount: state.depots.length,
-                    );
-                  }
-                  return Container();
+                      childCount: (state is DepotFetchListSuccess)
+                          ? state.depots.length
+                          : 1,
+                    ),
+                  );
                 },
               ),
-            )
+            ),
           ],
         ),
       ),

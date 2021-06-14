@@ -76,7 +76,6 @@ class ChatsPage extends StatelessWidget {
                       },
                       builder: (context, state) {
                         return ListView.builder(
-                          physics: BouncingScrollPhysics(),
                           reverse: true,
                           itemBuilder: (context, index) {
                             Message message = _messages[index];
