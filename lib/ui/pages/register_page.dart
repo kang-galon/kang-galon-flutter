@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kang_galon/core/blocs/event_state.dart';
 import 'package:kang_galon/core/viewmodels/bloc.dart';
 import 'package:kang_galon/ui/arguments/arguments.dart';
+import 'package:kang_galon/ui/config/pallette.dart';
 import 'package:kang_galon/ui/pages/pages.dart';
 import 'package:kang_galon/ui/widgets/widgets.dart';
 
@@ -127,7 +128,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         top: 30.0, left: 20.0, right: 20.0),
                     padding: const EdgeInsets.symmetric(
                         vertical: 20.0, horizontal: 30.0),
-                    decoration: Style.containerDecoration,
+                    decoration: Pallette.containerDecoration,
                     child: Form(
                       key: _formKey,
                       child: Column(

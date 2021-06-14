@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 
 class HeaderBar extends StatelessWidget {
-  final Function onPressed;
   final String label;
 
   HeaderBar({
-    @required this.onPressed,
     @required this.label,
   });
 
@@ -22,7 +20,7 @@ class HeaderBar extends StatelessWidget {
           color: Colors.white,
           padding: const EdgeInsets.all(10.0),
           elevation: 5.0,
-          onPressed: onPressed,
+          onPressed: () => Navigator.pop(context),
         ),
         Expanded(
           child: Container(

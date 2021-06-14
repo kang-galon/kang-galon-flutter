@@ -70,4 +70,18 @@ class TransactionService {
       return null;
     }
   }
+
+  Future<void> denyCurrentTransaction() async {
+    Uri uri = url('/client/transaction/current/deny');
+    String token = await FirebaseAuth.instance.currentUser.getIdToken();
+
+    var response = await http.post(uri, headers: {
+      'Authorization': 'Bearer ' + token,
+    });
+
+    var json = jsonDecode(response.body);
+    if (!json['success']) {
+      throw Exception(json['message']);
+    }
+  }
 }

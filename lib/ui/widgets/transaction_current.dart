@@ -1,20 +1,51 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:kang_galon/core/models/models.dart';
-import 'package:kang_galon/ui/pages/pages.dart';
+import 'package:kang_galon/ui/config/pallette.dart';
 import 'package:kang_galon/ui/widgets/home_button.dart';
 
 class TransactionCurrent extends StatelessWidget {
   final Transaction transaction;
-  final Function() onTapPhone;
-  final Function() onTapChat;
+  final Function(Depot) onTapPhone;
+  final VoidCallback onTapChat;
+  final VoidCallback onDenyTransaction;
 
   const TransactionCurrent({
     @required this.transaction,
     @required this.onTapPhone,
     @required this.onTapChat,
+    @required this.onDenyTransaction,
   });
+
+  void _denyAction(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Batalkan Pesanan'),
+          content: Text('Yakin ingin membatalkan pesanan ?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                onDenyTransaction();
+
+                Navigator.pop(context);
+              },
+              child: Text(
+                'Iya',
+                style: TextStyle(color: Colors.red),
+              ),
+            ),
+            const SizedBox(width: 10.0),
+            ElevatedButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text('Tidak'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,11 +80,27 @@ class TransactionCurrent extends StatelessWidget {
             ),
           ],
         ),
-        const SizedBox(height: 20.0),
+        const SizedBox(height: 10.0),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CustomIconButton(
+              label: 'Telepon',
+              icon: Icons.phone,
+              onPressed: () => onTapPhone(transaction.depot),
+            ),
+            CustomIconButton(
+              label: 'Chat',
+              icon: Icons.chat,
+              onPressed: onTapChat,
+            ),
+          ],
+        ),
+        const SizedBox(height: 10.0),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
           width: MediaQuery.of(context).size.width,
-          decoration: Style.containerDecoration,
+          decoration: Pallette.containerDecoration,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -72,21 +119,19 @@ class TransactionCurrent extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 10.0),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CustomIconButton(
-              label: 'Telepon',
-              icon: Icons.phone,
-              onPressed: onTapPhone,
-            ),
-            CustomIconButton(
-              label: 'Chat',
-              icon: Icons.chat,
-              onPressed: onTapChat,
-            ),
-          ],
-        ),
+        transaction.status == 1
+            ? MaterialButton(
+                onPressed: () => _denyAction(context),
+                minWidth: MediaQuery.of(context).size.width,
+                color: Colors.white,
+                elevation: 5.0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                child: Text('Batalkan pesanan',
+                    style: TextStyle(color: Colors.red)),
+              )
+            : const SizedBox.shrink(),
       ],
     );
   }

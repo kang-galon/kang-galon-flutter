@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kang_galon/core/blocs/event_state.dart';
 import 'package:kang_galon/core/models/models.dart';
 import 'package:kang_galon/core/viewmodels/bloc.dart';
+import 'package:kang_galon/ui/config/pallette.dart';
 import 'package:kang_galon/ui/pages/pages.dart';
 import 'package:kang_galon/ui/widgets/widgets.dart';
 
@@ -37,10 +38,6 @@ class ChatsPage extends StatelessWidget {
     print(await FirebaseAuth.instance.currentUser.getIdToken());
   }
 
-  void _backAction(BuildContext context) {
-    Navigator.pop(context);
-  }
-
   @override
   Widget build(BuildContext context) {
     ChatsBloc chatsBloc = BlocProvider.of<ChatsBloc>(context);
@@ -53,11 +50,10 @@ class ChatsPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.grey.shade200,
       body: Padding(
-        padding: Style.mainPadding,
+        padding: Pallette.contentPadding,
         child: Column(
           children: [
-            HeaderBar(
-                onPressed: () => _backAction(context), label: 'Chats Depot'),
+            HeaderBar(label: 'Chats Depot'),
             Expanded(
               child: Stack(
                 children: [

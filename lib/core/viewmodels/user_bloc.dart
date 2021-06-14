@@ -92,7 +92,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     );
   }
 
-  void logOUt() {
+  void logout() {
     _firebaseAuth.signOut();
   }
 }

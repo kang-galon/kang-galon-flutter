@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kang_galon/ui/config/pallette.dart';
 import 'package:kang_galon/ui/pages/pages.dart';
 
 class UserDescription extends StatelessWidget {
@@ -16,7 +17,7 @@ class UserDescription extends StatelessWidget {
       children: [
         Container(
           height: 65.0,
-          decoration: Style.containerDecoration,
+          decoration: Pallette.containerDecoration,
           child: Material(
             borderRadius: BorderRadius.circular(10),
             color: Colors.transparent,
@@ -45,7 +46,7 @@ class UserDescription extends StatelessWidget {
           child: Container(
             height: 65.0,
             padding: const EdgeInsets.all(20.0),
-            decoration: Style.containerDecoration,
+            decoration: Pallette.containerDecoration,
             alignment: Alignment.centerLeft,
             child: Row(
               children: [

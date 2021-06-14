@@ -33,3 +33,8 @@ class TransactionFetchCurrent extends TransactionEvent {
   @override
   List<Object> get props => [];
 }
+
+class TransactionDenyCurrent extends TransactionEvent {
+  @override
+  List<Object> get props => [];
+}

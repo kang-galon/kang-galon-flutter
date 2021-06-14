@@ -4,15 +4,12 @@ import 'package:kang_galon/core/blocs/event_state.dart';
 import 'package:kang_galon/core/models/models.dart';
 import 'package:kang_galon/core/viewmodels/bloc.dart';
 import 'package:kang_galon/ui/arguments/arguments.dart';
+import 'package:kang_galon/ui/config/pallette.dart';
 import 'package:kang_galon/ui/widgets/widgets.dart';
 import 'package:kang_galon/ui/pages/pages.dart';
 
 class NearDepotPage extends StatelessWidget {
   static const String routeName = '/near_depot';
-
-  void _backAction(BuildContext context) {
-    Navigator.pop(context);
-  }
 
   void _detailDepotAction(BuildContext context, LocationBloc locationBloc,
       TransactionBloc transactionBloc, Depot depot) {
@@ -28,17 +25,16 @@ class NearDepotPage extends StatelessWidget {
 
     return Scaffold(
       body: SingleChildScrollView(
-        padding: Style.mainPadding,
+        padding: Pallette.contentPadding,
         child: Column(
           children: [
             HeaderBar(
-              onPressed: () => _backAction(context),
               label: 'Depot disekitar anda',
             ),
             const SizedBox(height: 20.0),
             Container(
               padding: const EdgeInsets.all(10.0),
-              decoration: Style.containerDecoration,
+              decoration: Pallette.containerDecoration,
               child: BlocConsumer<DepotBloc, DepotState>(
                 listener: (context, state) {
                   if (state is DepotError) {

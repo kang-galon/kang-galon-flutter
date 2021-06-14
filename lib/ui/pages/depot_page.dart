@@ -5,6 +5,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:kang_galon/core/blocs/event_state.dart';
 import 'package:kang_galon/core/models/models.dart';
 import 'package:kang_galon/core/viewmodels/bloc.dart';
+import 'package:kang_galon/ui/config/pallette.dart';
 import 'package:kang_galon/ui/widgets/widgets.dart';
 import 'package:kang_galon/ui/pages/pages.dart';
 
@@ -19,11 +20,44 @@ class DepotPage extends StatefulWidget {
 }
 
 class _DepotPageState extends State<DepotPage> {
-  final List<Marker> markers = <Marker>[];
+  List<Marker> _markers;
   LocationBloc _locationBloc;
   TransactionBloc _transactionBloc;
   TransactionCurrentBloc _transactionCurrentBloc;
   int _gallon = 1;
+
+  @override
+  void initState() {
+    // init bloc
+    _locationBloc = BlocProvider.of<LocationBloc>(context);
+    _transactionBloc = BlocProvider.of<TransactionBloc>(context);
+    _transactionCurrentBloc = BlocProvider.of<TransactionCurrentBloc>(context);
+
+    // Depot marker
+    _markers = <Marker>[];
+    _markers.add(
+      Marker(
+        markerId: MarkerId(widget.depot.name),
+        position: LatLng(widget.depot.latitude, widget.depot.longitude),
+        infoWindow: InfoWindow(title: widget.depot.name),
+      ),
+    );
+
+    // Client marker
+    _markers.add(
+      Marker(
+        markerId: MarkerId('your_location'),
+        position: LatLng(
+          (_locationBloc.state as LocationEnable).location.latitude,
+          (_locationBloc.state as LocationEnable).location.longitude,
+        ),
+        infoWindow: InfoWindow(title: 'Your Location'),
+        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
+      ),
+    );
+
+    super.initState();
+  }
 
   void _removeGallonAction() {
     if (_gallon != 1) {
@@ -47,10 +81,6 @@ class _DepotPageState extends State<DepotPage> {
           depotPhoneNumber: widget.depot.phoneNumber,
           gallon: _gallon));
     }
-  }
-
-  void _backAction() {
-    Navigator.pop(context);
   }
 
   void _orderAction() {
@@ -150,129 +180,98 @@ class _DepotPageState extends State<DepotPage> {
   }
 
   @override
-  void initState() {
-    super.initState();
-
-    // init _locationBloc
-    _locationBloc = BlocProvider.of<LocationBloc>(context);
-
-    // init _transactionBloc
-    _transactionBloc = BlocProvider.of<TransactionBloc>(context);
-
-    // init _transactionCurrentBloc
-    _transactionCurrentBloc = BlocProvider.of<TransactionCurrentBloc>(context);
-
-    // Depot marker
-    markers.add(
-      Marker(
-        markerId: MarkerId(widget.depot.name),
-        position: LatLng(widget.depot.latitude, widget.depot.longitude),
-        infoWindow: InfoWindow(title: widget.depot.name),
-      ),
-    );
-
-    // Client marker
-    markers.add(
-      Marker(
-        markerId: MarkerId('Your Location'),
-        position: LatLng(
-          (_locationBloc.state as LocationEnable).location.latitude,
-          (_locationBloc.state as LocationEnable).location.longitude,
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Scaffold(
+        body: ListView(
+          padding: Pallette.contentPadding,
+          children: [
+            HeaderBar(label: widget.depot.name),
+            const SizedBox(height: 20.0),
+            DepotDescription(depot: widget.depot),
+            const SizedBox(height: 20.0),
+            Container(
+              padding: const EdgeInsets.all(20.0),
+              width: MediaQuery.of(context).size.width,
+              decoration: Pallette.containerDecoration,
+              child: Text(
+                  (_locationBloc.state as LocationEnable).location.address),
+            ),
+            _buildDepotLocation(),
+            const SizedBox(height: 20.0),
+            _buildOrder(),
+          ],
         ),
-        infoWindow: InfoWindow(title: 'Your Location'),
-        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
       ),
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: Style.mainPadding,
-          child: Column(
+  Widget _buildDepotLocation() {
+    return Container(
+      margin: const EdgeInsets.only(top: 20.0),
+      width: MediaQuery.of(context).size.width,
+      height: 300,
+      decoration: Pallette.containerDecoration,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(10.0),
+        child: GoogleMap(
+          initialCameraPosition: CameraPosition(
+            target: LatLng(widget.depot.latitude, widget.depot.longitude),
+            zoom: 15.0,
+          ),
+          myLocationEnabled: false,
+          myLocationButtonEnabled: false,
+          zoomControlsEnabled: true,
+          rotateGesturesEnabled: false,
+          scrollGesturesEnabled: false,
+          markers: Set<Marker>.from(_markers),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildOrder() {
+    return Container(
+      padding: const EdgeInsets.all(20.0),
+      width: MediaQuery.of(context).size.width,
+      decoration: Pallette.containerDecoration,
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              HeaderBar(onPressed: _backAction, label: widget.depot.name),
-              const SizedBox(height: 20.0),
-              DepotDescription(depot: widget.depot),
-              Container(
-                margin: const EdgeInsets.only(top: 20.0),
-                padding: const EdgeInsets.all(20.0),
-                width: MediaQuery.of(context).size.width,
-                decoration: Style.containerDecoration,
-                child: Text(
-                    (_locationBloc.state as LocationEnable).location.address),
+              CustomIconButton(
+                label: 'Kurang',
+                icon: Icons.remove,
+                onPressed: _removeGallonAction,
+                isDense: true,
               ),
               Container(
+                padding: const EdgeInsets.all(10.0),
                 margin: const EdgeInsets.only(top: 20.0),
-                width: MediaQuery.of(context).size.width,
-                height: 300,
-                decoration: Style.containerDecoration,
-                child: ClipRRect(
+                decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10.0),
-                  child: GoogleMap(
-                    initialCameraPosition: CameraPosition(
-                      target:
-                          LatLng(widget.depot.latitude, widget.depot.longitude),
-                      zoom: 15.0,
-                    ),
-                    myLocationEnabled: false,
-                    myLocationButtonEnabled: false,
-                    zoomControlsEnabled: true,
-                    rotateGesturesEnabled: false,
-                    scrollGesturesEnabled: false,
-                    markers: Set<Marker>.from(markers),
-                  ),
+                  border: Border.all(color: Colors.grey),
                 ),
+                child: Text('${_gallon} Galon'),
               ),
-              Container(
-                margin: const EdgeInsets.only(top: 20.0),
-                padding: const EdgeInsets.all(20.0),
-                width: MediaQuery.of(context).size.width,
-                decoration: Style.containerDecoration,
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        CustomIconButton(
-                          label: 'Kurang',
-                          icon: Icons.remove,
-                          onPressed: _removeGallonAction,
-                          isDense: true,
-                        ),
-                        Container(
-                          padding: const EdgeInsets.all(10.0),
-                          margin: const EdgeInsets.only(top: 20.0),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10.0),
-                            border: Border.all(color: Colors.grey),
-                          ),
-                          child: Text('${_gallon} Galon'),
-                        ),
-                        CustomIconButton(
-                          label: 'Tambah',
-                          icon: Icons.add,
-                          onPressed: _addGallonAction,
-                          isDense: true,
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 10.0),
-                    LongButton(
-                      context: context,
-                      onPressed: _orderAction,
-                      icon: Icons.shopping_cart,
-                      text: 'Order isi ulang galon',
-                    )
-                  ],
-                ),
+              CustomIconButton(
+                label: 'Tambah',
+                icon: Icons.add,
+                onPressed: _addGallonAction,
+                isDense: true,
               ),
             ],
           ),
-        ),
+          const SizedBox(height: 10.0),
+          LongButton(
+            context: context,
+            onPressed: _orderAction,
+            icon: Icons.shopping_cart,
+            text: 'Order isi ulang galon',
+          )
+        ],
       ),
     );
   }

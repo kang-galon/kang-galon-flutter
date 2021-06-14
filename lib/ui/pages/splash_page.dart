@@ -141,6 +141,9 @@ class _SplashPageState extends State<SplashPage> {
         child: MaterialApp(
           routes: _routes,
           initialRoute: HomePage.routeName,
+          theme: ThemeData(
+            scaffoldBackgroundColor: Colors.white,
+          ),
           onGenerateRoute: (settings) => _buildOnGenerateRoute(settings),
         ),
       );

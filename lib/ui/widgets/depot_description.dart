@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:kang_galon/core/models/models.dart';
+import 'package:kang_galon/ui/config/pallette.dart';
 import 'package:kang_galon/ui/pages/pages.dart';
 
 class DepotDescription extends StatelessWidget {
@@ -17,7 +18,7 @@ class DepotDescription extends StatelessWidget {
         Container(
           width: MediaQuery.of(context).size.width,
           padding: const EdgeInsets.all(20.0),
-          decoration: Style.containerDecoration,
+          decoration: Pallette.containerDecoration,
           child: Column(
             children: [
               Row(
@@ -73,7 +74,7 @@ class DepotDescription extends StatelessWidget {
         Container(
           width: MediaQuery.of(context).size.width,
           padding: const EdgeInsets.all(20.0),
-          decoration: Style.containerDecoration,
+          decoration: Pallette.containerDecoration,
           child: Row(
             children: [
               Text('Per galon '),

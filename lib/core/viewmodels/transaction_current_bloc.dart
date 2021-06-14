@@ -10,10 +10,10 @@ class TransactionCurrentBloc extends Bloc<TransactionEvent, TransactionState> {
 
   @override
   Stream<TransactionState> mapEventToState(TransactionEvent event) async* {
-    if (event is TransactionFetchCurrent) {
-      yield TransactionLoading();
+    try {
+      if (event is TransactionFetchCurrent) {
+        yield TransactionLoading();
 
-      try {
         Transaction transaction =
             await _transactionService.getCurrentTransactions();
 
@@ -22,10 +22,18 @@ class TransactionCurrentBloc extends Bloc<TransactionEvent, TransactionState> {
         } else {
           yield TransactionFetchCurrentSuccess(transaction: transaction);
         }
-      } catch (e) {
-        print(e);
-        yield TransactionError();
       }
+
+      if (event is TransactionDenyCurrent) {
+        yield TransactionLoading();
+
+        await _transactionService.denyCurrentTransaction();
+
+        yield TransactionEmpty();
+      }
+    } catch (e) {
+      print(e);
+      yield TransactionError();
     }
   }
 }
