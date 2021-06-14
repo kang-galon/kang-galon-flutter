@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kang_galon/core/blocs/event_state.dart';
+import 'package:kang_galon/core/models/models.dart';
 import 'package:kang_galon/core/viewmodels/bloc.dart';
 import 'package:kang_galon/ui/config/pallette.dart';
 import 'package:kang_galon/ui/pages/pages.dart';
@@ -56,18 +57,13 @@ class _HistoryPageState extends State<HistoryPage> {
                   return SliverList(
                     delegate: SliverChildBuilderDelegate(
                       (context, index) {
-                        if (state is TransactionLoading) {
-                          return Wrap(
-                            alignment: WrapAlignment.center,
-                            children: [CircularProgressIndicator()],
-                          );
-                        }
-
                         if (state is TransactionFetchListSuccess) {
+                          Transaction transaction = state.transactions[index];
+
                           return TransactionItem(
-                            transaction: state.transactions[index],
-                            onTap: () => _detailTransactionAction(
-                                state.transactions[index].id),
+                            transaction: transaction,
+                            onTap: () =>
+                                _detailTransactionAction(transaction.id),
                           );
                         }
 
@@ -78,11 +74,13 @@ class _HistoryPageState extends State<HistoryPage> {
                           );
                         }
 
-                        return const SizedBox.shrink();
+                        return TransactionItem.loading();
                       },
                       childCount: (state is TransactionFetchListSuccess)
                           ? state.transactions.length
-                          : 1,
+                          : (state is TransactionLoading)
+                              ? 1
+                              : 0,
                     ),
                   );
                 },

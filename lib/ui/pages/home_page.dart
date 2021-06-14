@@ -33,6 +33,9 @@ class _HomePageState extends State<HomePage> {
     // get current transaction
     _transactionCurrentBloc.add(TransactionFetchCurrent());
 
+    // get current location
+    _locationBloc.add(LocationCurrent());
+
     // init controller
     _refreshController = RefreshController(initialRefresh: false);
 
@@ -238,49 +241,47 @@ class _HomePageState extends State<HomePage> {
               }
             },
             builder: (context, state) {
-              if (state is DepotFetchListSuccess) {
-                return Container(
-                  padding: const EdgeInsets.all(10.0),
-                  decoration: Pallette.containerDecoration,
-                  child: Column(
-                    children: [
-                      LongButton(
-                        context: context,
-                        onPressed: _allDepotAction,
-                        icon: Icons.local_drink,
-                        text: 'Semua depot',
-                      ),
-                      ListView.builder(
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        itemBuilder: (context, index) {
+              return Container(
+                padding: const EdgeInsets.all(10.0),
+                decoration: Pallette.containerDecoration,
+                child: Column(
+                  children: [
+                    LongButton(
+                      context: context,
+                      onPressed: _allDepotAction,
+                      icon: Icons.local_drink,
+                      text: 'Semua depot',
+                    ),
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemBuilder: (context, index) {
+                        if (state is DepotFetchListSuccess) {
+                          Depot depot = state.depots[index];
                           return DepotItem(
-                            depot: state.depots[index],
-                            onTap: () =>
-                                _detailDepotAction(state.depots[index]),
+                            depot: depot,
+                            onTap: () => _detailDepotAction(depot),
                           );
-                        },
-                        itemCount:
-                            state.depots.length > 4 ? 5 : state.depots.length,
-                      ),
-                    ],
-                  ),
-                );
-              } else if (state is DepotLoading) {
-                return CircularProgressIndicator();
-              } else if (state is DepotEmpty || state is DepotError) {
-                return Container(
-                  padding: const EdgeInsets.all(10.0),
-                  width: double.infinity,
-                  decoration: Pallette.containerDecoration,
-                  child: Text(
-                    state.toString(),
-                    textAlign: TextAlign.center,
-                  ),
-                );
-              }
+                        }
 
-              return const SizedBox.shrink();
+                        if (state is DepotEmpty) {
+                          return Text(
+                            state.toString(),
+                            textAlign: TextAlign.center,
+                          );
+                        }
+
+                        return DepotItem.loading();
+                      },
+                      itemCount: (state is DepotFetchListSuccess)
+                          ? state.depots.length > 4
+                              ? 5
+                              : state.depots.length
+                          : 1,
+                    ),
+                  ],
+                ),
+              );
             },
           );
         }

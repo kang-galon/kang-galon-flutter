@@ -16,4 +16,8 @@ class Pallette {
 
   static final EdgeInsets contentPadding =
       const EdgeInsets.only(left: 10.0, right: 10.0, top: 20.0, bottom: 20.0);
+
+  static final Color shimmerBaseColor = Colors.grey.shade300;
+
+  static final Color shimmerHighlightColor = Colors.grey.shade100;
 }
