@@ -1,12 +1,10 @@
 import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kang_galon/core/viewmodels/bloc.dart';
 import 'package:kang_galon/ui/pages/pages.dart';
-import 'package:kang_galon/ui/widgets/widgets.dart';
 
 class SplashPage extends StatefulWidget {
   @override
@@ -15,38 +13,24 @@ class SplashPage extends StatefulWidget {
 
 class _SplashPageState extends State<SplashPage> {
   bool _initialized;
-  bool _error;
 
   @override
   void initState() {
-    super.initState();
-
     _initialized = false;
-    _error = false;
+
+    super.initState();
 
     splashTimer();
   }
 
   void splashTimer() async {
-    try {
-      var duration = Duration(seconds: 3);
+    Duration duration = Duration(seconds: 3);
 
-      await Firebase.initializeApp();
-
-      Timer(duration, () {
-        setState(() => _initialized = true);
-      });
-    } catch (e) {
-      setState(() => _error = true);
-    }
+    Timer(duration, () => setState(() => _initialized = true));
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_error) {
-      showSnackbar(context, 'Something wrong, when initialize FlutterFire');
-    }
-
     if (!_initialized) {
       return MaterialApp(
         home: Scaffold(
