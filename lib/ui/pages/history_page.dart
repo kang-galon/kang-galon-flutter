@@ -2,14 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kang_galon/core/blocs/event_state.dart';
 import 'package:kang_galon/core/viewmodels/bloc.dart';
-import 'package:kang_galon/ui/arguments/transaction_arguments.dart';
 import 'package:kang_galon/ui/config/pallette.dart';
 import 'package:kang_galon/ui/pages/pages.dart';
 import 'package:kang_galon/ui/widgets/widgets.dart';
 
 class HistoryPage extends StatefulWidget {
-  static const String routeName = '/history';
-
   @override
   _HistoryPageState createState() => _HistoryPageState();
 }
@@ -28,11 +25,8 @@ class _HistoryPageState extends State<HistoryPage> {
     super.initState();
   }
 
-  void _detailTransactionAction(int id) {
-    TransactionArguments args = TransactionArguments(id);
-
-    Navigator.pushNamed(context, TransactionPage.routeName, arguments: args);
-  }
+  void _detailTransactionAction(int id) => Navigator.of(context)
+      .push(MaterialPageRoute(builder: (_) => TransactionPage(id: id)));
 
   void _transactionListener(BuildContext context, TransactionState state) {
     if (state is TransactionError) {

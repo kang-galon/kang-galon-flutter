@@ -3,13 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kang_galon/core/blocs/event_state.dart';
 import 'package:kang_galon/core/viewmodels/bloc.dart';
 import 'package:kang_galon/ui/config/pallette.dart';
-import 'package:kang_galon/ui/pages/pages.dart';
 import 'package:kang_galon/ui/widgets/widgets.dart';
 
 class TransactionPage extends StatefulWidget {
-  static const String routeName = '/transaction';
   final int id;
-
   TransactionPage({@required this.id});
 
   @override

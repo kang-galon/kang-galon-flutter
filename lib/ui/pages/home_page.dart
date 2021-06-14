@@ -6,7 +6,6 @@ import 'package:kang_galon/core/blocs/event_state.dart';
 import 'package:kang_galon/core/models/models.dart' as model;
 import 'package:kang_galon/core/models/models.dart';
 import 'package:kang_galon/core/viewmodels/bloc.dart';
-import 'package:kang_galon/ui/arguments/arguments.dart';
 import 'package:kang_galon/ui/config/pallette.dart';
 import 'package:kang_galon/ui/pages/pages.dart';
 import 'package:kang_galon/ui/widgets/widgets.dart';
@@ -14,8 +13,6 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HomePage extends StatefulWidget {
-  static const String routeName = '/home';
-
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -56,16 +53,22 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  void _mapsAction() => Navigator.pushNamed(context, MapsPage.routeName);
+  void _accountAction() => Navigator.of(context)
+      .push(MaterialPageRoute(builder: (_) => AccountPage()));
 
   void _detectMapsAction() => _locationBloc.add(LocationCurrent());
 
-  void _allDepotAction() =>
-      Navigator.pushNamed(context, NearDepotPage.routeName);
+  void _mapsAction() =>
+      Navigator.of(context).push(MaterialPageRoute(builder: (_) => MapsPage()));
 
-  void _historyAction() => Navigator.pushNamed(context, HistoryPage.routeName);
+  void _allDepotAction() => Navigator.of(context)
+      .push(MaterialPageRoute(builder: (_) => NearDepotPage()));
 
-  void _accountAction() => Navigator.pushNamed(context, AccountPage.routeName);
+  void _detailDepotAction(model.Depot depot) => Navigator.of(context)
+      .push(MaterialPageRoute(builder: (_) => DepotPage(depot: depot)));
+
+  void _historyAction() => Navigator.of(context)
+      .push(MaterialPageRoute(builder: (_) => HistoryPage()));
 
   void _phoneAction(Depot depot) async =>
       await launch('tel:${depot.phoneNumber}');
@@ -84,11 +87,6 @@ class _HomePageState extends State<HomePage> {
     _transactionCurrentBloc.add(TransactionDenyCurrent());
 
     showSnackbar(context, 'Berhasil dibatalkan');
-  }
-
-  void _detailDepotAction(model.Depot depot) {
-    DepotArguments args = DepotArguments(depot);
-    Navigator.pushNamed(context, DepotPage.routeName, arguments: args);
   }
 
   @override

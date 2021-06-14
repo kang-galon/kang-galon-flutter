@@ -3,24 +3,18 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kang_galon/core/blocs/event_state.dart';
 import 'package:kang_galon/core/models/models.dart';
 import 'package:kang_galon/core/viewmodels/bloc.dart';
-import 'package:kang_galon/ui/arguments/arguments.dart';
 import 'package:kang_galon/ui/config/pallette.dart';
 import 'package:kang_galon/ui/widgets/widgets.dart';
 import 'package:kang_galon/ui/pages/pages.dart';
 
 class NearDepotPage extends StatefulWidget {
-  static const String routeName = '/near_depot';
-
   @override
   _NearDepotPageState createState() => _NearDepotPageState();
 }
 
 class _NearDepotPageState extends State<NearDepotPage> {
-  void _detailDepotAction(Depot depot) {
-    DepotArguments args = DepotArguments(depot);
-
-    Navigator.pushNamed(context, DepotPage.routeName, arguments: args);
-  }
+  void _detailDepotAction(Depot depot) => Navigator.of(context)
+      .push(MaterialPageRoute(builder: (_) => DepotPage(depot: depot)));
 
   @override
   Widget build(BuildContext context) {

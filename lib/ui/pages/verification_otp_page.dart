@@ -42,7 +42,8 @@ class VerificationOtpPage extends StatelessWidget {
 
   void _blocListener(BuildContext context, UserState state) {
     if (state is UserSuccess) {
-      Navigator.pushReplacementNamed(context, HomePage.routeName);
+      Navigator.of(context)
+          .pushReplacement(MaterialPageRoute(builder: (_) => HomePage()));
     }
 
     if (state is UserError) {

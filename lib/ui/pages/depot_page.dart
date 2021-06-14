@@ -10,9 +10,7 @@ import 'package:kang_galon/ui/widgets/widgets.dart';
 import 'package:kang_galon/ui/pages/pages.dart';
 
 class DepotPage extends StatefulWidget {
-  static const String routeName = '/depot';
   final Depot depot;
-
   DepotPage({@required this.depot});
 
   @override
@@ -108,8 +106,10 @@ class _DepotPageState extends State<DepotPage> {
               _transactionCurrentBloc.add(TransactionFetchCurrent());
 
               // navigate to home
-              Navigator.popUntil(
-                  context, ModalRoute.withName(HomePage.routeName));
+              Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (_) => HomePage()),
+                (route) => false,
+              );
             }
 
             if (state is TransactionAddFailed || state is TransactionError) {

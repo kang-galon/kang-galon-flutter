@@ -8,8 +8,6 @@ import 'package:kang_galon/core/models/models.dart';
 import 'package:kang_galon/core/viewmodels/bloc.dart';
 
 class MapsPage extends StatefulWidget {
-  static const String routeName = '/maps';
-
   @override
   _MapsPageState createState() => _MapsPageState();
 }

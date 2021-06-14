@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kang_galon/core/blocs/event_state.dart';
 import 'package:kang_galon/core/viewmodels/bloc.dart';
-import 'package:kang_galon/ui/arguments/arguments.dart';
 import 'package:kang_galon/ui/config/pallette.dart';
 import 'package:kang_galon/ui/pages/pages.dart';
 import 'package:kang_galon/ui/widgets/widgets.dart';
@@ -67,14 +66,13 @@ class _RegisterPageState extends State<RegisterPage> {
       (verificationId, forceResendingToken) {
         showSnackbar(context, 'OTP berhasil dikirim');
 
-        VerificationOtpArguments args =
-            VerificationOtpArguments(verificationId, phoneNumber, name);
-
-        Navigator.pushReplacementNamed(
-          context,
-          VerificationOtpPage.routeName,
-          arguments: args,
-        );
+        Navigator.of(context).pushReplacement(MaterialPageRoute(
+            builder: (_) => VerificationOtpPage(
+                  verificationId: verificationId,
+                  phoneNumber: phoneNumber,
+                  name: name,
+                  isLogin: false,
+                )));
       },
     );
   }
