@@ -46,43 +46,30 @@ class _SplashPageState extends State<SplashPage> {
     // Check if already login or not
     var auth = FirebaseAuth.instance;
     var user = auth.currentUser;
-    if (user == null) {
-      return MultiBlocProvider(
-        providers: [
-          BlocProvider<UserBloc>(create: (context) => UserBloc()),
-          BlocProvider<LocationBloc>(create: (context) => LocationBloc()),
-          BlocProvider<DepotBloc>(create: (context) => DepotBloc()),
-          BlocProvider<TransactionBloc>(create: (context) => TransactionBloc()),
-          BlocProvider<TransactionDetailBloc>(
-              create: (context) => TransactionDetailBloc()),
-          BlocProvider<TransactionCurrentBloc>(
-              create: (context) => TransactionCurrentBloc()),
-          BlocProvider<ChatsBloc>(create: (context) => ChatsBloc()),
-        ],
-        child: MaterialApp(
-          home: LoginPage(),
+
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<LocationBloc>(create: (context) => LocationBloc()),
+        BlocProvider<DepotBloc>(create: (context) => DepotBloc()),
+        BlocProvider<TransactionBloc>(create: (context) => TransactionBloc()),
+        BlocProvider<TransactionDetailBloc>(
+            create: (context) => TransactionDetailBloc()),
+        BlocProvider<TransactionCurrentBloc>(
+            create: (context) => TransactionCurrentBloc()),
+        BlocProvider<ChatsBloc>(create: (context) => ChatsBloc()),
+      ]..add(
+          user == null // user bloc
+              ? BlocProvider<UserBloc>(create: (context) => UserBloc())
+              : BlocProvider<UserBloc>(
+                  create: (context) => UserBloc.currentUser()),
         ),
-      );
-    } else {
-      return MultiBlocProvider(
-        providers: [
-          BlocProvider<UserBloc>(create: (context) => UserBloc.currentUser()),
-          BlocProvider<LocationBloc>(create: (context) => LocationBloc()),
-          BlocProvider<DepotBloc>(create: (context) => DepotBloc()),
-          BlocProvider<TransactionBloc>(create: (context) => TransactionBloc()),
-          BlocProvider<TransactionDetailBloc>(
-              create: (context) => TransactionDetailBloc()),
-          BlocProvider<TransactionCurrentBloc>(
-              create: (context) => TransactionCurrentBloc()),
-          BlocProvider<ChatsBloc>(create: (context) => ChatsBloc()),
-        ],
-        child: MaterialApp(
-          theme: ThemeData(
-            scaffoldBackgroundColor: Colors.white,
-          ),
-          home: HomePage(),
+      child: MaterialApp(
+        title: 'Kang Galon',
+        theme: ThemeData(
+          scaffoldBackgroundColor: Colors.white,
         ),
-      );
-    }
+        home: user == null ? LoginPage() : HomePage(),
+      ),
+    );
   }
 }

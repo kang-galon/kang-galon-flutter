@@ -1,8 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:kang_galon/core/models/models.dart';
 import 'package:kang_galon/ui/config/pallette.dart';
-import 'package:kang_galon/ui/widgets/home_button.dart';
+import 'package:kang_galon/ui/widgets/custom_icon_button.dart';
 
 class TransactionCurrent extends StatelessWidget {
   final Transaction transaction;
@@ -49,11 +50,6 @@ class TransactionCurrent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var customIconButton = CustomIconButton(
-      label: 'Telepon',
-      icon: Icons.phone,
-      onPressed: () => onTapPhone(transaction.depot!),
-    );
     return Column(
       children: [
         Row(
@@ -87,17 +83,35 @@ class TransactionCurrent extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 10.0),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            customIconButton,
-            CustomIconButton(
-              label: 'Chat',
-              icon: Icons.chat,
-              onPressed: onTapChat,
-            ),
-          ],
-        ),
+        transaction.status == 4
+            ? RatingBar.builder(
+                initialRating: 0,
+                minRating: 1,
+                direction: Axis.horizontal,
+                itemCount: 5,
+                itemPadding: const EdgeInsets.symmetric(horizontal: 5.0),
+                itemBuilder: (context, _) => Icon(
+                  Icons.star,
+                  color: Colors.amber,
+                ),
+                tapOnlyMode: true,
+                onRatingUpdate: (double value) {},
+              )
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CustomIconButton(
+                    label: 'Telepon',
+                    icon: Icons.phone,
+                    onPressed: () => onTapPhone(transaction.depot!),
+                  ),
+                  CustomIconButton(
+                    label: 'Chat',
+                    icon: Icons.chat,
+                    onPressed: onTapChat,
+                  ),
+                ],
+              ),
         const SizedBox(height: 10.0),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
