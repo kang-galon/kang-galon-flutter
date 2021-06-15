@@ -47,7 +47,8 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void _registerAction(BuildContext context) {
-    Navigator.pushNamed(context, RegisterPage.routeName);
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (_) => RegisterPage()));
   }
 
   void _sendOtp() async {

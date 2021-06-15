@@ -90,6 +90,13 @@ class _HomePageState extends State<HomePage> {
     showSnackbar(context, 'Berhasil dibatalkan');
   }
 
+  void _ratingTransactionAction(double rating) {
+    _transactionCurrentBloc
+        .add(TransactionRatingCurrent(rating: rating.toInt()));
+
+    showSnackbar(context, 'Berhasil rating');
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -153,6 +160,7 @@ class _HomePageState extends State<HomePage> {
                     onTapPhone: _phoneAction,
                     onTapChat: _chatAction,
                     onDenyTransaction: _denyTransactionAction,
+                    onRatingTransaction: _ratingTransactionAction,
                   );
                 }
 

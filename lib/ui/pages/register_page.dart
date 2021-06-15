@@ -8,8 +8,6 @@ import 'package:kang_galon/ui/pages/pages.dart';
 import 'package:kang_galon/ui/widgets/widgets.dart';
 
 class RegisterPage extends StatefulWidget {
-  static const String routeName = '/register';
-
   @override
   _RegisterPageState createState() => _RegisterPageState();
 }

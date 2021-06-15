@@ -41,3 +41,12 @@ class TransactionDenyCurrent extends TransactionEvent {
   @override
   List<Object> get props => [];
 }
+
+class TransactionRatingCurrent extends TransactionEvent {
+  final int rating;
+
+  TransactionRatingCurrent({required this.rating});
+
+  @override
+  List<Object> get props => [];
+}

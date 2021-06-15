@@ -29,6 +29,14 @@ class TransactionCurrentBloc extends Bloc<TransactionEvent, TransactionState> {
 
         yield TransactionEmpty();
       }
+
+      if (event is TransactionRatingCurrent) {
+        yield TransactionLoading();
+
+        await TransactionService.ratingCurrentTransaction(event.rating * 2);
+
+        yield TransactionEmpty();
+      }
     } catch (e) {
       print('TransactionCurrent - $e');
 

@@ -9,7 +9,6 @@ import 'package:kang_galon/ui/widgets/snackbar.dart';
 import 'package:pinput/pin_put/pin_put.dart';
 
 class VerificationOtpPage extends StatelessWidget {
-  static const String routeName = '/verification_otp';
   final String verificationId;
   final String phoneNumber;
   final String name;

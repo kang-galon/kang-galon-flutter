@@ -10,12 +10,14 @@ class TransactionCurrent extends StatelessWidget {
   final Function(Depot) onTapPhone;
   final VoidCallback onTapChat;
   final VoidCallback onDenyTransaction;
+  final Function(double) onRatingTransaction;
 
   const TransactionCurrent({
     required this.transaction,
     required this.onTapPhone,
     required this.onTapChat,
     required this.onDenyTransaction,
+    required this.onRatingTransaction,
   });
 
   void _denyAction(BuildContext context) {
@@ -95,7 +97,7 @@ class TransactionCurrent extends StatelessWidget {
                   color: Colors.amber,
                 ),
                 tapOnlyMode: true,
-                onRatingUpdate: (double value) {},
+                onRatingUpdate: onRatingTransaction,
               )
             : Row(
                 mainAxisAlignment: MainAxisAlignment.center,

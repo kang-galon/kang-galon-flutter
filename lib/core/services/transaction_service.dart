@@ -84,4 +84,20 @@ class TransactionService {
       throw Exception(json['message']);
     }
   }
+
+  static Future<void> ratingCurrentTransaction(int rating) async {
+    Uri uri = url('/client/transaction/current/rating');
+    String token = await FirebaseAuth.instance.currentUser!.getIdToken();
+
+    var response = await http.post(
+      uri,
+      headers: {'Authorization': 'Bearer ' + token},
+      body: {'rating': rating.toString()},
+    );
+
+    var json = jsonDecode(response.body);
+    if (!json['success']) {
+      throw Exception(json['message']);
+    }
+  }
 }
