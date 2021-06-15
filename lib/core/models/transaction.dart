@@ -55,22 +55,10 @@ class Transaction {
     return transactions;
   }
 
-  static Transaction fromJsonToModel(dynamic json) {
-    Depot depot = Depot(
-      phoneNumber: json['depot']['phone_number'],
-      name: json['depot']['name'],
-      image: json['depot']['image'],
-      latitude: json['depot']['latitude'],
-      longitude: json['depot']['longitude'],
-      address: json['depot']['address'],
-      rating: double.parse(json['depot']['rating'].toString()),
-      price: json['depot']['price'],
-      priceDesc: json['depot']['price_description'],
-      isOpen: json['depot']['is_open'] == 1 ? true : false,
-      isOpenDesc: json['depot']['is_open_description'],
-    );
+  factory Transaction.fromJson(dynamic json) {
+    Depot depot = Depot.fromJson(json['depot']);
 
-    Transaction transaction = Transaction(
+    return Transaction(
       id: json['id'],
       depotName: json['depot_name'],
       depotPhoneNumber: json['depot_phone_number'],
@@ -85,7 +73,5 @@ class Transaction {
       createdAt: json['created_at'],
       depot: depot,
     );
-
-    return transaction;
   }
 }

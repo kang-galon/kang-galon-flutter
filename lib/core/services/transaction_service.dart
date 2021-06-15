@@ -49,7 +49,7 @@ class TransactionService {
 
     var json = jsonDecode(response.body);
     if (json['success']) {
-      return Transaction.fromJsonToModel(json['data']);
+      return Transaction.fromJson(json['data']);
     } else {
       throw Exception(json['message']);
     }
@@ -65,7 +65,7 @@ class TransactionService {
 
     var json = jsonDecode(response.body);
     if (json['success']) {
-      return Transaction.fromJsonToModel(json['data']);
+      return Transaction.fromJson(json['data']);
     } else {
       return null;
     }

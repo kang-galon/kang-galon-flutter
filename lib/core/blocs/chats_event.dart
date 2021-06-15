@@ -10,16 +10,14 @@ class ChatGetMessage extends ChatsEvent {
 }
 
 class ChatSendMessage extends ChatsEvent {
-  final String depotPhoneNumber;
   final int transactionId;
   final String message;
 
   ChatSendMessage({
     required this.transactionId,
-    required this.depotPhoneNumber,
     required this.message,
   });
 
   @override
-  List<Object> get props => [transactionId, depotPhoneNumber, message];
+  List<Object> get props => [transactionId, message];
 }

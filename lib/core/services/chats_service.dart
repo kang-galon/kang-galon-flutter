@@ -21,19 +21,14 @@ class ChatsService {
     }
   }
 
-  static Future<void> sendMessage(
-      String depotPhoneNumber, int transactionId, String message) async {
+  static Future<void> sendMessage(int transactionId, String message) async {
     Uri uri = url('/client/chats/send');
     String token = await FirebaseAuth.instance.currentUser!.getIdToken();
 
     var response = await http.post(
       uri,
       headers: {'Authorization': 'Bearer $token'},
-      body: {
-        'to': depotPhoneNumber,
-        'transaction_id': transactionId.toString(),
-        'message': message
-      },
+      body: {'transaction_id': transactionId.toString(), 'message': message},
     );
 
     var json = jsonDecode(response.body);

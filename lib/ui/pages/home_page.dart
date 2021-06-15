@@ -78,12 +78,10 @@ class _HomePageState extends State<HomePage> {
 
   void _chatAction() async {
     print(await fire.FirebaseAuth.instance.currentUser!.getIdToken());
-    // FirebaseMessaging messaging = FirebaseMessaging.instance;
-    // print(await messaging.getToken());
-    // print(fire.FirebaseAuth.instance.currentUser.uid);
-    // print(await fire.FirebaseAuth.instance.currentUser.getIdToken());
 
-    Navigator.pushNamed(context, ChatsPage.routeName);
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => ChatsPage()),
+    );
   }
 
   void _denyTransactionAction() {

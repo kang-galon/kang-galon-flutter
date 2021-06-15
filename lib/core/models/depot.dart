@@ -49,4 +49,20 @@ class Depot {
 
     return depots;
   }
+
+  factory Depot.fromJson(dynamic json) {
+    return Depot(
+      phoneNumber: json['phone_number'],
+      name: json['name'],
+      image: json['image'],
+      latitude: json['latitude'],
+      longitude: json['longitude'],
+      address: json['address'],
+      rating: double.parse(json['rating'].toString()),
+      price: json['price'],
+      priceDesc: json['price_description'],
+      isOpen: json['is_open'] == 1 ? true : false,
+      isOpenDesc: json['is_open_description'],
+    );
+  }
 }

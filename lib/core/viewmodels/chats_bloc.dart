@@ -12,8 +12,7 @@ class ChatsBloc extends Bloc<ChatsEvent, ChatsState> {
       if (event is ChatSendMessage) {
         yield ChatsLoading();
 
-        await ChatsService.sendMessage(
-            event.depotPhoneNumber, event.transactionId, event.message);
+        await ChatsService.sendMessage(event.transactionId, event.message);
 
         yield ChatsSendMessageSuccess();
       }
