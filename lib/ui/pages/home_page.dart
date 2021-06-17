@@ -44,6 +44,13 @@ class _HomePageState extends State<HomePage> {
 
   void _onRefresh() {
     _transactionCurrentBloc.add(TransactionFetchCurrent());
+
+    LocationState state = _locationBloc.state;
+    if (state is LocationEnable || state is LocationSet) {
+      model.Location location = (state as LocationEnable).location;
+
+      _depotBloc.add(DepotFetchList(location: location));
+    }
   }
 
   void _transactionListener(BuildContext context, TransactionState state) {
