@@ -8,13 +8,13 @@ import 'package:kang_galon/ui/pages/pages.dart';
 import 'package:kang_galon/ui/widgets/snackbar.dart';
 import 'package:pinput/pin_put/pin_put.dart';
 
-class VerificationOtpPage extends StatelessWidget {
+class VerificationOTPPage extends StatelessWidget {
   final String verificationId;
   final String phoneNumber;
   final String name;
   final bool isLogin;
 
-  VerificationOtpPage({
+  VerificationOTPPage({
     required this.verificationId,
     required this.phoneNumber,
     required this.name,
@@ -39,14 +39,10 @@ class VerificationOtpPage extends StatelessWidget {
     }
   }
 
-  void _blocListener(BuildContext context, UserState state) {
+  void _verificationOTPListener(BuildContext context, UserState state) {
     if (state is UserSuccess) {
       Navigator.of(context)
           .pushReplacement(MaterialPageRoute(builder: (_) => HomePage()));
-    }
-
-    if (state is UserError) {
-      showSnackbar(context, state.toString());
     }
   }
 
@@ -83,7 +79,7 @@ class VerificationOtpPage extends StatelessWidget {
                       vertical: 20.0, horizontal: 30.0),
                   decoration: Pallette.containerDecoration,
                   child: BlocConsumer<UserBloc, UserState>(
-                    listener: _blocListener,
+                    listener: _verificationOTPListener,
                     builder: (context, state) {
                       if (state is UserLoading) {
                         return Wrap(

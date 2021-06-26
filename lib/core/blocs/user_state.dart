@@ -15,12 +15,7 @@ class UserSuccess extends UserState {
   UserSuccess({required this.name});
 
   @override
-  List<Object> get props => [];
-
-  @override
-  String toString() {
-    return 'Ubah nama berhasil';
-  }
+  List<Object> get props => [name];
 }
 
 class UserExist extends UserState {
@@ -36,11 +31,6 @@ class UserDoesntExist extends UserState {
 class UserError extends UserState {
   @override
   List<Object> get props => [];
-
-  @override
-  String toString() {
-    return 'Ups.. ada yang salah nih';
-  }
 }
 
 class UserLoading extends UserState {

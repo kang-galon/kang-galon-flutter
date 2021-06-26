@@ -2,9 +2,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kang_galon/core/blocs/event_state.dart';
 import 'package:kang_galon/core/models/models.dart';
 import 'package:kang_galon/core/services/services.dart';
+import 'package:kang_galon/core/viewmodels/bloc.dart';
 
 class TransactionCurrentBloc extends Bloc<TransactionEvent, TransactionState> {
-  TransactionCurrentBloc() : super(TransactionEmpty());
+  final SnackbarBloc _snackbarBloc;
+  TransactionCurrentBloc(this._snackbarBloc) : super(TransactionEmpty());
 
   @override
   Stream<TransactionState> mapEventToState(TransactionEvent event) async* {
@@ -39,6 +41,7 @@ class TransactionCurrentBloc extends Bloc<TransactionEvent, TransactionState> {
       }
     } catch (e) {
       print('TransactionCurrent - $e');
+      _snackbarBloc.add(SnackbarShow(message: 'Ups.. ada yang salah nih'));
 
       yield TransactionError();
     }

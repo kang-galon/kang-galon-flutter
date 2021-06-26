@@ -34,6 +34,12 @@ class _LoginPageState extends State<LoginPage> {
     _textEditingController.dispose();
   }
 
+  void _loginListener(BuildContext context, UserState state) {
+    if (state is UserExist) {
+      _sendOtp();
+    }
+  }
+
   void _loginAction() {
     if (_formKey.currentState!.validate()) {
       FocusScope.of(context).unfocus();
@@ -64,7 +70,7 @@ class _LoginPageState extends State<LoginPage> {
         showSnackbar(context, 'OTP berhasil dikirim');
 
         Navigator.of(context).pushReplacement(MaterialPageRoute(
-            builder: (_) => VerificationOtpPage(
+            builder: (_) => VerificationOTPPage(
                   verificationId: verificationId,
                   phoneNumber: phoneNumber,
                   name: '',
@@ -134,15 +140,7 @@ class _LoginPageState extends State<LoginPage> {
                   child: Column(
                     children: [
                       BlocConsumer<UserBloc, UserState>(
-                        listener: (context, state) {
-                          if (state is UserExist) {
-                            _sendOtp();
-                          }
-
-                          if (state is UserError) {
-                            showSnackbar(context, state.toString());
-                          }
-                        },
+                        listener: _loginListener,
                         builder: (context, state) {
                           return TextFormField(
                             controller: _textEditingController,

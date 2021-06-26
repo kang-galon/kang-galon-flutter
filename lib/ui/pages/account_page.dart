@@ -7,8 +7,6 @@ import 'package:kang_galon/ui/pages/pages.dart';
 import 'package:kang_galon/ui/widgets/widgets.dart';
 
 class AccountPage extends StatefulWidget {
-  static const String routeName = '/account';
-
   @override
   _AccountPageState createState() => _AccountPageState();
 }
@@ -50,6 +48,14 @@ class _AccountPageState extends State<AccountPage> {
     }
 
     return null;
+  }
+
+  void _accountListener(BuildContext context, UserState state) {
+    if (state is UserSuccess) {
+      Navigator.pop(context);
+
+      showSnackbar(context, 'Ubah nama berhasil');
+    }
   }
 
   void _saveAction() {
@@ -101,17 +107,7 @@ class _AccountPageState extends State<AccountPage> {
                     ),
                     const SizedBox(height: 10.0),
                     BlocConsumer<UserBloc, UserState>(
-                      listener: (context, state) {
-                        if (state is UserError) {
-                          showSnackbar(context, state.toString());
-                        }
-
-                        if (state is UserSuccess) {
-                          Navigator.pop(context);
-
-                          showSnackbar(context, state.toString());
-                        }
-                      },
+                      listener: _accountListener,
                       builder: (context, state) {
                         return ElevatedButton(
                           onPressed:

@@ -54,10 +54,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _transactionListener(BuildContext context, TransactionState state) {
-    if (state is TransactionError) {
-      showSnackbar(context, state.toString());
-    }
-
     if (state is TransactionFetchCurrentSuccess || state is TransactionEmpty) {
       _refreshController.refreshCompleted();
     }
@@ -185,12 +181,7 @@ class _HomePageState extends State<HomePage> {
       padding: const EdgeInsets.all(10.0),
       width: MediaQuery.of(context).size.width,
       decoration: Pallette.containerDecoration,
-      child: BlocConsumer<LocationBloc, LocationState>(
-        listener: (context, state) {
-          if (state is LocationError) {
-            showSnackbar(context, state.toString());
-          }
-        },
+      child: BlocBuilder<LocationBloc, LocationState>(
         builder: (context, state) {
           if (state is LocationEnable) {
             return Column(
@@ -210,27 +201,25 @@ class _HomePageState extends State<HomePage> {
             );
           }
 
-          if (state is LocationPermissionUnable ||
-              state is LocationServiceUnable ||
-              state is LocationError) {
-            return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10.0),
-              child: Column(
-                children: [
-                  LongButton(
-                    context: context,
-                    onPressed: _detectMapsAction,
-                    icon: Icons.refresh,
-                    text: 'Deteksi lokasi anda',
-                  ),
-                  const SizedBox(height: 10.0),
-                  Text(state.toString()),
-                ],
-              ),
-            );
-          }
-
-          return const SizedBox.shrink();
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10.0),
+            child: Column(
+              children: [
+                LongButton(
+                  context: context,
+                  onPressed: _detectMapsAction,
+                  icon: Icons.refresh,
+                  text: 'Deteksi lokasi anda',
+                ),
+                const SizedBox(height: 10.0),
+                Text((state is LocationPermissionUnable)
+                    ? 'Silahkan izinkan Location'
+                    : (state is LocationServiceUnable)
+                        ? 'Silahkan aktifkan Location Service'
+                        : '-'),
+              ],
+            ),
+          );
         },
       ),
     );
@@ -279,7 +268,7 @@ class _HomePageState extends State<HomePage> {
 
                         if (state is DepotEmpty) {
                           return Text(
-                            state.toString(),
+                            'Tidak ada depot di sekitar anda',
                             textAlign: TextAlign.center,
                           );
                         }

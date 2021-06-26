@@ -100,10 +100,9 @@ class _DepotPageState extends State<DepotPage> {
       ),
       builder: (context) {
         return BlocConsumer<TransactionBloc, TransactionState>(
-          bloc: _transactionBloc,
           listener: (context, state) {
             if (state is TransactionAddSuccess) {
-              showSnackbar(context, state.toString());
+              showSnackbar(context, 'Checkout berhasil, silahkan menunggu');
 
               // fetch current transaction
               _transactionCurrentBloc.add(TransactionFetchCurrent());
@@ -115,9 +114,11 @@ class _DepotPageState extends State<DepotPage> {
               );
             }
 
-            if (state is TransactionAddFailed || state is TransactionError) {
+            if (state is TransactionAddFailed) {
               Navigator.pop(context);
-              showSnackbar(context, state.toString());
+
+              showSnackbar(context,
+                  'Checkout gagal, tunggu transaksi sebelumnya selesai');
             }
           },
           builder: (context, state) {

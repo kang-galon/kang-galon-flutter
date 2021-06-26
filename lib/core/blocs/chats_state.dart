@@ -18,11 +18,6 @@ class ChatsLoading extends ChatsState {
 class ChatsError extends ChatsState {
   @override
   List<Object> get props => [];
-
-  @override
-  String toString() {
-    return 'Ups.. ada yang salah nih';
-  }
 }
 
 class ChatsSendMessageSuccess extends ChatsState {

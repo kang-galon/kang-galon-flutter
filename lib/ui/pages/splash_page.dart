@@ -3,8 +3,10 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kang_galon/core/blocs/event_state.dart';
 import 'package:kang_galon/core/viewmodels/bloc.dart';
 import 'package:kang_galon/ui/pages/pages.dart';
+import 'package:kang_galon/ui/widgets/snackbar.dart';
 
 class SplashPage extends StatefulWidget {
   @override
@@ -12,10 +14,13 @@ class SplashPage extends StatefulWidget {
 }
 
 class _SplashPageState extends State<SplashPage> {
+  late SnackbarBloc _snackbarBloc;
   late bool _initialized;
 
   @override
   void initState() {
+    // init
+    _snackbarBloc = SnackbarBloc();
     _initialized = false;
 
     super.initState();
@@ -44,31 +49,40 @@ class _SplashPageState extends State<SplashPage> {
     }
 
     // Check if already login or not
-    var auth = FirebaseAuth.instance;
-    var user = auth.currentUser;
+    FirebaseAuth auth = FirebaseAuth.instance;
+    User? user = auth.currentUser;
 
     return MultiBlocProvider(
       providers: [
-        BlocProvider<LocationBloc>(create: (context) => LocationBloc()),
-        BlocProvider<DepotBloc>(create: (context) => DepotBloc()),
-        BlocProvider<TransactionBloc>(create: (context) => TransactionBloc()),
+        BlocProvider<SnackbarBloc>(create: (_) => _snackbarBloc),
+        BlocProvider<LocationBloc>(create: (_) => LocationBloc(_snackbarBloc)),
+        BlocProvider<DepotBloc>(create: (_) => DepotBloc(_snackbarBloc)),
+        BlocProvider<TransactionBloc>(
+            create: (_) => TransactionBloc(_snackbarBloc)),
         BlocProvider<TransactionDetailBloc>(
-            create: (context) => TransactionDetailBloc()),
+            create: (_) => TransactionDetailBloc(_snackbarBloc)),
         BlocProvider<TransactionCurrentBloc>(
-            create: (context) => TransactionCurrentBloc()),
-        BlocProvider<ChatsBloc>(create: (context) => ChatsBloc()),
+            create: (_) => TransactionCurrentBloc(_snackbarBloc)),
+        BlocProvider<ChatsBloc>(create: (_) => ChatsBloc(_snackbarBloc)),
       ]..add(
           user == null // user bloc
-              ? BlocProvider<UserBloc>(create: (context) => UserBloc())
+              ? BlocProvider<UserBloc>(create: (_) => UserBloc(_snackbarBloc))
               : BlocProvider<UserBloc>(
-                  create: (context) => UserBloc.currentUser()),
+                  create: (_) => UserBloc.currentUser(_snackbarBloc)),
         ),
       child: MaterialApp(
         title: 'Kang Galon',
         theme: ThemeData(
           scaffoldBackgroundColor: Colors.white,
         ),
-        home: user == null ? LoginPage() : HomePage(),
+        home: BlocListener<SnackbarBloc, SnackbarState>(
+          listener: (context, state) {
+            if (state is SnackbarShowing) {
+              showSnackbar(context, state.message, isError: state.isError);
+            }
+          },
+          child: user == null ? LoginPage() : HomePage(),
+        ),
       ),
     );
   }

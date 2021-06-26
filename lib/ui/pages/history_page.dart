@@ -29,12 +29,6 @@ class _HistoryPageState extends State<HistoryPage> {
   void _detailTransactionAction(int id) => Navigator.of(context)
       .push(MaterialPageRoute(builder: (_) => TransactionPage(id: id)));
 
-  void _transactionListener(BuildContext context, TransactionState state) {
-    if (state is TransactionError) {
-      showSnackbar(context, state.toString());
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -51,8 +45,7 @@ class _HistoryPageState extends State<HistoryPage> {
             ),
             SliverPadding(
               padding: Pallette.contentPadding,
-              sliver: BlocConsumer<TransactionBloc, TransactionState>(
-                listener: _transactionListener,
+              sliver: BlocBuilder<TransactionBloc, TransactionState>(
                 builder: (context, state) {
                   return SliverList(
                     delegate: SliverChildBuilderDelegate(
@@ -69,7 +62,7 @@ class _HistoryPageState extends State<HistoryPage> {
 
                         if (state is TransactionEmpty) {
                           return Text(
-                            state.toString(),
+                            'Anda belum memiliki transaksi',
                             textAlign: TextAlign.center,
                           );
                         }

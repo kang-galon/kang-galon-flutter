@@ -2,9 +2,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kang_galon/core/blocs/event_state.dart';
 import 'package:kang_galon/core/models/models.dart';
 import 'package:kang_galon/core/services/depot_service.dart';
+import 'package:kang_galon/core/viewmodels/bloc.dart';
 
 class DepotBloc extends Bloc<DepotEvent, DepotState> {
-  DepotBloc() : super(DepotUninitialized());
+  final SnackbarBloc _snackbarBloc;
+  DepotBloc(this._snackbarBloc) : super(DepotUninitialized());
 
   @override
   Stream<DepotState> mapEventToState(DepotEvent event) async* {
@@ -23,6 +25,7 @@ class DepotBloc extends Bloc<DepotEvent, DepotState> {
       }
     } catch (e) {
       print('DepotBloc - $e');
+      _snackbarBloc.add(SnackbarShow(message: 'Ups.. ada yang salah nih'));
 
       yield DepotError();
     }

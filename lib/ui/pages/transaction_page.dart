@@ -34,12 +34,7 @@ class _TransactionPageState extends State<TransactionPage> {
         body: SingleChildScrollView(
           child: Padding(
             padding: Pallette.contentPadding,
-            child: BlocConsumer<TransactionDetailBloc, TransactionState>(
-              listener: (context, state) {
-                if (state is TransactionError) {
-                  showSnackbar(context, state.toString());
-                }
-              },
+            child: BlocBuilder<TransactionDetailBloc, TransactionState>(
               builder: (context, state) {
                 if (state is TransactionLoading) {
                   return Center(child: CircularProgressIndicator());

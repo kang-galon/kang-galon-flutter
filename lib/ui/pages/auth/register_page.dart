@@ -36,6 +36,12 @@ class _RegisterPageState extends State<RegisterPage> {
     _nameController.dispose();
   }
 
+  void _registerListener(BuildContext context, UserState state) {
+    if (state is UserDoesntExist) {
+      _sendOtp();
+    }
+  }
+
   void _registerAction() {
     if (_formKey.currentState!.validate()) {
       FocusScope.of(context).unfocus();
@@ -65,7 +71,7 @@ class _RegisterPageState extends State<RegisterPage> {
         showSnackbar(context, 'OTP berhasil dikirim');
 
         Navigator.of(context).pushReplacement(MaterialPageRoute(
-            builder: (_) => VerificationOtpPage(
+            builder: (_) => VerificationOTPPage(
                   verificationId: verificationId,
                   phoneNumber: phoneNumber,
                   name: name,
@@ -152,15 +158,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           ),
                           const SizedBox(height: 10.0),
                           BlocConsumer<UserBloc, UserState>(
-                            listener: (context, state) {
-                              if (state is UserDoesntExist) {
-                                _sendOtp();
-                              }
-
-                              if (state is UserError) {
-                                showSnackbar(context, state.toString());
-                              }
-                            },
+                            listener: _registerListener,
                             builder: (context, state) {
                               return TextFormField(
                                 controller: _phoneNumberController,

@@ -58,10 +58,6 @@ class _ChatsPageState extends State<ChatsPage> {
   void _unFocus() => FocusScope.of(context).unfocus();
 
   void _chatsListener(BuildContext context, ChatsState state) {
-    if (state is ChatsError) {
-      showSnackbar(context, state.toString());
-    }
-
     if (state is ChatsSendMessageSuccess) {
       _textEditingController.text = '';
       _chatsBloc.add(ChatGetMessage());

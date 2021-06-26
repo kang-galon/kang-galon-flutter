@@ -3,14 +3,15 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kang_galon/core/blocs/event_state.dart';
 import 'package:kang_galon/core/services/user_service.dart';
+import 'package:kang_galon/core/viewmodels/bloc.dart';
 
 class UserBloc extends Bloc<UserEvent, UserState> {
-  final UserService _userService = UserService();
+  final SnackbarBloc _snackbarBloc;
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
-  UserBloc() : super(UserUninitialized());
+  UserBloc(this._snackbarBloc) : super(UserUninitialized());
 
-  UserBloc.currentUser()
+  UserBloc.currentUser(this._snackbarBloc)
       : super(
             UserSuccess(name: FirebaseAuth.instance.currentUser!.displayName!));
 
@@ -75,6 +76,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
       }
     } catch (e) {
       print('UserBloc - $e');
+      _snackbarBloc.add(SnackbarShow(message: 'Ups.. ada yang salah nih'));
 
       yield UserError();
     }

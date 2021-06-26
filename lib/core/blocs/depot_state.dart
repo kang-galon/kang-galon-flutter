@@ -13,11 +13,6 @@ class DepotUninitialized extends DepotState {
 class DepotEmpty extends DepotState {
   @override
   List<Object> get props => [];
-
-  @override
-  String toString() {
-    return 'Tidak ada depot di sekitar anda';
-  }
 }
 
 class DepotLoading extends DepotState {
@@ -28,11 +23,6 @@ class DepotLoading extends DepotState {
 class DepotError extends DepotState {
   @override
   List<Object> get props => [];
-
-  @override
-  String toString() {
-    return 'Ups.. ada yang salah nih';
-  }
 }
 
 class DepotFetchListSuccess extends DepotState {

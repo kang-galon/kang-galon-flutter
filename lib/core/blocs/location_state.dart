@@ -13,21 +13,11 @@ class LocationUnable extends LocationState {
 class LocationServiceUnable extends LocationState {
   @override
   List<Object> get props => [];
-
-  @override
-  String toString() {
-    return 'Silahkan aktifkan Location Service';
-  }
 }
 
 class LocationPermissionUnable extends LocationState {
   @override
   List<Object> get props => [];
-
-  @override
-  String toString() {
-    return 'Silahkan izinkan Location';
-  }
 }
 
 class LocationEnable extends LocationState {
@@ -42,9 +32,4 @@ class LocationEnable extends LocationState {
 class LocationError extends LocationState {
   @override
   List<Object> get props => [];
-
-  @override
-  String toString() {
-    return 'Ups.. ada yang salah nih';
-  }
 }

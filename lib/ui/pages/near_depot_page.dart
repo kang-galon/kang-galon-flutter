@@ -30,12 +30,7 @@ class _NearDepotPageState extends State<NearDepotPage> {
             ),
             SliverPadding(
               padding: Pallette.contentPadding,
-              sliver: BlocConsumer<DepotBloc, DepotState>(
-                listener: (context, state) {
-                  if (state is DepotError) {
-                    showSnackbar(context, state.toString());
-                  }
-                },
+              sliver: BlocBuilder<DepotBloc, DepotState>(
                 builder: (context, state) {
                   return SliverList(
                     delegate: SliverChildBuilderDelegate(

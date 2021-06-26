@@ -2,9 +2,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kang_galon/core/blocs/event_state.dart';
 import 'package:kang_galon/core/models/models.dart';
 import 'package:kang_galon/core/services/services.dart';
+import 'package:kang_galon/core/viewmodels/bloc.dart';
 
 class ChatsBloc extends Bloc<ChatsEvent, ChatsState> {
-  ChatsBloc() : super(ChatsUninitialized());
+  final SnackbarBloc _snackbarBloc;
+  ChatsBloc(this._snackbarBloc) : super(ChatsUninitialized());
 
   @override
   Stream<ChatsState> mapEventToState(ChatsEvent event) async* {
@@ -26,6 +28,7 @@ class ChatsBloc extends Bloc<ChatsEvent, ChatsState> {
       }
     } catch (e) {
       print('ChatsBloc - $e');
+      _snackbarBloc.add(SnackbarShow(message: 'Ups.. ada yang salah nih'));
 
       yield ChatsError();
     }
