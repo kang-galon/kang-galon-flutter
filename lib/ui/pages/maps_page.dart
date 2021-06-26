@@ -13,30 +13,31 @@ class MapsPage extends StatefulWidget {
 }
 
 class _MapsPageState extends State<MapsPage> {
-  final String _infoWindowTitle = 'My Position';
-  final String _markerId = 'my_location';
   late LocationBloc _locationBloc;
   late double _latitude;
   late double _longitude;
   late Completer<GoogleMapController> _mapsController;
-  late List<Marker> _markers;
+  late bool _isCameraMove;
+  late double _cameraZoom;
 
   @override
   void initState() {
-    super.initState();
-
-    _mapsController = Completer();
-    _markers = <Marker>[];
+    // init bloc
     _locationBloc = BlocProvider.of<LocationBloc>(context);
+
+    // set
+    _mapsController = Completer();
+    _isCameraMove = false;
+    _cameraZoom = 20.0;
 
     // set current position
     LocationState locationState = _locationBloc.state;
     if (locationState is LocationEnable) {
       _latitude = locationState.location.latitude;
       _longitude = locationState.location.longitude;
-
-      _setMarkerLocation();
     }
+
+    super.initState();
   }
 
   @override
@@ -44,20 +45,6 @@ class _MapsPageState extends State<MapsPage> {
     super.dispose();
 
     (await _mapsController.future).dispose();
-  }
-
-  void _setMarkerLocation() {
-    LatLng latLng = LatLng(_latitude, _longitude);
-
-    // create marker
-    _markers.add(
-      Marker(
-        markerId: MarkerId(_markerId),
-        position: latLng,
-        infoWindow: InfoWindow(title: _infoWindowTitle),
-        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
-      ),
-    );
   }
 
   void _changeLocation() {
@@ -78,26 +65,32 @@ class _MapsPageState extends State<MapsPage> {
     return Scaffold(
       body: Stack(
         children: [
-          Container(
-            child: GoogleMap(
-              initialCameraPosition: CameraPosition(
-                target: LatLng(_latitude, _longitude),
-                zoom: 20.0,
-              ),
-              myLocationEnabled: false,
-              myLocationButtonEnabled: false,
-              zoomControlsEnabled: false,
-              markers: Set<Marker>.from(_markers),
-              onMapCreated: (controller) =>
-                  _mapsController.complete(controller),
-              onTap: (latLng) {
-                setState(() {
-                  _latitude = latLng.latitude;
-                  _longitude = latLng.longitude;
-
-                  _setMarkerLocation();
-                });
-              },
+          GoogleMap(
+            initialCameraPosition: CameraPosition(
+              target: LatLng(_latitude, _longitude),
+              zoom: _cameraZoom,
+            ),
+            myLocationEnabled: false,
+            myLocationButtonEnabled: false,
+            zoomControlsEnabled: false,
+            onMapCreated: (controller) => _mapsController.complete(controller),
+            onCameraMove: (cameraPosition) {
+              _latitude = cameraPosition.target.latitude;
+              _longitude = cameraPosition.target.longitude;
+            },
+            onCameraMoveStarted: () {
+              setState(() => _isCameraMove = true);
+            },
+            onCameraIdle: () {
+              setState(() => _isCameraMove = false);
+            },
+          ),
+          Align(
+            alignment: Alignment.center,
+            child: Icon(
+              Icons.location_on,
+              size: _isCameraMove ? 60.0 : 40.0,
+              color: Colors.blue.shade400,
             ),
           ),
           Positioned(
